@@ -1,0 +1,4 @@
+.env
+noosphere/
+__pycache__/
+uploads/
