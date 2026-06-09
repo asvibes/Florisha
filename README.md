@@ -83,22 +83,49 @@ Users can upload an image and receive species predictions, botanical information
 ```text
 Flourisha/
 │
-├── static/
+├── app.py                    
+├── config.py                
+├── .env                      
+├── .gitignore
+├── requirements.txt          
+├── README.md                 
+│
+├── routes/                  
+│   ├── __init__.py
+│   ├── main_routes.py
+│   ├── auth_routes.py
+│   └── ai_routes.py
+│
+├── modules/                
+│   ├── ai_engine.py
+│   ├── prompt_engine.py
+│   ├── recommendation.py
+│   ├── user_profile.py
+│   └── utils.py
+│
+├── templates/              
+│   ├── index.html
+│   ├── dashboard.html
+│   ├── login.html
+│   └── chat.html
+│
+├── static/                   
 │   ├── css/
+│   │   └── style.css
 │   ├── js/
+│   │   └── app.js
 │   └── images/
+│       └── logo.png
 │
-├── templates/
+├── uploads/               
 │
-├── uploads/
+├── data/                    
+│   ├── users.json
+│   └── history.json
 │
-├── instance/
-│
-├── app.py
-├── models.py
-├── requirements.txt
-├── .env
-└── README.md
+└── models/                   
+    └── model.pkl
+
 ```
 
 ## Getting Started
