@@ -25,7 +25,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Optional
 
-from gemini_service import generate_plant_profile
+from services.gemini_service import generate_plant_profile
 from plant_knowledge import PlantKnowledge
 
 logger = logging.getLogger(__name__)
