@@ -1,5 +1,6 @@
 from extensions import db
 from sqlalchemy import JSON
+from datetime import datetime
 
 
 class Plant(db.Model):
@@ -18,6 +19,9 @@ class Plant(db.Model):
     # identification alternatives — stored as JSON list of dicts
     # each dict: { scientific_name, common_name, family, genus, confidence }
     alternatives    = db.Column(JSON, nullable=True)              # NEW
+
+    # timestamps
+    created_at      = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     # relations / flags
     user_id         = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
