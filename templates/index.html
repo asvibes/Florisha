@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="day">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flourisha — Identify Any Plant, Instantly</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root[data-theme="day"] {
+    --bg-base: #f4f8f2;
+    --bg-surface: #edf4e9;
+    --bg-card: #ffffff;
+    --bg-nav: rgba(244,248,242,0.92);
+    --accent-primary: #7aad6e;
+    --accent-deep: #4a7a3e;
+    --accent-soft: #c8dfc3;
+    --accent-wash: #dcefd8;
+    --text-primary: #1e2d1a;
+    --text-secondary: #4a6043;
+    --text-muted: #7a9c74;
+    --text-on-accent: #ffffff;
+    --border-color: #c2d9bc;
+    --border-light: #dcefd8;
+    --hero-leaf-1: #a8cc9e;
+    --hero-leaf-2: #6b9e60;
+    --watercolor-1: rgba(168,204,158,0.18);
+    --watercolor-2: rgba(107,158,96,0.10);
+    --watercolor-3: rgba(200,223,195,0.22);
+    --step-bg: #edf4e9;
+    --night-icon: "🌙";
+    --shadow-card: 0 2px 16px rgba(74,122,62,0.08);
+  }
+  :root[data-theme="night"] {
+    --bg-base: #1a2016;
+    --bg-surface: #212b1c;
+    --bg-card: #2a3623;
+    --bg-nav: rgba(26,32,22,0.95);
+    --accent-primary: #7aad6e;
+    --accent-deep: #a8cc9e;
+    --accent-soft: #3a5233;
+    --accent-wash: #2e3e27;
+    --text-primary: #deecd8;
+    --text-secondary: #a8c4a0;
+    --text-muted: #6e8e66;
+    --text-on-accent: #1a2016;
+    --border-color: #3a5233;
+    --border-light: #2e3e27;
+    --hero-leaf-1: #3a5233;
+    --hero-leaf-2: #4a6840;
+    --watercolor-1: rgba(58,82,51,0.25);
+    --watercolor-2: rgba(74,104,64,0.15);
+    --watercolor-3: rgba(46,62,39,0.30);
+    --step-bg: #212b1c;
+    --shadow-card: 0 2px 20px rgba(0,0,0,0.30);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    transition: background 0.4s ease, color 0.4s ease;
+    overflow-x: hidden;
+  }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: var(--bg-nav);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-light);
+    padding: 0 2rem;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.4s ease, border-color 0.4s ease;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-logo-icon { width: 34px; height: 34px; background: var(--accent-primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .nav-logo-icon svg { width: 20px; height: 20px; }
+  .nav-logo-text { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--text-primary); letter-spacing: 0.01em; }
+  .nav-links { display: flex; align-items: center; gap: 0.25rem; }
+  .nav-link { font-size: 0.875rem; font-weight: 400; color: var(--text-secondary); text-decoration: none; padding: 0.4rem 0.85rem; border-radius: 8px; transition: color 0.2s, background 0.2s; }
+  .nav-link:hover { color: var(--text-primary); background: var(--accent-wash); }
+  .btn-nav-login { font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); text-decoration: none; padding: 0.4rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); transition: all 0.2s; }
+  .btn-nav-login:hover { color: var(--accent-deep); border-color: var(--accent-primary); background: var(--accent-wash); }
+  .btn-nav-register { font-size: 0.875rem; font-weight: 500; color: var(--text-on-accent); text-decoration: none; padding: 0.4rem 1.1rem; border-radius: 8px; background: var(--accent-primary); transition: all 0.2s; }
+  .btn-nav-register:hover { background: var(--accent-deep); }
+
+  .sky-switch { overflow: hidden; position: relative; display: inline-block; width: 80px; height: 32.5px; margin-left: 0.75rem; flex-shrink: 0; }
+  .sky-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .sky-slider { position: absolute; border-radius: 999px; cursor: pointer; overflow: hidden; top: 0; left: 0; right: 0; bottom: 0; background-color: #2196F3; transition: .6s ease-in-out; border: 1.5px solid rgba(255,255,255,0.3); }
+  .sky-slider:before { position: absolute; content: ""; height: 27px; width: 27px; border-radius: 50%; left: 2.5px; bottom: 2.5px; background-color: #f9dc5c; transition: .6s; z-index: 999; box-shadow: 0px 0px 12px 12px rgba(255,255,255,0.25); }
+  .sky-switch input:checked + .sky-slider { background-color: #1c1c24; border-color: rgba(255,255,255,0.2); }
+  .sky-switch input:checked + .sky-slider:before { transform: translateX(47px) translateY(0px); background-color: #E0E0D1; box-shadow: 0px 0px 8px 8px rgba(200,200,180,0.15); }
+  .sky-clouds { position: absolute; top: 0; left: 0; width: 80px; height: 32.5px; overflow: hidden; pointer-events: none; }
+  .sky-cloud1 { position: relative; z-index: 200; transition: .8s; opacity: .95; width: 80px; }
+  .sky-cloud2 { z-index: 100; transition: 1.1s; transform: scale(1.15) translateY(-5px) translateX(-5px); opacity: .5; width: 80px; position: absolute; top: 0; left: 0; }
+  .sky-switch input:checked + .sky-slider > .sky-clouds { transform: translateY(33px); }
+  .sky-balloon { z-index: 150; position: absolute; top: 0; right: 25px; height: 11px; transform: translateY(5px); transition: 3s ease-in-out; pointer-events: none; }
+  .sky-switch input:checked + .sky-slider > .sky-balloon { transform: translateY(38px); }
+  .sky-night { background-color: #1c1c24; position: absolute; display: none; top: 0; left: 0; height: 100%; width: 100%; }
+  .sky-switch input:checked + .sky-slider > .sky-night { z-index: 151; display: block; }
+  .sky-star { z-index: 500; position: absolute; color: white; opacity: 0; transition: .6s; font-size: 3px; text-shadow: 0 0 4px #fff, 0 0 8px #0fa, 0 0 14px #0fa; transform: translateY(-20px); }
+  .sky-star:nth-of-type(1) { top: 3px; left: 15px; font-size: 3px; }
+  .sky-star:nth-of-type(2) { top: 8px; font-size: 2px; left: 42px; }
+  .sky-star:nth-of-type(3) { top: 16px; font-size: 4px; left: 4px; }
+  .sky-star:nth-of-type(4) { top: 22px; font-size: 2px; left: 18px; }
+  .sky-star:nth-of-type(5) { top: 13px; font-size: 3px; left: 35px; }
+  .sky-switch input:checked + .sky-slider .sky-star { transform: translateY(0px); opacity: 1; }
+  .sky-spaceship { z-index: 800; opacity: 0; position: absolute; top: 0; right: 25px; height: 11px; transform: translateY(38px) translateX(-38px); transition: transform 2s ease-in-out; transition-delay: 1s; pointer-events: none; }
+  .sky-switch input:checked + .sky-slider .sky-spaceship { opacity: 1; transform: translateY(-25px) translateX(10px); }
+
+  .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 100px 2rem 4rem; position: relative; overflow: hidden; }
+  .hero-watercolor { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+  .hero-watercolor-blob { position: absolute; border-radius: 50%; filter: blur(60px); transition: background 0.4s ease; }
+  .blob-1 { width: 520px; height: 420px; top: -80px; right: -100px; background: var(--watercolor-1); }
+  .blob-2 { width: 380px; height: 380px; bottom: 0; left: -80px; background: var(--watercolor-2); }
+  .blob-3 { width: 300px; height: 260px; top: 40%; left: 40%; background: var(--watercolor-3); }
+  .hero-botanical { position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: 0.35; }
+  .hero-content { max-width: 660px; text-align: center; position: relative; z-index: 1; }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-deep); background: var(--accent-wash); border: 1px solid var(--accent-soft); padding: 0.3rem 1rem; border-radius: 100px; margin-bottom: 1.75rem; }
+  .hero-eyebrow-dot { width: 6px; height: 6px; background: var(--accent-primary); border-radius: 50%; display: inline-block; }
+  .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 7vw, 5rem); font-weight: 500; line-height: 1.08; color: var(--text-primary); letter-spacing: -0.01em; margin-bottom: 1.25rem; }
+  .hero-title em { font-style: italic; color: var(--accent-deep); }
+  .hero-tagline { font-size: 1.1rem; font-weight: 300; color: var(--text-secondary); line-height: 1.7; max-width: 480px; margin: 0 auto 2.5rem; }
+  .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 0.85rem 2rem; background: var(--accent-primary); color: var(--text-on-accent); font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 500; border-radius: 12px; border: none; cursor: pointer; text-decoration: none; transition: background 0.2s, transform 0.15s; }
+  .btn-primary:hover { background: var(--accent-deep); transform: translateY(-1px); }
+  .btn-secondary { display: inline-flex; align-items: center; gap: 8px; padding: 0.85rem 2rem; background: transparent; color: var(--text-secondary); font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 400; border-radius: 12px; border: 1px solid var(--border-color); cursor: pointer; text-decoration: none; transition: all 0.2s; }
+  .btn-secondary:hover { border-color: var(--accent-primary); color: var(--accent-deep); background: var(--accent-wash); }
+  .hero-proof { display: flex; align-items: center; justify-content: center; gap: 2rem; margin-top: 3.5rem; flex-wrap: wrap; }
+  .hero-proof-item { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--text-muted); }
+  .hero-proof-item svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .hero-proof-divider { width: 1px; height: 20px; background: var(--border-color); }
+
+  .section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
+  .section-label { font-size: 0.78rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-primary); margin-bottom: 0.75rem; }
+  .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 500; color: var(--text-primary); line-height: 1.15; margin-bottom: 1rem; max-width: 520px; }
+  .section-subtitle { font-size: 1rem; font-weight: 300; color: var(--text-secondary); line-height: 1.7; max-width: 480px; margin-bottom: 3.5rem; }
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; }
+  .feature-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.75rem; transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s; box-shadow: var(--shadow-card); }
+  .feature-card:hover { border-color: var(--accent-soft); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(74,122,62,0.12); }
+  .feature-icon { width: 44px; height: 44px; background: var(--accent-wash); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.1rem; }
+  .feature-icon svg { width: 22px; height: 22px; stroke: var(--accent-deep); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .feature-title { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+  .feature-desc { font-size: 0.88rem; font-weight: 300; color: var(--text-secondary); line-height: 1.65; }
+
+  .how-section { background: var(--bg-surface); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); transition: background 0.4s ease; }
+  .how-inner { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
+  .how-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; margin-top: 1rem; position: relative; }
+  .how-step { display: flex; flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .step-number { font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 400; color: var(--accent-soft); line-height: 1; letter-spacing: -0.02em; }
+  .step-icon { width: 48px; height: 48px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-card); }
+  .step-icon svg { width: 24px; height: 24px; stroke: var(--accent-primary); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .step-title { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 600; color: var(--text-primary); }
+  .step-desc { font-size: 0.875rem; font-weight: 300; color: var(--text-secondary); line-height: 1.65; }
+
+  .cta-section { padding: 6rem 2rem; text-align: center; max-width: 640px; margin: 0 auto; }
+  .cta-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 500; color: var(--text-primary); line-height: 1.15; margin-bottom: 1rem; }
+  .cta-title em { font-style: italic; color: var(--accent-deep); }
+  .cta-sub { font-size: 0.95rem; font-weight: 300; color: var(--text-secondary); line-height: 1.7; margin-bottom: 2rem; }
+
+  footer { border-top: 1px solid var(--border-light); padding: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; max-width: 1100px; margin: 0 auto; }
+  .footer-brand { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; color: var(--text-muted); }
+  .footer-copy { font-size: 0.8rem; color: var(--text-muted); }
+
+  .leaf-accent { position: absolute; pointer-events: none; opacity: 0.13; transition: opacity 0.4s ease; }
+  [data-theme="night"] .leaf-accent { opacity: 0.07; }
+
+  @media (max-width: 640px) {
+    nav { padding: 0 1rem; }
+    .nav-link { display: none; }
+    .hero { padding: 90px 1.25rem 3rem; }
+    .section { padding: 4rem 1.25rem; }
+    .how-inner { padding: 4rem 1.25rem; }
+    footer { padding: 1.5rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="{{ url_for('home') }}" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22V12M12 12C12 7 8 3 3 3c0 5 3.5 8.5 9 9zM12 12C12 7 16 3 21 3c0 5-3.5 8.5-9 9z"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">Flourisha</span>
+  </a>
+  <div class="nav-links">
+    <a href="#how" class="nav-link">How it works</a>
+    <a href="{{ url_for('login') }}" class="btn-nav-login">Log in</a>
+    <a href="{{ url_for('register') }}" class="btn-nav-register">Get started</a>
+    <label class="sky-switch" aria-label="Toggle day/night mode">
+      <input type="checkbox" id="themeToggle" />
+      <div class="sky-slider">
+        <img class="sky-clouds sky-cloud1" src="https://i.ibb.co/BKZ5z46/Mediamodifier-Design-Template.png" alt="" />
+        <img class="sky-clouds sky-cloud2" src="https://i.ibb.co/BKZ5z46/Mediamodifier-Design-Template.png" alt="" />
+        <div class="sky-night"></div>
+        <img class="sky-balloon" src="https://i.ibb.co/rtvfLkh/kisspng-hot-air-ballooning-hot-air-balloon-festival-flight-balloon-festival-5b0c63bbf3e107-504475381.png" alt="" />
+        <p class="sky-star">✦</p>
+        <p class="sky-star">✦</p>
+        <p class="sky-star">✦</p>
+        <p class="sky-star">✦</p>
+        <p class="sky-star">✦</p>
+        <img class="sky-spaceship" src="https://i.ibb.co/LhFzH2X/kisspng-emoji-rocket-spacecraft-text-messaging-clip-art-rocket-5acb92ecc2cf10-049862491523290860798.png" alt="" />
+      </div>
+    </label>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-watercolor">
+    <div class="hero-watercolor-blob blob-1"></div>
+    <div class="hero-watercolor-blob blob-2"></div>
+    <div class="hero-watercolor-blob blob-3"></div>
+  </div>
+  <svg class="hero-botanical leaf-accent" style="top:-10px;right:-20px;width:340px;height:340px;" viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M320 20 Q200 80 180 200 Q160 300 80 320" stroke="var(--accent-primary)" stroke-width="1" fill="none"/>
+    <path d="M280 10 Q170 90 155 210 Q140 310 60 330" stroke="var(--accent-primary)" stroke-width="0.7" fill="none"/>
+    <ellipse cx="240" cy="90" rx="38" ry="18" transform="rotate(-35 240 90)" stroke="var(--accent-primary)" stroke-width="0.8" fill="none"/>
+    <path d="M240 90 Q258 72 270 60" stroke="var(--accent-primary)" stroke-width="0.6" fill="none"/>
+    <ellipse cx="205" cy="155" rx="32" ry="15" transform="rotate(-42 205 155)" stroke="var(--accent-primary)" stroke-width="0.8" fill="none"/>
+    <path d="M205 155 Q220 140 228 128" stroke="var(--accent-primary)" stroke-width="0.6" fill="none"/>
+    <ellipse cx="172" cy="225" rx="28" ry="13" transform="rotate(-38 172 225)" stroke="var(--accent-primary)" stroke-width="0.8" fill="none"/>
+  </svg>
+  <svg class="hero-botanical leaf-accent" style="bottom:40px;left:-10px;width:280px;height:280px;" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 260 Q100 160 120 80 Q140 20 200 10" stroke="var(--accent-primary)" stroke-width="1" fill="none"/>
+    <ellipse cx="75" cy="195" rx="34" ry="16" transform="rotate(42 75 195)" stroke="var(--accent-primary)" stroke-width="0.8" fill="none"/>
+    <path d="M75 195 Q58 212 48 225" stroke="var(--accent-primary)" stroke-width="0.6" fill="none"/>
+    <ellipse cx="108" cy="130" rx="30" ry="14" transform="rotate(38 108 130)" stroke="var(--accent-primary)" stroke-width="0.8" fill="none"/>
+    <ellipse cx="145" cy="68" rx="24" ry="11" transform="rotate(32 145 68)" stroke="var(--accent-primary)" stroke-width="0.8" fill="none"/>
+  </svg>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-dot"></span>
+      Powered by Pl@ntNet
+    </div>
+    <h1 class="hero-title">
+      The whole world<br><em>grows</em> in one snap
+    </h1>
+    <p class="hero-tagline">
+      Photograph any plant, flower, or tree — Flourisha identifies it in seconds and opens a door into the botanical world behind it.
+    </p>
+    <div class="hero-actions">
+      <!-- ✅ CHANGED: url_for('start') -->
+      <a href="{{ url_for('start') }}" class="btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Identify a plant
+      </a>
+      <a href="#how" class="btn-secondary">
+        See how it works
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+    </div>
+    <div class="hero-proof">
+      <div class="hero-proof-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Guest-friendly, no sign-up needed
+      </div>
+      <div class="hero-proof-divider"></div>
+      <div class="hero-proof-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        300,000+ plant species
+      </div>
+      <div class="hero-proof-divider"></div>
+      <div class="hero-proof-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Scientific + common names
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="section-label">What Flourisha does</div>
+  <h2 class="section-title">More than a name — a full botanical portrait</h2>
+  <p class="section-subtitle">Every identification unlocks a curated profile: taxonomy, habitat, growth habits, and plants that grow alongside it.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg></div>
+      <div class="feature-title">Instant identification</div>
+      <p class="feature-desc">Upload a photo and receive a species prediction with confidence score in seconds — no botanical training required.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+      <div class="feature-title">Rich species profiles</div>
+      <p class="feature-desc">Scientific name, family, genus, habitat, and growth characteristics — drawn from Pl@ntNet and enriched by AI.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+      <div class="feature-title">Related species</div>
+      <p class="feature-desc">Discover botanical neighbours — same genus, same family — ranked by how closely they're related to what you found.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg></div>
+      <div class="feature-title">Personal history</div>
+      <p class="feature-desc">Every identification is saved to your profile. Browse, search, re-identify, or remove entries whenever you like.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+      <div class="feature-title">Honest confidence</div>
+      <p class="feature-desc">When a match is uncertain, Flourisha says so — showing alternatives and prompting a better photo rather than guessing.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <div class="feature-title">Guest or registered</div>
+      <p class="feature-desc">Try it immediately — no account needed. Sign up to unlock history, saved images, and re-identification.</p>
+    </div>
+  </div>
+</section>
+
+<div class="how-section" id="how">
+  <div class="how-inner">
+    <div class="section-label">How it works</div>
+    <h2 class="section-title">From photograph to botanical knowledge in four steps</h2>
+    <p class="section-subtitle" style="margin-bottom:3rem;">No expertise needed — just a clear photo and curiosity.</p>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="step-number">01</div>
+        <div class="step-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        <div class="step-title">Upload your photo</div>
+        <p class="step-desc">Drag and drop or browse a photo of any plant, flower, leaf, or tree. A close, well-lit shot gives the best result.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-number">02</div>
+        <div class="step-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <div class="step-title">We identify it</div>
+        <p class="step-desc">Your image is sent to Pl@ntNet's botanical recognition engine, trained on millions of verified plant specimens.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-number">03</div>
+        <div class="step-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+        <div class="step-title">Read the profile</div>
+        <p class="step-desc">Get the species name, family, habitat, characteristics, and a plain-language description — all in one clean page.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-number">04</div>
+        <div class="step-icon"><svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg></div>
+        <div class="step-title">Explore further</div>
+        <p class="step-desc">Follow related species suggestions, save the identification to your history, or upload another — the garden never ends.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="cta-section">
+  <h2 class="cta-title">Every leaf has<br>a <em>story</em> to tell</h2>
+  <p class="cta-sub">Start identifying plants around you — no expertise, no subscription, no waiting.</p>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+    <!-- ✅ CHANGED: url_for('start') -->
+    <a href="{{ url_for('start') }}" class="btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Identify a plant free
+    </a>
+    <a href="{{ url_for('register') }}" class="btn-secondary">Create an account</a>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-brand">Flourisha</span>
+  <span class="footer-copy">© 2025 Flourisha · Flora identification powered by Pl@ntNet</span>
+</footer>
+
+<script>
+  const html = document.documentElement;
+  const toggle = document.getElementById('themeToggle');
+  const saved = localStorage.getItem('flourisha-theme') || 'day';
+  html.setAttribute('data-theme', saved);
+  if (saved === 'night') toggle.checked = true;
+  toggle.addEventListener('change', () => {
+    const theme = toggle.checked ? 'night' : 'day';
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem('flourisha-theme', theme);
+  });
+</script>
+</body>
+</html>

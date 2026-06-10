@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="day">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flourisha — My Collection</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&family=Caveat:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root[data-theme="day"] {
+    --bg-base:         #f4f8f2;
+    --bg-surface:      #edf4e9;
+    --bg-card:         #ffffff;
+    --bg-sidebar:      #ffffff;
+    --bg-topbar:       rgba(255,255,255,0.92);
+    --accent-primary:  #7aad6e;
+    --accent-deep:     #4a7a3e;
+    --accent-soft:     #c8dfc3;
+    --accent-wash:     #dcefd8;
+    --text-primary:    #1e2d1a;
+    --text-secondary:  #4a6043;
+    --text-muted:      #7a9c74;
+    --text-on-accent:  #ffffff;
+    --border-color:    #c2d9bc;
+    --border-light:    #dcefd8;
+    --shadow-card:     0 2px 16px rgba(74,122,62,0.08);
+    --shadow-hover:    0 8px 32px rgba(74,122,62,0.14);
+    --polaroid-bg:     #fffef9;
+    --polaroid-border: #f0ece0;
+    --stat-card-bg:    #ffffff;
+    --sidebar-active:  #dcefd8;
+    --sidebar-width:   220px;
+    --topbar-height:   64px;
+    --watercolor-1:    rgba(168,204,158,0.15);
+    --watercolor-2:    rgba(107,158,96,0.08);
+  }
+  :root[data-theme="night"] {
+    --bg-base:         #1a2016;
+    --bg-surface:      #212b1c;
+    --bg-card:         #2a3623;
+    --bg-sidebar:      #1e2818;
+    --bg-topbar:       rgba(26,32,22,0.96);
+    --accent-primary:  #7aad6e;
+    --accent-deep:     #a8cc9e;
+    --accent-soft:     #3a5233;
+    --accent-wash:     #2e3e27;
+    --text-primary:    #deecd8;
+    --text-secondary:  #a8c4a0;
+    --text-muted:      #6e8e66;
+    --text-on-accent:  #1a2016;
+    --border-color:    #3a5233;
+    --border-light:    #2e3e27;
+    --shadow-card:     0 2px 20px rgba(0,0,0,0.28);
+    --shadow-hover:    0 8px 32px rgba(0,0,0,0.40);
+    --polaroid-bg:     #2a3623;
+    --polaroid-border: #3a5233;
+    --stat-card-bg:    #2a3623;
+    --sidebar-active:  #2e3e27;
+    --sidebar-width:   220px;
+    --topbar-height:   64px;
+    --watercolor-1:    rgba(58,82,51,0.20);
+    --watercolor-2:    rgba(74,104,64,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { height: 100%; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    transition: background 0.4s ease, color 0.4s ease;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ═══════════════════════════════════════
+     TOP BAR
+  ═══════════════════════════════════════ */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+    height: var(--topbar-height);
+    background: var(--bg-topbar);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-light);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 1.5rem 0 calc(var(--sidebar-width) + 1.5rem);
+    transition: background 0.4s, border-color 0.4s;
+  }
+  .topbar-logo {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+    position: absolute; left: 1.5rem; top: 50%; transform: translateY(-50%);
+  }
+  .topbar-logo-icon {
+    width: 32px; height: 32px; background: var(--accent-primary);
+    border-radius: 9px; display: flex; align-items: center; justify-content: center;
+  }
+  .topbar-logo-icon svg { width: 18px; height: 18px; }
+  .topbar-logo-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; font-weight: 600; color: var(--text-primary);
+  }
+  .topbar-right {
+    display: flex; align-items: center; gap: 1rem; margin-left: auto;
+  }
+  .topbar-greeting {
+    font-size: 0.85rem; font-weight: 400; color: var(--text-secondary);
+  }
+  .topbar-greeting strong { color: var(--text-primary); font-weight: 500; }
+  .topbar-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent-primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 600; color: var(--text-on-accent);
+    letter-spacing: 0.02em; flex-shrink: 0;
+  }
+
+  /* sky toggle */
+  .sky-switch { overflow: hidden; position: relative; display: inline-block; width: 80px; height: 32.5px; flex-shrink: 0; }
+  .sky-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .sky-slider { position: absolute; border-radius: 999px; cursor: pointer; overflow: hidden; top: 0; left: 0; right: 0; bottom: 0; background-color: #2196F3; transition: .6s ease-in-out; border: 1.5px solid rgba(255,255,255,0.3); }
+  .sky-slider:before { position: absolute; content: ""; height: 27px; width: 27px; border-radius: 50%; left: 2.5px; bottom: 2.5px; background-color: #f9dc5c; transition: .6s; z-index: 999; box-shadow: 0px 0px 12px 12px rgba(255,255,255,0.25); }
+  .sky-switch input:checked + .sky-slider { background-color: #1c1c24; border-color: rgba(255,255,255,0.2); }
+  .sky-switch input:checked + .sky-slider:before { transform: translateX(47px); background-color: #E0E0D1; box-shadow: 0px 0px 8px 8px rgba(200,200,180,0.15); }
+  .sky-clouds { position: absolute; top: 0; left: 0; width: 80px; height: 32.5px; overflow: hidden; pointer-events: none; }
+  .sky-cloud1 { position: relative; z-index: 200; transition: .8s; opacity: .95; width: 80px; }
+  .sky-cloud2 { z-index: 100; transition: 1.1s; transform: scale(1.15) translateY(-5px) translateX(-5px); opacity: .5; width: 80px; position: absolute; top: 0; left: 0; }
+  .sky-switch input:checked + .sky-slider > .sky-clouds { transform: translateY(33px); }
+  .sky-balloon { z-index: 150; position: absolute; top: 0; right: 25px; height: 11px; transform: translateY(5px); transition: 3s ease-in-out; pointer-events: none; }
+  .sky-switch input:checked + .sky-slider > .sky-balloon { transform: translateY(38px); }
+  .sky-night { background-color: #1c1c24; position: absolute; display: none; top: 0; left: 0; height: 100%; width: 100%; }
+  .sky-switch input:checked + .sky-slider > .sky-night { z-index: 151; display: block; }
+  .sky-star { z-index: 500; position: absolute; color: white; opacity: 0; transition: .6s; font-size: 3px; text-shadow: 0 0 4px #fff, 0 0 8px #0fa, 0 0 14px #0fa; transform: translateY(-20px); }
+  .sky-star:nth-of-type(1) { top: 3px; left: 15px; } .sky-star:nth-of-type(2) { top: 8px; left: 42px; font-size: 2px; } .sky-star:nth-of-type(3) { top: 16px; left: 4px; font-size: 4px; } .sky-star:nth-of-type(4) { top: 22px; left: 18px; font-size: 2px; } .sky-star:nth-of-type(5) { top: 13px; left: 35px; }
+  .sky-switch input:checked + .sky-slider .sky-star { transform: translateY(0); opacity: 1; }
+  .sky-spaceship { z-index: 800; opacity: 0; position: absolute; top: 0; right: 25px; height: 11px; transform: translateY(38px) translateX(-38px); transition: transform 2s ease-in-out; transition-delay: 1s; pointer-events: none; }
+  .sky-switch input:checked + .sky-slider .sky-spaceship { opacity: 1; transform: translateY(-25px) translateX(10px); }
+
+  /* ═══════════════════════════════════════
+     SIDEBAR
+  ═══════════════════════════════════════ */
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 200;
+    width: var(--sidebar-width);
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border-light);
+    display: flex; flex-direction: column;
+    padding-top: var(--topbar-height);
+    transition: background 0.4s, border-color 0.4s;
+  }
+  .sidebar-nav { flex: 1; padding: 1.25rem 0.75rem; display: flex; flex-direction: column; gap: 2px; }
+  .sidebar-section-label {
+    font-size: 0.68rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-muted);
+    padding: 0.6rem 0.75rem 0.3rem; margin-top: 0.5rem;
+  }
+  .sidebar-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0.6rem 0.75rem; border-radius: 10px;
+    text-decoration: none; font-size: 0.875rem; font-weight: 400;
+    color: var(--text-secondary);
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer; border: none; background: none; width: 100%; text-align: left;
+  }
+  .sidebar-link:hover { background: var(--accent-wash); color: var(--text-primary); }
+  .sidebar-link.active {
+    background: var(--sidebar-active); color: var(--accent-deep); font-weight: 500;
+    border-left: 3px solid var(--accent-primary); padding-left: calc(0.75rem - 3px);
+  }
+  .sidebar-link svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .sidebar-bottom { padding: 0.75rem; border-top: 1px solid var(--border-light); }
+  .sidebar-logout {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0.6rem 0.75rem; border-radius: 10px;
+    text-decoration: none; font-size: 0.875rem; font-weight: 400;
+    color: var(--text-muted); transition: background 0.2s, color 0.2s;
+    cursor: pointer; border: none; background: none; width: 100%; text-align: left;
+  }
+  .sidebar-logout:hover { background: rgba(220,80,80,0.08); color: #c0392b; }
+  .sidebar-logout svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+  /* botanical vine on sidebar */
+  .sidebar-vine {
+    padding: 1rem 0.75rem 0;
+    opacity: 0.12; pointer-events: none;
+  }
+  [data-theme="night"] .sidebar-vine { opacity: 0.06; }
+
+  /* ═══════════════════════════════════════
+     MAIN CONTENT
+  ═══════════════════════════════════════ */
+  .main {
+    margin-left: var(--sidebar-width);
+    padding-top: var(--topbar-height);
+    min-height: 100vh;
+  }
+  .main-inner { padding: 2.5rem 2rem; max-width: 1200px; }
+
+  /* watercolor blobs */
+  .bg-blob {
+    position: fixed; border-radius: 50%; filter: blur(80px);
+    pointer-events: none; z-index: 0; transition: background 0.4s;
+  }
+  .blob-a { width: 400px; height: 400px; top: 80px; right: -100px; background: var(--watercolor-1); }
+  .blob-b { width: 300px; height: 300px; bottom: 100px; right: 200px; background: var(--watercolor-2); }
+
+  /* section visibility */
+  .dash-section { display: none; position: relative; z-index: 1; }
+  .dash-section.active { display: block; }
+
+  /* ═══════════════════════════════════════
+     WELCOME + STATS
+  ═══════════════════════════════════════ */
+  .welcome-strip {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
+  }
+  .welcome-text-block {}
+  .welcome-greeting {
+    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent-primary); margin-bottom: 0.3rem;
+  }
+  .welcome-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 500;
+    color: var(--text-primary); line-height: 1.1;
+  }
+  .welcome-title em { font-style: italic; color: var(--accent-deep); }
+  .welcome-sub { font-size: 0.875rem; font-weight: 300; color: var(--text-secondary); margin-top: 0.3rem; }
+  .btn-identify {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 0.75rem 1.5rem; background: var(--accent-primary);
+    color: var(--text-on-accent); font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 500; border-radius: 12px; border: none;
+    cursor: pointer; text-decoration: none; transition: background 0.2s, transform 0.15s;
+  }
+  .btn-identify:hover { background: var(--accent-deep); transform: translateY(-1px); }
+  .btn-identify svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* stats row */
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2.5rem; }
+  .stat-card {
+    background: var(--stat-card-bg); border: 1px solid var(--border-light);
+    border-radius: 14px; padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow-card); transition: box-shadow 0.2s, border-color 0.2s, background 0.4s;
+  }
+  .stat-card:hover { border-color: var(--accent-soft); box-shadow: var(--shadow-hover); }
+  .stat-label { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; }
+  .stat-value { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 500; color: var(--text-primary); line-height: 1; }
+  .stat-sub { font-size: 0.8rem; font-weight: 300; color: var(--text-secondary); margin-top: 0.25rem; }
+
+  /* ═══════════════════════════════════════
+     CATEGORY TABS
+  ═══════════════════════════════════════ */
+  .collection-header { margin-bottom: 1.5rem; }
+  .collection-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem; font-weight: 500; color: var(--text-primary); margin-bottom: 1rem;
+  }
+  .tabs-wrap { overflow-x: auto; padding-bottom: 4px; }
+  .tabs { display: flex; gap: 4px; min-width: max-content; }
+  .tab-btn {
+    padding: 0.4rem 1rem; border-radius: 100px;
+    border: 1px solid var(--border-color); background: transparent;
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 400;
+    color: var(--text-secondary); cursor: pointer;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .tab-btn:hover { border-color: var(--accent-primary); color: var(--accent-deep); background: var(--accent-wash); }
+  .tab-btn.active { background: var(--accent-primary); border-color: var(--accent-primary); color: var(--text-on-accent); font-weight: 500; }
+
+  /* ═══════════════════════════════════════
+     POLAROID GRID
+  ═══════════════════════════════════════ */
+  .polaroid-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 2rem 1.5rem;
+    padding: 1rem 0 3rem;
+  }
+
+  .polaroid-wrap { perspective: 800px; }
+  .polaroid {
+    background: var(--polaroid-bg);
+    border: 1px solid var(--polaroid-border);
+    border-radius: 3px;
+    padding: 10px 10px 40px;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    cursor: default;
+  }
+  /* each card gets a slightly different tilt via JS */
+  .polaroid:hover {
+    transform: translateY(-6px) rotate(0deg) !important;
+    box-shadow: var(--shadow-hover);
+  }
+  .polaroid-img-wrap {
+    width: 100%; aspect-ratio: 1/1; overflow: hidden;
+    background: var(--bg-surface); border-radius: 1px; position: relative;
+  }
+  .polaroid-img-wrap img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform 0.4s ease;
+  }
+  .polaroid:hover .polaroid-img-wrap img { transform: scale(1.04); }
+
+  /* placeholder when no image */
+  .polaroid-placeholder {
+    width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+    background: var(--accent-wash);
+  }
+  .polaroid-placeholder svg { width: 40px; height: 40px; stroke: var(--accent-soft); fill: none; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .polaroid-label {
+    padding-top: 8px; text-align: center;
+  }
+  .polaroid-name {
+    font-family: 'Caveat', cursive;
+    font-size: 1rem; font-weight: 500;
+    color: var(--text-primary); line-height: 1.2;
+    display: block; margin-bottom: 2px;
+  }
+  .polaroid-date {
+    font-size: 0.7rem; font-weight: 300;
+    color: var(--text-muted); display: block;
+  }
+
+  /* heart button */
+  .heart-btn {
+    position: absolute; top: 8px; right: 8px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(255,255,255,0.85); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s, background 0.2s;
+    backdrop-filter: blur(4px);
+  }
+  [data-theme="night"] .heart-btn { background: rgba(42,54,35,0.85); }
+  .heart-btn:hover { transform: scale(1.15); }
+  .heart-btn svg { width: 14px; height: 14px; transition: fill 0.2s, stroke 0.2s; }
+  .heart-btn.favourited svg { fill: #e05555; stroke: #e05555; }
+  .heart-btn:not(.favourited) svg { fill: none; stroke: var(--text-muted); }
+
+  /* pop animation on heart */
+  @keyframes heartPop { 0%{transform:scale(1)} 40%{transform:scale(1.35)} 70%{transform:scale(0.9)} 100%{transform:scale(1)} }
+  .heart-pop { animation: heartPop 0.35s ease forwards; }
+
+  /* ═══════════════════════════════════════
+     EMPTY STATE
+  ═══════════════════════════════════════ */
+  .empty-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; text-align: center;
+    padding: 5rem 2rem; gap: 1rem;
+  }
+  .empty-illustration {
+    width: 140px; height: 140px; margin-bottom: 0.5rem;
+  }
+  .empty-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem; font-weight: 500; color: var(--text-primary);
+  }
+  .empty-title em { font-style: italic; color: var(--accent-deep); }
+  .empty-sub { font-size: 0.9rem; font-weight: 300; color: var(--text-secondary); max-width: 320px; line-height: 1.65; }
+
+  /* ═══════════════════════════════════════
+     FAVOURITES EMPTY
+  ═══════════════════════════════════════ */
+  .fav-empty { text-align: center; padding: 4rem 2rem; color: var(--text-muted); font-size: 0.9rem; font-weight: 300; }
+  .fav-empty-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+
+  /* ═══════════════════════════════════════
+     HISTORY TABLE
+  ═══════════════════════════════════════ */
+  .history-table { width: 100%; border-collapse: collapse; }
+  .history-table th {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-muted); padding: 0.75rem 1rem; text-align: left;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .history-table td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border-light); font-size: 0.875rem; color: var(--text-secondary); vertical-align: middle; }
+  .history-table tr:hover td { background: var(--accent-wash); }
+  .history-thumb { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border-light); }
+  .history-thumb-placeholder { width: 40px; height: 40px; border-radius: 6px; background: var(--accent-wash); display: flex; align-items: center; justify-content: center; }
+  .confidence-pill {
+    display: inline-block; padding: 0.15rem 0.6rem;
+    border-radius: 100px; font-size: 0.72rem; font-weight: 500;
+  }
+  .conf-high { background: rgba(122,173,110,0.15); color: var(--accent-deep); }
+  .conf-mid  { background: rgba(224,154,48,0.15);  color: #a06820; }
+  .conf-low  { background: rgba(220,80,80,0.10);   color: #c0392b; }
+
+  /* ═══════════════════════════════════════
+     PROFILE
+  ═══════════════════════════════════════ */
+  .profile-card {
+    background: var(--bg-card); border: 1px solid var(--border-light);
+    border-radius: 16px; padding: 2rem; max-width: 480px;
+    box-shadow: var(--shadow-card);
+  }
+  .profile-avatar-lg {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--accent-primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; font-weight: 600; color: var(--text-on-accent);
+    margin-bottom: 1.25rem;
+  }
+  .profile-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem; font-weight: 500; color: var(--text-primary); margin-bottom: 0.25rem;
+  }
+  .profile-email { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+  .profile-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light); font-size: 0.875rem; }
+  .profile-row:last-of-type { border-bottom: none; }
+  .profile-row-label { color: var(--text-muted); font-weight: 400; }
+  .profile-row-value { color: var(--text-primary); font-weight: 500; }
+  .btn-logout-profile {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 1.5rem; padding: 0.65rem 1.25rem;
+    border: 1px solid rgba(220,80,80,0.3); border-radius: 10px;
+    background: transparent; color: #c0392b; font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem; cursor: pointer; text-decoration: none; transition: all 0.2s;
+  }
+  .btn-logout-profile:hover { background: rgba(220,80,80,0.08); }
+  .btn-logout-profile svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ═══════════════════════════════════════
+     RESPONSIVE
+  ═══════════════════════════════════════ */
+  @media (max-width: 768px) {
+    :root { --sidebar-width: 0px; }
+    .sidebar { display: none; }
+    .topbar { padding: 0 1rem; }
+    .topbar-logo { position: static; transform: none; }
+    .main { margin-left: 0; }
+    .main-inner { padding: 1.5rem 1rem; }
+    .stats-row { grid-template-columns: 1fr; }
+    .polaroid-grid { grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-blob blob-a"></div>
+<div class="bg-blob blob-b"></div>
+
+<!-- ═══════ TOP BAR ═══════ -->
+<header class="topbar">
+  <a href="{{ url_for('home') }}" class="topbar-logo">
+    <div class="topbar-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22V12M12 12C12 7 8 3 3 3c0 5 3.5 8.5 9 9zM12 12C12 7 16 3 21 3c0 5-3.5 8.5-9 9z"/>
+      </svg>
+    </div>
+    <span class="topbar-logo-text">Flourisha</span>
+  </a>
+
+  <div class="topbar-right">
+    <span class="topbar-greeting">Hello, <strong id="greetName">{{ user_email.split('@')[0] | capitalize }}</strong></span>
+    <div class="topbar-avatar" id="avatarInitials">{{ user_email[0] | upper }}</div>
+    <label class="sky-switch" aria-label="Toggle day/night mode">
+      <input type="checkbox" id="themeToggle" />
+      <div class="sky-slider">
+        <img class="sky-clouds sky-cloud1" src="https://i.ibb.co/BKZ5z46/Mediamodifier-Design-Template.png" alt="" />
+        <img class="sky-clouds sky-cloud2" src="https://i.ibb.co/BKZ5z46/Mediamodifier-Design-Template.png" alt="" />
+        <div class="sky-night"></div>
+        <img class="sky-balloon" src="https://i.ibb.co/rtvfLkh/kisspng-hot-air-ballooning-hot-air-balloon-festival-flight-balloon-festival-5b0c63bbf3e107-504475381.png" alt="" />
+        <p class="sky-star">✦</p><p class="sky-star">✦</p><p class="sky-star">✦</p><p class="sky-star">✦</p><p class="sky-star">✦</p>
+        <img class="sky-spaceship" src="https://i.ibb.co/LhFzH2X/kisspng-emoji-rocket-spacecraft-text-messaging-clip-art-rocket-5acb92ecc2cf10-049862491523290860798.png" alt="" />
+      </div>
+    </label>
+  </div>
+</header>
+
+<!-- ═══════ SIDEBAR ═══════ -->
+<aside class="sidebar">
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">My Garden</div>
+
+    <button class="sidebar-link active" data-section="collection" onclick="showSection('collection', this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      My Collection
+    </button>
+
+    <button class="sidebar-link" data-section="favourites" onclick="showSection('favourites', this)">
+      <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Favourites
+    </button>
+
+    <div class="sidebar-section-label">Tools</div>
+
+    <a href="#" class="sidebar-link" onclick="showSection('identify', this); return false;" data-section="identify">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Identify Plant
+    </a>
+
+    <button class="sidebar-link" data-section="history" onclick="showSection('history', this)">
+      <svg viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+      History
+    </button>
+
+    <div class="sidebar-section-label">Account</div>
+
+    <button class="sidebar-link" data-section="profile" onclick="showSection('profile', this)">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile
+    </button>
+
+    <!-- botanical vine accent -->
+    <div class="sidebar-vine">
+      <svg viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <path d="M10 120 Q30 90 20 60 Q10 30 40 10" stroke="var(--accent-primary)" stroke-width="1.2" fill="none"/>
+        <ellipse cx="28" cy="82" rx="14" ry="5" transform="rotate(25 28 82)" stroke="var(--accent-primary)" stroke-width="0.9" fill="none"/>
+        <ellipse cx="22" cy="50" rx="12" ry="5" transform="rotate(-18 22 50)" stroke="var(--accent-primary)" stroke-width="0.9" fill="none"/>
+        <ellipse cx="36" cy="24" rx="10" ry="4" transform="rotate(15 36 24)" stroke="var(--accent-primary)" stroke-width="0.9" fill="none"/>
+      </svg>
+    </div>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <a href="{{ url_for('logout') }}" class="sidebar-logout">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Log out
+    </a>
+  </div>
+</aside>
+
+<!-- ═══════ MAIN CONTENT ═══════ -->
+<main class="main">
+  <div class="main-inner">
+
+    <!-- ── COLLECTION SECTION ── -->
+    <section class="dash-section active" id="section-collection">
+
+      <!-- Welcome strip -->
+      <div class="welcome-strip">
+        <div class="welcome-text-block">
+          <div class="welcome-greeting" id="timeGreeting">Welcome back</div>
+          <h1 class="welcome-title">Your botanical <em>collection</em></h1>
+          <p class="welcome-sub">Every plant you've identified, organised by category.</p>
+        </div>
+        <a href="#" class="btn-identify" onclick="showSection('identify', document.querySelector('[data-section=identify]')); return false;">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Identify a plant
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Total identified</div>
+          <div class="stat-value">{{ total_identified }}</div>
+          <div class="stat-sub">plants in your collection</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Categories found</div>
+          <div class="stat-value">{{ total_categories }}</div>
+          <div class="stat-sub">botanical families</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Latest find</div>
+          <div class="stat-value" style="font-size:1.3rem;">
+            {% if latest_find %}{{ latest_find.name or latest_find.scientific_name or '—' }}{% else %}—{% endif %}
+          </div>
+          <div class="stat-sub">
+            {% if latest_find and latest_find.scientific_name %}{{ latest_find.scientific_name }}{% else %}No identifications yet{% endif %}
+          </div>
+        </div>
+      </div>
+
+      {% if plants %}
+        <!-- Category tabs -->
+        <div class="collection-header">
+          <h2 class="collection-title">Browse by category</h2>
+          <div class="tabs-wrap">
+            <div class="tabs" id="categoryTabs">
+              <button class="tab-btn active" data-cat="all" onclick="filterCategory('all', this)">All ({{ plants|length }})</button>
+              {% for cat, items in collection.items() %}
+              <button class="tab-btn" data-cat="{{ cat }}" onclick="filterCategory('{{ cat }}', this)">
+                {{ cat }} ({{ items|length }})
+              </button>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Polaroid grid -->
+        <div class="polaroid-grid" id="polaroidGrid">
+          {% for plant in plants %}
+          <div class="polaroid-wrap" data-cat="{{ plant.family or 'Uncategorised' }}">
+            <div class="polaroid" id="card-{{ plant.id }}">
+              <!-- heart -->
+              <button class="heart-btn {% if plant.is_favourite %}favourited{% endif %}"
+                      onclick="toggleHeart({{ plant.id }}, this)"
+                      aria-label="Favourite">
+                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              </button>
+
+              <!-- image -->
+              <div class="polaroid-img-wrap">
+                {% if plant.image_url %}
+                  <img src="{{ plant.image_url }}" alt="{{ plant.name }}" loading="lazy" />
+                {% else %}
+                  <div class="polaroid-placeholder">
+                    <svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg>
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- label -->
+              <div class="polaroid-label">
+                <span class="polaroid-name">{{ plant.name or plant.scientific_name or 'Unknown' }}</span>
+                <span class="polaroid-date">{{ plant.id }}</span>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+      {% else %}
+        <!-- Empty state -->
+        <div class="empty-state">
+          <svg class="empty-illustration" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- pot -->
+            <ellipse cx="70" cy="115" rx="30" ry="8" fill="var(--accent-wash)"/>
+            <path d="M45 90 L50 118 Q70 124 90 118 L95 90 Z" fill="var(--accent-soft)"/>
+            <ellipse cx="70" cy="90" rx="25" ry="7" fill="var(--accent-primary)" opacity="0.6"/>
+            <!-- soil -->
+            <ellipse cx="70" cy="90" rx="22" ry="5.5" fill="var(--accent-deep)" opacity="0.3"/>
+            <!-- stem -->
+            <line x1="70" y1="88" x2="70" y2="48" stroke="var(--accent-primary)" stroke-width="3" stroke-linecap="round"/>
+            <!-- leaves -->
+            <path d="M70 72 Q48 58 42 40 Q62 42 70 60" fill="var(--accent-primary)" opacity="0.7"/>
+            <path d="M70 62 Q92 48 98 30 Q78 32 70 50" fill="var(--accent-deep)" opacity="0.6"/>
+            <!-- flower -->
+            <circle cx="70" cy="42" r="10" fill="var(--accent-soft)"/>
+            <circle cx="70" cy="42" r="5" fill="var(--accent-primary)"/>
+            <circle cx="70" cy="42" r="2.5" fill="#f9dc5c"/>
+            <!-- petals -->
+            <ellipse cx="70" cy="30" rx="4" ry="7" fill="var(--accent-soft)" opacity="0.8"/>
+            <ellipse cx="70" cy="54" rx="4" ry="7" fill="var(--accent-soft)" opacity="0.8"/>
+            <ellipse cx="58" cy="42" rx="7" ry="4" fill="var(--accent-soft)" opacity="0.8"/>
+            <ellipse cx="82" cy="42" rx="7" ry="4" fill="var(--accent-soft)" opacity="0.8"/>
+            <!-- sparkles -->
+            <circle cx="102" cy="38" r="2" fill="var(--accent-primary)" opacity="0.5"/>
+            <circle cx="36" cy="50" r="1.5" fill="var(--accent-deep)" opacity="0.4"/>
+            <circle cx="108" cy="62" r="1.5" fill="var(--accent-primary)" opacity="0.4"/>
+          </svg>
+          <h2 class="empty-title">Your collection is <em>waiting</em></h2>
+          <p class="empty-sub">Photograph a plant and Flourisha will identify it — it goes straight into your collection.</p>
+          <a href="#" class="btn-identify" onclick="showSection('identify', document.querySelector('[data-section=identify]')); return false;" style="margin-top:0.5rem;">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Identify your first plant
+          </a>
+        </div>
+      {% endif %}
+    </section>
+
+    <!-- ── FAVOURITES SECTION ── -->
+    <section class="dash-section" id="section-favourites">
+      <div class="welcome-strip">
+        <div class="welcome-text-block">
+          <div class="welcome-greeting">Saved for later</div>
+          <h1 class="welcome-title">Your <em>favourites</em></h1>
+          <p class="welcome-sub">Plants you've hearted from your collection.</p>
+        </div>
+      </div>
+
+      {% if favourites %}
+        <div class="polaroid-grid" id="favGrid">
+          {% for plant in favourites %}
+          <div class="polaroid-wrap">
+            <div class="polaroid">
+              <button class="heart-btn favourited" onclick="toggleHeart({{ plant.id }}, this)" aria-label="Unfavourite">
+                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              </button>
+              <div class="polaroid-img-wrap">
+                {% if plant.image_url %}
+                  <img src="{{ plant.image_url }}" alt="{{ plant.name }}" loading="lazy" />
+                {% else %}
+                  <div class="polaroid-placeholder">
+                    <svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg>
+                  </div>
+                {% endif %}
+              </div>
+              <div class="polaroid-label">
+                <span class="polaroid-name">{{ plant.name or plant.scientific_name or 'Unknown' }}</span>
+                <span class="polaroid-date">{{ plant.family or '' }}</span>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="fav-empty">
+          <div class="fav-empty-icon">🤍</div>
+          <p>Heart a plant in your collection to pin it here.</p>
+        </div>
+      {% endif %}
+    </section>
+
+    <!-- ── IDENTIFY SECTION ── -->
+    <!-- ── IDENTIFY SECTION ── -->
+<section class="dash-section" id="section-identify">
+  <div class="welcome-strip">
+    <div class="welcome-text-block">
+      <div class="welcome-greeting">New identification</div>
+      <h1 class="welcome-title">Identify a <em>plant</em></h1>
+      <p class="welcome-sub">Upload a clear photo for the best result.</p>
+    </div>
+  </div>
+
+  <form action="{{ url_for('ai.identify') }}" method="post" enctype="multipart/form-data" style="max-width:500px;">
+    <div id="uploadZone" style="background:var(--bg-card);border:2px dashed var(--border-color);border-radius:16px;padding:4rem 2rem;text-align:center;cursor:pointer;transition:border-color 0.2s;"
+         onmouseover="this.style.borderColor='var(--accent-primary)'"
+         onmouseout="this.style.borderColor='var(--border-color)'"
+         onclick="document.getElementById('plantImageInput').click()">
+
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:1rem;">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+
+      <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:500;color:var(--text-primary);margin-bottom:0.5rem;">Drop your photo here</p>
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0;">or click to browse — JPG, PNG, WEBP supported</p>
+    </div>
+
+    <!-- hidden file input -->
+    <input type="file"
+           id="plantImageInput"
+           name="image"
+           accept=".jpg,.jpeg,.png,.webp"
+           style="display:none;"
+           onchange="handleFileSelect(this)" />
+
+    <!-- filename feedback + submit — hidden until file chosen -->
+    <div id="fileFeedback" style="display:none; margin-top:1.25rem; background:var(--bg-card); border:1px solid var(--border-light); border-radius:12px; padding:1rem 1.25rem; display:none; align-items:center; justify-content:space-between; gap:1rem;">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+          <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+          <polyline points="13 2 13 9 20 9"/>
+        </svg>
+        <span id="fileNameDisplay" style="font-size:0.875rem;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
+      </div>
+      <button type="button"
+              onclick="clearFile()"
+              style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:0.8rem;flex-shrink:0;padding:0;">
+        Remove
+      </button>
+    </div>
+
+    <button type="submit"
+            id="submitBtn"
+            style="display:none; margin-top:1rem; width:100%;"
+            class="btn-identify">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      Identify this plant
+    </button>
+  </form>
+</section>
+
+    <!-- ── HISTORY SECTION ── -->
+    <section class="dash-section" id="section-history">
+      <div class="welcome-strip">
+        <div class="welcome-text-block">
+          <div class="welcome-greeting">Full log</div>
+          <h1 class="welcome-title">Identification <em>history</em></h1>
+          <p class="welcome-sub">Every plant you've identified, in order.</p>
+        </div>
+      </div>
+      {% if plants %}
+        <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-card);">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Species</th>
+                <th>Family</th>
+                <th>Confidence</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for plant in plants %}
+              <tr>
+                <td>
+                  {% if plant.image_url %}
+                    <img src="{{ plant.image_url }}" class="history-thumb" alt="{{ plant.name }}" />
+                  {% else %}
+                    <div class="history-thumb-placeholder">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-soft)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg>
+                    </div>
+                  {% endif %}
+                </td>
+                <td style="color:var(--text-primary);font-weight:500;">{{ plant.name or plant.scientific_name or '—' }}
+                  {% if plant.scientific_name and plant.name %}<br><span style="font-size:0.78rem;font-style:italic;color:var(--text-muted);">{{ plant.scientific_name }}</span>{% endif %}
+                </td>
+                <td>{{ plant.family or '—' }}</td>
+                <td>
+                  {% if plant.confidence %}
+                    {% set pct = (plant.confidence * 100) | int %}
+                    <span class="confidence-pill {% if pct >= 75 %}conf-high{% elif pct >= 40 %}conf-mid{% else %}conf-low{% endif %}">
+                      {{ pct }}%
+                    </span>
+                  {% else %}—{% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <p class="empty-sub">No history yet. Identify a plant to see it here.</p>
+        </div>
+      {% endif %}
+    </section>
+
+    <!-- ── PROFILE SECTION ── -->
+    <section class="dash-section" id="section-profile">
+      <div class="welcome-strip">
+        <div class="welcome-text-block">
+          <div class="welcome-greeting">Your account</div>
+          <h1 class="welcome-title">Profile & <em>settings</em></h1>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="profile-avatar-lg">{{ user_email[0] | upper }}</div>
+        <div class="profile-name">{{ user_email.split('@')[0] | capitalize }}</div>
+        <div class="profile-email">{{ user_email }}</div>
+        <div class="profile-row">
+          <span class="profile-row-label">Total identifications</span>
+          <span class="profile-row-value">{{ total_identified }}</span>
+        </div>
+        <div class="profile-row">
+          <span class="profile-row-label">Categories explored</span>
+          <span class="profile-row-value">{{ total_categories }}</span>
+        </div>
+        <div class="profile-row">
+          <span class="profile-row-label">Favourites saved</span>
+          <span class="profile-row-value">{{ favourites | length }}</span>
+        </div>
+        <a href="{{ url_for('logout') }}" class="btn-logout-profile">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Log out
+        </a>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+  /* ── theme persistence ── */
+  const html   = document.documentElement;
+  const toggle = document.getElementById('themeToggle');
+  const saved  = localStorage.getItem('flourisha-theme') || 'day';
+  html.setAttribute('data-theme', saved);
+  if (saved === 'night') toggle.checked = true;
+  toggle.addEventListener('change', () => {
+    const theme = toggle.checked ? 'night' : 'day';
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem('flourisha-theme', theme);
+  });
+
+  /* ── time-based greeting ── */
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('timeGreeting').textContent = greet;
+
+  /* ── sidebar section switching ── */
+  function showSection(id, btn) {
+    document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.sidebar-link').forEach(b => b.classList.remove('active'));
+    document.getElementById('section-' + id).classList.add('active');
+    if (btn) btn.classList.add('active');
+  }
+
+  /* ── polaroid random tilts ── */
+  document.querySelectorAll('.polaroid').forEach(card => {
+    const tilt = (Math.random() * 4 - 2).toFixed(2);
+    card.style.transform = `rotate(${tilt}deg)`;
+    card.dataset.tilt = tilt;
+  });
+
+  /* ── category filter ── */
+  function filterCategory(cat, btn) {
+    document.querySelectorAll('#categoryTabs .tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#polaroidGrid .polaroid-wrap').forEach(wrap => {
+      wrap.style.display = (cat === 'all' || wrap.dataset.cat === cat) ? '' : 'none';
+    });
+  }
+
+  /* ── heart / favourite toggle ── */
+  function toggleHeart(plantId, btn) {
+    btn.classList.add('heart-pop');
+    btn.addEventListener('animationend', () => btn.classList.remove('heart-pop'), { once: true });
+
+    fetch(`/favourite/${plantId}`, { method: 'POST' })
+      .then(r => r.json())
+      .then(data => {
+        btn.classList.toggle('favourited', data.is_favourite);
+        // sync matching card in favourites grid if present
+        document.querySelectorAll(`[onclick*="toggleHeart(${plantId},"]`).forEach(b => {
+          b.classList.toggle('favourited', data.is_favourite);
+        });
+      })
+      .catch(() => {
+        // fallback: toggle locally if server unavailable
+        btn.classList.toggle('favourited');
+      });
+  }
+
+  /* ── file upload UX ── */
+/* ── file upload UX ── */
+function handleFileSelect(input) {
+  const feedback = document.getElementById('fileFeedback');
+  const nameDisplay = document.getElementById('fileNameDisplay');
+  const submitBtn = document.getElementById('submitBtn');
+  if (input.files && input.files[0]) {
+    nameDisplay.textContent = input.files[0].name;
+    feedback.style.display = 'flex';
+    submitBtn.style.display = 'block';
+  }
+}
+
+function clearFile() {
+  const input = document.getElementById('plantImageInput');
+  const feedback = document.getElementById('fileFeedback');
+  const submitBtn = document.getElementById('submitBtn');
+  input.value = '';
+  feedback.style.display = 'none';
+  submitBtn.style.display = 'none';
+}
+
+/* ── auto-open section from URL param ── */
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const sec = params.get('section');
+  if (sec) {
+    const btn = document.querySelector(`[data-section="${sec}"]`);
+    if (btn) showSection(sec, btn);
+  }
+})();
+
+function clearFile() {
+  const input = document.getElementById('plantImageInput');
+  const feedback = document.getElementById('fileFeedback');
+  const submitBtn = document.getElementById('submitBtn');
+
+  input.value = '';
+  feedback.style.display = 'none';
+  submitBtn.style.display = 'none';
+}
+</script>
+</body>
+</html>

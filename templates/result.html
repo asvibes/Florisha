@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="day">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flourisha — {{ plant.scientific_name if plant.scientific_name else 'Plant Result' }}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root[data-theme="day"] {
+    --bg-base:        #f4f8f2;
+    --bg-surface:     #edf4e9;
+    --bg-card:        #ffffff;
+    --bg-nav:         rgba(244,248,242,0.92);
+    --accent-primary: #7aad6e;
+    --accent-deep:    #4a7a3e;
+    --accent-soft:    #c8dfc3;
+    --accent-wash:    #dcefd8;
+    --text-primary:   #1e2d1a;
+    --text-secondary: #4a6043;
+    --text-muted:     #7a9c74;
+    --text-on-accent: #ffffff;
+    --border-color:   #c2d9bc;
+    --border-light:   #dcefd8;
+    --input-bg:       #f9fdf8;
+    --shadow-card:    0 2px 16px rgba(74,122,62,0.08);
+    --shadow-hover:   0 8px 32px rgba(74,122,62,0.14);
+    --watercolor-1:   rgba(168,204,158,0.18);
+    --watercolor-2:   rgba(107,158,96,0.10);
+    --specimen-bg:    #fafdf8;
+    --specimen-border:#dcefd8;
+  }
+  :root[data-theme="night"] {
+    --bg-base:        #1a2016;
+    --bg-surface:     #212b1c;
+    --bg-card:        #2a3623;
+    --bg-nav:         rgba(26,32,22,0.96);
+    --accent-primary: #7aad6e;
+    --accent-deep:    #a8cc9e;
+    --accent-soft:    #3a5233;
+    --accent-wash:    #2e3e27;
+    --text-primary:   #deecd8;
+    --text-secondary: #a8c4a0;
+    --text-muted:     #6e8e66;
+    --text-on-accent: #1a2016;
+    --border-color:   #3a5233;
+    --border-light:   #2e3e27;
+    --input-bg:       #212b1c;
+    --shadow-card:    0 2px 20px rgba(0,0,0,0.28);
+    --shadow-hover:   0 8px 32px rgba(0,0,0,0.40);
+    --watercolor-1:   rgba(58,82,51,0.20);
+    --watercolor-2:   rgba(74,104,64,0.12);
+    --specimen-bg:    #212b1c;
+    --specimen-border:#3a5233;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg-base); color: var(--text-primary); transition: background 0.4s ease, color 0.4s ease; min-height: 100vh; overflow-x: hidden; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: var(--bg-nav); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-light); padding: 0 2rem; height: 64px; display: flex; align-items: center; justify-content: space-between; transition: background 0.4s ease, border-color 0.4s ease; }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-logo-icon { width: 34px; height: 34px; background: var(--accent-primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .nav-logo-icon svg { width: 20px; height: 20px; }
+  .nav-logo-text { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--text-primary); letter-spacing: 0.01em; }
+  .nav-right { display: flex; align-items: center; gap: 0.75rem; }
+  .btn-back { display: inline-flex; align-items: center; gap: 7px; font-size: 0.875rem; font-weight: 400; color: var(--text-secondary); text-decoration: none; padding: 0.4rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); transition: all 0.2s; }
+  .btn-back:hover { color: var(--accent-deep); border-color: var(--accent-primary); background: var(--accent-wash); }
+  .btn-back svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .btn-identify-another { display: inline-flex; align-items: center; gap: 7px; font-size: 0.875rem; font-weight: 500; color: var(--text-on-accent); text-decoration: none; padding: 0.4rem 1.1rem; border-radius: 8px; background: var(--accent-primary); transition: all 0.2s; }
+  .btn-identify-another:hover { background: var(--accent-deep); }
+  .btn-identify-another svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .sky-switch { overflow: hidden; position: relative; display: inline-block; width: 80px; height: 32.5px; flex-shrink: 0; }
+  .sky-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .sky-slider { position: absolute; border-radius: 999px; cursor: pointer; overflow: hidden; top: 0; left: 0; right: 0; bottom: 0; background-color: #2196F3; transition: .6s ease-in-out; border: 1.5px solid rgba(255,255,255,0.3); }
+  .sky-slider:before { position: absolute; content: ""; height: 27px; width: 27px; border-radius: 50%; left: 2.5px; bottom: 2.5px; background-color: #f9dc5c; transition: .6s; z-index: 999; box-shadow: 0px 0px 12px 12px rgba(255,255,255,0.25); }
+  .sky-switch input:checked + .sky-slider { background-color: #1c1c24; border-color: rgba(255,255,255,0.2); }
+  .sky-switch input:checked + .sky-slider:before { transform: translateX(47px); background-color: #E0E0D1; box-shadow: 0px 0px 8px 8px rgba(200,200,180,0.15); }
+  .sky-clouds { position: absolute; top: 0; left: 0; width: 80px; height: 32.5px; overflow: hidden; pointer-events: none; }
+  .sky-cloud1 { position: relative; z-index: 200; transition: .8s; opacity: .95; width: 80px; }
+  .sky-cloud2 { z-index: 100; transition: 1.1s; transform: scale(1.15) translateY(-5px) translateX(-5px); opacity: .5; width: 80px; position: absolute; top: 0; left: 0; }
+  .sky-switch input:checked + .sky-slider > .sky-clouds { transform: translateY(33px); }
+  .sky-balloon { z-index: 150; position: absolute; top: 0; right: 25px; height: 11px; transform: translateY(5px); transition: 3s ease-in-out; pointer-events: none; }
+  .sky-switch input:checked + .sky-slider > .sky-balloon { transform: translateY(38px); }
+  .sky-night { background-color: #1c1c24; position: absolute; display: none; top: 0; left: 0; height: 100%; width: 100%; }
+  .sky-switch input:checked + .sky-slider > .sky-night { z-index: 151; display: block; }
+  .sky-star { z-index: 500; position: absolute; color: white; opacity: 0; transition: .6s; font-size: 3px; text-shadow: 0 0 4px #fff, 0 0 8px #0fa, 0 0 14px #0fa; transform: translateY(-20px); }
+  .sky-star:nth-of-type(1) { top: 3px; left: 15px; } .sky-star:nth-of-type(2) { top: 8px; left: 42px; font-size: 2px; } .sky-star:nth-of-type(3) { top: 16px; left: 4px; font-size: 4px; } .sky-star:nth-of-type(4) { top: 22px; left: 18px; font-size: 2px; } .sky-star:nth-of-type(5) { top: 13px; left: 35px; }
+  .sky-switch input:checked + .sky-slider .sky-star { transform: translateY(0); opacity: 1; }
+  .sky-spaceship { z-index: 800; opacity: 0; position: absolute; top: 0; right: 25px; height: 11px; transform: translateY(38px) translateX(-38px); transition: transform 2s ease-in-out; transition-delay: 1s; pointer-events: none; }
+  .sky-switch input:checked + .sky-slider .sky-spaceship { opacity: 1; transform: translateY(-25px) translateX(10px); }
+
+  .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; transition: background 0.4s; }
+  .blob-a { width: 500px; height: 400px; top: -80px; right: -100px; background: var(--watercolor-1); }
+  .blob-b { width: 350px; height: 350px; bottom: 60px; left: -80px; background: var(--watercolor-2); }
+
+  .page { padding-top: 64px; position: relative; z-index: 1; }
+
+  .result-hero { display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 64px); max-width: 1200px; margin: 0 auto; padding: 3rem 2rem; gap: 4rem; align-items: center; }
+
+  .specimen-wrap { position: relative; }
+  .specimen-frame { background: var(--specimen-bg); border: 1px solid var(--specimen-border); border-radius: 4px; padding: 14px 14px 56px; box-shadow: var(--shadow-hover); position: relative; transform: rotate(-1.5deg); transition: transform 0.4s ease; }
+  .specimen-frame:hover { transform: rotate(0deg); }
+  .specimen-img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: var(--bg-surface); border-radius: 2px; }
+  .specimen-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
+  .specimen-frame:hover .specimen-img-wrap img { transform: scale(1.03); }
+  .specimen-caption { position: absolute; bottom: 0; left: 0; right: 0; height: 56px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .specimen-label { font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; font-style: italic; color: var(--text-muted); letter-spacing: 0.02em; }
+
+  .confidence-ring { position: absolute; top: -16px; right: -16px; width: 72px; height: 72px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: var(--shadow-card); }
+  .conf-pct { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; line-height: 1; color: var(--accent-deep); }
+  .conf-lbl { font-size: 0.6rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-top: 1px; }
+
+  .guest-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(224,154,48,0.12); border: 1px solid rgba(224,154,48,0.3); color: #a06820; border-radius: 100px; font-size: 0.75rem; font-weight: 500; padding: 0.25rem 0.75rem; margin-top: 1rem; letter-spacing: 0.04em; }
+  [data-theme="night"] .guest-badge { background: rgba(224,154,48,0.15); color: #d4a045; }
+
+  .info-panel { display: flex; flex-direction: column; gap: 0; }
+  .result-eyebrow { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-primary); margin-bottom: 0.6rem; }
+  .result-common-name { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 500; color: var(--text-primary); line-height: 1.05; margin-bottom: 0.4rem; }
+  .result-scientific-name { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 400; font-style: italic; color: var(--text-muted); margin-bottom: 2rem; }
+
+  .taxonomy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border-light); border: 1px solid var(--border-light); border-radius: 12px; overflow: hidden; margin-bottom: 2rem; }
+  .taxon-cell { background: var(--bg-card); padding: 1rem 1.25rem; transition: background 0.4s; }
+  .taxon-cell:hover { background: var(--accent-wash); }
+  .taxon-label { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.3rem; }
+  .taxon-value { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 500; color: var(--text-primary); }
+  .taxon-value em { font-style: italic; }
+
+  .conf-bar-wrap { margin-bottom: 2rem; }
+  .conf-bar-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+  .conf-bar-label { font-size: 0.78rem; font-weight: 500; color: var(--text-secondary); letter-spacing: 0.04em; }
+  .conf-bar-pct { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; color: var(--accent-deep); }
+  .conf-bar-track { height: 6px; background: var(--border-light); border-radius: 100px; overflow: hidden; }
+  .conf-bar-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--accent-primary), var(--accent-deep)); transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1); width: 0; }
+
+  .result-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 0.75rem 1.5rem; background: var(--accent-primary); color: var(--text-on-accent); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; border-radius: 12px; border: none; cursor: pointer; text-decoration: none; transition: background 0.2s, transform 0.15s; }
+  .btn-primary:hover { background: var(--accent-deep); transform: translateY(-1px); }
+  .btn-primary svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .btn-outline { display: inline-flex; align-items: center; gap: 8px; padding: 0.75rem 1.5rem; background: transparent; color: var(--text-secondary); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 400; border-radius: 12px; border: 1px solid var(--border-color); text-decoration: none; transition: all 0.2s; }
+  .btn-outline:hover { border-color: var(--accent-primary); color: var(--accent-deep); background: var(--accent-wash); }
+  .btn-outline svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .lower { max-width: 1200px; margin: 0 auto; padding: 0 2rem 5rem; }
+  .section-divider { height: 1px; background: var(--border-light); margin: 0 0 3rem; transition: background 0.4s; }
+  .section-eyebrow { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-primary); margin-bottom: 0.5rem; }
+  .section-heading { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 500; color: var(--text-primary); margin-bottom: 1.5rem; line-height: 1.15; }
+  .section-heading em { font-style: italic; color: var(--accent-deep); }
+
+  .alt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 3.5rem; }
+  .alt-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px; padding: 1.25rem; box-shadow: var(--shadow-card); transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s; }
+  .alt-card:hover { border-color: var(--accent-soft); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .alt-rank { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.4rem; }
+  .alt-name { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.2rem; line-height: 1.2; }
+  .alt-sci { font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; font-style: italic; color: var(--text-muted); margin-bottom: 0.75rem; }
+  .alt-conf { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 100px; font-size: 0.72rem; font-weight: 500; background: var(--accent-wash); color: var(--accent-deep); }
+  .no-alts { font-size: 0.875rem; font-weight: 300; color: var(--text-muted); font-style: italic; }
+
+  .vine-accent { position: absolute; pointer-events: none; opacity: 0.1; transition: opacity 0.4s; }
+  [data-theme="night"] .vine-accent { opacity: 0.05; }
+
+  @media (max-width: 768px) {
+    .result-hero { grid-template-columns: 1fr; gap: 2rem; min-height: auto; padding: 2rem 1.25rem; }
+    .taxonomy-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 1rem; }
+    .lower { padding: 0 1.25rem 3rem; }
+    .alt-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-blob blob-a"></div>
+<div class="bg-blob blob-b"></div>
+
+<nav>
+  <a href="{{ url_for('home') }}" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22V12M12 12C12 7 8 3 3 3c0 5 3.5 8.5 9 9zM12 12C12 7 16 3 21 3c0 5-3.5 8.5-9 9z"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">Flourisha</span>
+  </a>
+  <div class="nav-right">
+    {% if not is_guest %}
+      <a href="{{ url_for('dashboard.dashboard') }}" class="btn-back">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        My collection
+      </a>
+    {% endif %}
+    <!-- ✅ CHANGED: points to dashboard identify section -->
+    <a href="{{ url_for('dashboard.dashboard') }}?section=identify" class="btn-identify-another">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Identify another
+    </a>
+    <label class="sky-switch" aria-label="Toggle day/night mode">
+      <input type="checkbox" id="themeToggle" />
+      <div class="sky-slider">
+        <img class="sky-clouds sky-cloud1" src="https://i.ibb.co/BKZ5z46/Mediamodifier-Design-Template.png" alt="" />
+        <img class="sky-clouds sky-cloud2" src="https://i.ibb.co/BKZ5z46/Mediamodifier-Design-Template.png" alt="" />
+        <div class="sky-night"></div>
+        <img class="sky-balloon" src="https://i.ibb.co/rtvfLkh/kisspng-hot-air-ballooning-hot-air-balloon-festival-flight-balloon-festival-5b0c63bbf3e107-504475381.png" alt="" />
+        <p class="sky-star">✦</p><p class="sky-star">✦</p><p class="sky-star">✦</p><p class="sky-star">✦</p><p class="sky-star">✦</p>
+        <img class="sky-spaceship" src="https://i.ibb.co/LhFzH2X/kisspng-emoji-rocket-spacecraft-text-messaging-clip-art-rocket-5acb92ecc2cf10-049862491523290860798.png" alt="" />
+      </div>
+    </label>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="result-hero">
+    <div class="specimen-wrap">
+      <svg class="vine-accent" style="top:-40px;left:-30px;width:160px;height:160px;" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 160 Q50 120 40 80 Q30 40 70 10" stroke="var(--accent-primary)" stroke-width="1.2" fill="none"/>
+        <ellipse cx="38" cy="108" rx="16" ry="6" transform="rotate(28 38 108)" stroke="var(--accent-primary)" stroke-width="0.9" fill="none"/>
+        <ellipse cx="46" cy="60" rx="14" ry="5" transform="rotate(-20 46 60)" stroke="var(--accent-primary)" stroke-width="0.9" fill="none"/>
+      </svg>
+      <div class="specimen-frame">
+        {% if is_guest %}
+          <div class="specimen-img-wrap" style="display:flex;align-items:center;justify-content:center;background:var(--accent-wash);">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--accent-soft)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22V12M12 12C12 7 8 3 3 3c0 5 3.5 8.5 9 9zM12 12C12 7 16 3 21 3c0 5-3.5 8.5-9 9z"/>
+            </svg>
+          </div>
+        {% else %}
+          <div class="specimen-img-wrap">
+            <img src="{{ url_for('static', filename='../' + plant.image_url) if plant.image_url else '' }}"
+                 alt="{{ plant.name }}"
+                 onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;background:var(--accent-wash)\'><svg width=64 height=64 viewBox=\'0 0 24 24\' fill=none stroke=\'var(--accent-soft)\' stroke-width=1.2><path d=\'M12 22V12M12 12C12 7 8 3 3 3c0 5 3.5 8.5 9 9zM12 12C12 7 16 3 21 3c0 5-3.5 8.5-9 9z\'/></svg></div>'" />
+          </div>
+        {% endif %}
+        <div class="specimen-caption">
+          <span class="specimen-label">
+            {% if is_guest %}Identified specimen{% else %}{{ plant.scientific_name or plant.name or 'Unknown specimen' }}{% endif %}
+          </span>
+        </div>
+        {% if plant.confidence %}
+          <div class="confidence-ring">
+            <span class="conf-pct">{{ (plant.confidence * 100) | int }}%</span>
+            <span class="conf-lbl">match</span>
+          </div>
+        {% endif %}
+      </div>
+      {% if is_guest %}
+        <div class="guest-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Guest result — not saved to any account
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="info-panel">
+      <div class="result-eyebrow">Identified species</div>
+      <h1 class="result-common-name">
+        {% if is_guest %}{{ plant.common_name or plant.scientific_name or 'Unknown plant' }}
+        {% else %}{{ plant.name or plant.scientific_name or 'Unknown plant' }}{% endif %}
+      </h1>
+      <div class="result-scientific-name">{{ plant.scientific_name or '' }}</div>
+      <div class="taxonomy-grid">
+        <div class="taxon-cell">
+          <div class="taxon-label">Family</div>
+          <div class="taxon-value">{{ plant.family or '—' }}</div>
+        </div>
+        <div class="taxon-cell">
+          <div class="taxon-label">Genus</div>
+          <div class="taxon-value"><em>{% if is_guest %}{{ plant.genus or '—' }}{% else %}—{% endif %}</em></div>
+        </div>
+        <div class="taxon-cell">
+          <div class="taxon-label">Common name</div>
+          <div class="taxon-value">{% if is_guest %}{{ plant.common_name or '—' }}{% else %}{{ plant.name or '—' }}{% endif %}</div>
+        </div>
+        <div class="taxon-cell">
+          <div class="taxon-label">Scientific name</div>
+          <div class="taxon-value"><em>{{ plant.scientific_name or '—' }}</em></div>
+        </div>
+      </div>
+      {% set conf_val = plant.confidence if plant.confidence else 0 %}
+      {% set conf_pct = (conf_val * 100) | int %}
+      <div class="conf-bar-wrap">
+        <div class="conf-bar-header">
+          <span class="conf-bar-label">Identification confidence</span>
+          <span class="conf-bar-pct">{{ conf_pct }}%</span>
+        </div>
+        <div class="conf-bar-track">
+          <div class="conf-bar-fill" id="confBar" data-width="{{ conf_pct }}"></div>
+        </div>
+      </div>
+      <div class="result-actions">
+        {% if is_guest %}
+          <a href="{{ url_for('register') }}" class="btn-primary">
+            <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            Save to my collection
+          </a>
+          <!-- ✅ CHANGED: points to dashboard identify section -->
+          <a href="{{ url_for('dashboard.dashboard') }}?section=identify" class="btn-outline">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Identify another
+          </a>
+        {% else %}
+          <a href="{{ url_for('dashboard.dashboard') }}" class="btn-primary">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            View my collection
+          </a>
+          <!-- ✅ CHANGED: points to dashboard identify section -->
+          <a href="{{ url_for('dashboard.dashboard') }}?section=identify" class="btn-outline">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Identify another
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="lower">
+    <div class="section-divider"></div>
+    <div class="section-eyebrow">Other possibilities</div>
+    <h2 class="section-heading">Could it also be <em>one of these?</em></h2>
+    {% if alternatives %}
+      <div class="alt-grid">
+        {% for alt in alternatives %}
+        <div class="alt-card">
+          <div class="alt-rank">Match {{ loop.index + 1 }}</div>
+          <div class="alt-name">{{ alt.common_name or alt.scientific_name or 'Unknown' }}</div>
+          <div class="alt-sci">{{ alt.scientific_name or '' }}</div>
+          {% if alt.confidence %}<span class="alt-conf">{{ (alt.confidence * 100) | int }}%</span>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="no-alts" style="margin-bottom:3.5rem;">No close alternatives — this identification was clear.</p>
+    {% endif %}
+    <div class="section-divider"></div>
+    {% if is_guest %}
+    <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:16px;padding:2.5rem;max-width:560px;box-shadow:var(--shadow-card);text-align:center;">
+      <div class="section-eyebrow" style="text-align:center;">Want to keep this?</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:500;color:var(--text-primary);margin-bottom:0.75rem;">
+        Create a free account to <em style="font-style:italic;color:var(--accent-deep);">save your finds</em>
+      </h2>
+      <p style="font-size:0.875rem;font-weight:300;color:var(--text-secondary);line-height:1.65;margin-bottom:1.75rem;">
+        Registered users get a personal collection, favourites, full history, and the ability to re-identify past uploads.
+      </p>
+      <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+        <a href="{{ url_for('register') }}" class="btn-primary">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          Create free account
+        </a>
+        <a href="{{ url_for('login') }}" class="btn-outline">Log in</a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  const html   = document.documentElement;
+  const toggle = document.getElementById('themeToggle');
+  const saved  = localStorage.getItem('flourisha-theme') || 'day';
+  html.setAttribute('data-theme', saved);
+  if (saved === 'night') toggle.checked = true;
+  toggle.addEventListener('change', () => {
+    const theme = toggle.checked ? 'night' : 'day';
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem('flourisha-theme', theme);
+  });
+  window.addEventListener('load', () => {
+    const bar = document.getElementById('confBar');
+    if (bar) {
+      const target = bar.dataset.width;
+      requestAnimationFrame(() => {
+        setTimeout(() => { bar.style.width = target + '%'; }, 200);
+      });
+    }
+  });
+</script>
+</body>
+</html>

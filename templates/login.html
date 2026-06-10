@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="day">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flourisha — Log in</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root[data-theme="day"] {
+    --bg-base: #f4f8f2;
+    --bg-surface: #edf4e9;
+    --bg-card: #ffffff;
+    --bg-nav: rgba(244,248,242,0.92);
+    --accent-primary: #7aad6e;
+    --accent-deep: #4a7a3e;
+    --accent-soft: #c8dfc3;
+    --accent-wash: #dcefd8;
+    --text-primary: #1e2d1a;
+    --text-secondary: #4a6043;
+    --text-muted: #7a9c74;
+    --text-on-accent: #ffffff;
+    --border-color: #c2d9bc;
+    --border-light: #dcefd8;
+    --input-bg: #f9fdf8;
+    --input-border: #c2d9bc;
+    --input-focus: #7aad6e;
+    --panel-overlay-start: rgba(26, 48, 20, 0.55);
+    --panel-overlay-end: rgba(15, 35, 10, 0.72);
+    --shadow-card: 0 4px 32px rgba(74,122,62,0.10);
+    --watercolor-1: rgba(168,204,158,0.18);
+    --watercolor-2: rgba(107,158,96,0.10);
+  }
+  :root[data-theme="night"] {
+    --bg-base: #1a2016;
+    --bg-surface: #212b1c;
+    --bg-card: #2a3623;
+    --bg-nav: rgba(26,32,22,0.95);
+    --accent-primary: #7aad6e;
+    --accent-deep: #a8cc9e;
+    --accent-soft: #3a5233;
+    --accent-wash: #2e3e27;
+    --text-primary: #deecd8;
+    --text-secondary: #a8c4a0;
+    --text-muted: #6e8e66;
+    --text-on-accent: #1a2016;
+    --border-color: #3a5233;
+    --border-light: #2e3e27;
+    --input-bg: #212b1c;
+    --input-border: #3a5233;
+    --input-focus: #7aad6e;
+    --panel-overlay-start: rgba(10, 20, 8, 0.62);
+    --panel-overlay-end: rgba(5, 14, 3, 0.80);
+    --shadow-card: 0 4px 32px rgba(0,0,0,0.35);
+    --watercolor-1: rgba(58,82,51,0.25);
+    --watercolor-2: rgba(74,104,64,0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; height: 100%; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    transition: background 0.4s ease, color 0.4s ease;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    background: var(--bg-nav);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-light);
+    padding: 0 2rem;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.4s ease, border-color 0.4s ease;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+  }
+  .nav-logo-icon {
+    width: 34px; height: 34px;
+    background: var(--accent-primary);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nav-logo-icon svg { width: 20px; height: 20px; }
+  .nav-logo-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.01em;
+  }
+  .nav-links {
+    display: flex; align-items: center; gap: 0.25rem;
+  }
+  .nav-link {
+    font-size: 0.875rem; font-weight: 400;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 0.4rem 0.85rem;
+    border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .nav-link:hover { color: var(--text-primary); background: var(--accent-wash); }
+  .btn-nav-login {
+    font-size: 0.875rem; font-weight: 500;
+    color: var(--accent-deep);
+    text-decoration: none;
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--accent-primary);
+    background: var(--accent-wash);
+    transition: all 0.2s;
+  }
+  .btn-nav-login:hover { background: var(--accent-soft); }
+  .btn-nav-register {
+    font-size: 0.875rem; font-weight: 500;
+    color: var(--text-on-accent);
+    text-decoration: none;
+    padding: 0.4rem 1.1rem;
+    border-radius: 8px;
+    background: var(--accent-primary);
+    transition: all 0.2s;
+  }
+  .btn-nav-register:hover { background: var(--accent-deep); }
+
+  /* ── ANIMATED SKY TOGGLE ── */
+  .sky-switch {
+    overflow: hidden; position: relative;
+    display: inline-block;
+    width: 80px; height: 32.5px;
+    margin-left: 0.75rem; flex-shrink: 0;
+  }
+  .sky-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .sky-slider {
+    position: absolute; border-radius: 999px; cursor: pointer; overflow: hidden;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #2196F3;
+    transition: .6s ease-in-out;
+    border: 1.5px solid rgba(255,255,255,0.3);
+  }
+  .sky-slider:before {
+    position: absolute; content: "";
+    height: 27px; width: 27px; border-radius: 50%;
+    left: 2.5px; bottom: 2.5px;
+    background-color: #f9dc5c;
+    transition: .6s; z-index: 999;
+    box-shadow: 0px 0px 12px 12px rgba(255,255,255,0.25);
+  }
+  .sky-switch input:checked + .sky-slider { background-color: #1c1c24; border-color: rgba(255,255,255,0.2); }
+  .sky-switch input:checked + .sky-slider:before {
+    transform: translateX(47px);
+    background-color: #E0E0D1;
+    box-shadow: 0px 0px 8px 8px rgba(200,200,180,0.15);
+  }
+  .sky-clouds {
+    position: absolute; top: 0; left: 0;
+    width: 80px; height: 32.5px; overflow: hidden; pointer-events: none;
+  }
+  .sky-cloud1 { position: relative; z-index: 200; transition: .8s; opacity: .95; width: 80px; }
+  .sky-cloud2 {
+    z-index: 100; transition: 1.1s;
+    transform: scale(1.15) translateY(-5px) translateX(-5px);
+    opacity: .5; width: 80px; position: absolute; top: 0; left: 0;
+  }
+  .sky-switch input:checked + .sky-slider > .sky-clouds { transform: translateY(33px); }
+  .sky-balloon {
+    z-index: 150; position: absolute; top: 0; right: 25px; height: 11px;
+    transform: translateY(5px); transition: 3s ease-in-out; pointer-events: none;
+  }
+  .sky-switch input:checked + .sky-slider > .sky-balloon { transform: translateY(38px); }
+  .sky-night {
+    background-color: #1c1c24; position: absolute; display: none;
+    top: 0; left: 0; height: 100%; width: 100%;
+  }
+  .sky-switch input:checked + .sky-slider > .sky-night { z-index: 151; display: block; }
+  .sky-star {
+    z-index: 500; position: absolute; color: white; opacity: 0;
+    transition: .6s; font-size: 3px;
+    text-shadow: 0 0 4px #fff, 0 0 8px #0fa, 0 0 14px #0fa;
+    transform: translateY(-20px);
+  }
+  .sky-star:nth-of-type(1) { top: 3px; left: 15px; font-size: 3px; }
+  .sky-star:nth-of-type(2) { top: 8px; font-size: 2px; left: 42px; }
+  .sky-star:nth-of-type(3) { top: 16px; font-size: 4px; left: 4px; }
+  .sky-star:nth-of-type(4) { top: 22px; font-size: 2px; left: 18px; }
+  .sky-star:nth-of-type(5) { top: 13px; font-size: 3px; left: 35px; }
+  .sky-switch input:checked + .sky-slider .sky-star { transform: translateY(0); opacity: 1; }
+  .sky-spaceship {
+    z-index: 800; opacity: 0; position: absolute; top: 0; right: 25px; height: 11px;
+    transform: translateY(38px) translateX(-38px);
+    transition: transform 2s ease-in-out; transition-delay: 1s; pointer-events: none;
+  }
+  .sky-switch input:checked + .sky-slider .sky-spaceship { opacity: 1; transform: translateY(-25px) translateX(10px); }
+
+  /* ── SPLIT LAYOUT ── */
+  .login-layout {
+    display: flex;
+    min-height: 100vh;
+    padding-top: 64px;
+  }
+
+  /* ── LEFT PANEL — botanical illustration ── */
+  .panel-left {
+    flex: 0 0 52%;
+    position: relative;
+    overflow: hidden;
+    background: #1a2e14;
+  }
+  .panel-botanical-svg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+  }
+  .panel-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, var(--panel-overlay-start) 0%, var(--panel-overlay-end) 100%);
+    transition: background 0.4s ease;
+  }
+  .panel-content {
+    position: relative; z-index: 10;
+    height: 100%;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 3rem;
+  }
+
+  /* rotating fun facts */
+  .fact-carousel {
+    display: flex; flex-direction: column; gap: 0;
+  }
+  .fact-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(200,240,190,0.75);
+    margin-bottom: 0.9rem;
+  }
+  .fact-tag-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: #7aad6e; display: inline-block; flex-shrink: 0;
+  }
+  .fact-display {
+    min-height: 130px;
+    position: relative;
+  }
+  .fact-item {
+    position: absolute; top: 0; left: 0; right: 0;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+    pointer-events: none;
+  }
+  .fact-item.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .fact-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+    font-weight: 400;
+    font-style: italic;
+    color: #e8f5e4;
+    line-height: 1.4;
+    margin-bottom: 0.75rem;
+  }
+  .fact-source {
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: rgba(180,220,170,0.65);
+    letter-spacing: 0.04em;
+  }
+  .fact-dots {
+    display: flex; gap: 6px; margin-top: 1.6rem;
+  }
+  .fact-dot {
+    width: 20px; height: 3px; border-radius: 2px;
+    background: rgba(255,255,255,0.25);
+    cursor: pointer; transition: background 0.3s, width 0.3s;
+    border: none;
+  }
+  .fact-dot.active { background: #7aad6e; width: 32px; }
+
+  /* panel logo watermark */
+  .panel-logo-mark {
+    position: absolute; top: 2.5rem; left: 3rem; z-index: 10;
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+  }
+  .panel-logo-icon {
+    width: 36px; height: 36px;
+    background: rgba(122,173,110,0.25);
+    border: 1px solid rgba(122,173,110,0.4);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .panel-logo-icon svg { width: 20px; height: 20px; }
+  .panel-logo-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-weight: 600;
+    color: rgba(220,245,215,0.9);
+    letter-spacing: 0.02em;
+  }
+
+  /* ── RIGHT PANEL — form ── */
+  .panel-right {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 3rem 2rem;
+    background: var(--bg-base);
+    transition: background 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  /* subtle watercolor wash behind form */
+  .panel-right::before {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    top: -80px; right: -80px;
+    border-radius: 50%;
+    background: var(--watercolor-1);
+    filter: blur(70px);
+    pointer-events: none;
+  }
+  .panel-right::after {
+    content: '';
+    position: absolute;
+    width: 300px; height: 300px;
+    bottom: -60px; left: -60px;
+    border-radius: 50%;
+    background: var(--watercolor-2);
+    filter: blur(60px);
+    pointer-events: none;
+  }
+
+  .form-wrapper {
+    width: 100%; max-width: 400px;
+    position: relative; z-index: 1;
+  }
+  .form-eyebrow {
+    font-size: 0.78rem; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent-primary);
+    margin-bottom: 0.6rem;
+  }
+  .form-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem; font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+  .form-title em { font-style: italic; color: var(--accent-deep); }
+  .form-subtitle {
+    font-size: 0.875rem; font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 2.25rem;
+  }
+  .form-subtitle a {
+    color: var(--accent-deep);
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent-soft);
+    transition: border-color 0.2s;
+  }
+  .form-subtitle a:hover { border-color: var(--accent-primary); }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+  .form-label {
+    display: block;
+    font-size: 0.8rem; font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.45rem;
+  }
+  .form-input-wrap {
+    position: relative;
+  }
+  .form-input-icon {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    pointer-events: none;
+  }
+  .form-input-icon svg {
+    width: 16px; height: 16px;
+    stroke: var(--text-muted); fill: none;
+    stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+    display: block;
+  }
+  .form-input {
+    width: 100%;
+    padding: 0.7rem 1rem 0.7rem 2.75rem;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 400;
+    color: var(--text-primary);
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.4s;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .form-input::placeholder { color: var(--text-muted); }
+  .form-input:focus {
+    border-color: var(--input-focus);
+    box-shadow: 0 0 0 3px rgba(122,173,110,0.15);
+    background: var(--bg-card);
+  }
+
+  /* password toggle */
+  .pwd-toggle {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer; padding: 4px;
+    color: var(--text-muted); transition: color 0.2s;
+    display: flex; align-items: center;
+  }
+  .pwd-toggle:hover { color: var(--text-secondary); }
+  .pwd-toggle svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; display: block; }
+
+  .form-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.75rem; margin-top: -0.25rem;
+  }
+  .remember-wrap {
+    display: flex; align-items: center; gap: 8px; cursor: pointer;
+  }
+  .remember-checkbox {
+    width: 16px; height: 16px;
+    accent-color: var(--accent-primary);
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  .remember-label {
+    font-size: 0.82rem; font-weight: 400;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .forgot-link {
+    font-size: 0.82rem; font-weight: 500;
+    color: var(--accent-deep);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .forgot-link:hover { color: var(--accent-primary); }
+
+  .btn-login {
+    width: 100%;
+    padding: 0.85rem 1.5rem;
+    background: var(--accent-primary);
+    color: var(--text-on-accent);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; font-weight: 500;
+    border-radius: 12px; border: none;
+    cursor: pointer; letter-spacing: 0.01em;
+    transition: background 0.2s, transform 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-login:hover { background: var(--accent-deep); transform: translateY(-1px); }
+  .btn-login:active { transform: translateY(0); }
+
+  .form-divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 1.5rem 0;
+  }
+  .form-divider-line {
+    flex: 1; height: 1px; background: var(--border-light);
+    transition: background 0.4s;
+  }
+  .form-divider-text {
+    font-size: 0.78rem; color: var(--text-muted); white-space: nowrap;
+  }
+
+  .form-footer {
+    text-align: center;
+    font-size: 0.85rem; font-weight: 300;
+    color: var(--text-secondary);
+    margin-top: 1.75rem;
+  }
+  .form-footer a {
+    color: var(--accent-deep); font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent-soft);
+    transition: border-color 0.2s;
+  }
+  .form-footer a:hover { border-color: var(--accent-primary); }
+
+  .form-error {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0.7rem 1rem;
+    background: rgba(220, 80, 80, 0.08);
+    border: 1px solid rgba(220, 80, 80, 0.25);
+    border-radius: 10px;
+    font-size: 0.85rem;
+    color: #c0392b;
+    margin-bottom: 1.1rem;
+  }
+  [data-theme="night"] .form-error {
+    background: rgba(220, 80, 80, 0.12);
+    border-color: rgba(220, 80, 80, 0.3);
+    color: #e87c7c;
+  }
+  .form-error svg { flex-shrink: 0; stroke: currentColor; }
+
+  /* vine decoration on form panel */
+  .form-vine {
+    position: absolute; bottom: 0; right: 0;
+    width: 180px; height: 200px;
+    pointer-events: none; opacity: 0.12;
+    transition: opacity 0.4s;
+  }
+  [data-theme="night"] .form-vine { opacity: 0.07; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .panel-left { display: none; }
+    .panel-right { padding: 2rem 1.25rem; }
+    nav { padding: 0 1rem; }
+    .nav-link { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="{{ url_for('home') }}" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22V12M12 12C12 7 8 3 3 3c0 5 3.5 8.5 9 9zM12 12C12 7 16 3 21 3c0 5-3.5 8.5-9 9z"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">Flourisha</span>
+  </a>
+  <div class="nav-links">
+    <a href="{{ url_for('home') }}#how" class="nav-link">How it works</a>
+    <a href="{{ url_for('login') }}" class="btn-nav-login">Log in</a>
+    <a href="{{ url_for('register') }}" class="btn-nav-register">Get started</a>
+    <label class="sky-switch" aria-label="Toggle day/night mode">
+      <input type="checkbox" id="themeToggle" />
+      <div class="sky-slider">
+        <img class="sky-clouds sky-cloud1" src="https://i.ibb.co/BKZ5z46/Mediamodifier-Design-Template.png" alt="" />
+        <img class="sky-clouds sky-cloud2" src="https://i.ibb.co/BKZ5z46/Mediamodifier-Design-Template.png" alt="" />
+        <div class="sky-night"></div>
+        <img class="sky-balloon" src="https://i.ibb.co/rtvfLkh/kisspng-hot-air-ballooning-hot-air-balloon-festival-flight-balloon-festival-5b0c63bbf3e107-504475381.png" alt="" />
+        <p class="sky-star">✦</p><p class="sky-star">✦</p><p class="sky-star">✦</p><p class="sky-star">✦</p><p class="sky-star">✦</p>
+        <img class="sky-spaceship" src="https://i.ibb.co/LhFzH2X/kisspng-emoji-rocket-spacecraft-text-messaging-clip-art-rocket-5acb92ecc2cf10-049862491523290860798.png" alt="" />
+      </div>
+    </label>
+  </div>
+</nav>
+
+<!-- SPLIT LAYOUT -->
+<div class="login-layout">
+
+  <!-- LEFT — botanical illustration panel -->
+  <div class="panel-left">
+
+    <!-- Full botanical SVG scene -->
+    <svg class="panel-botanical-svg" viewBox="0 0 620 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <!-- deep forest background -->
+      <rect width="620" height="800" fill="#0e1f0a"/>
+      <!-- ground layer -->
+      <ellipse cx="310" cy="820" rx="400" ry="120" fill="#0a1807"/>
+      <!-- back trees -->
+      <line x1="80" y1="800" x2="100" y2="300" stroke="#1a3512" stroke-width="12"/>
+      <ellipse cx="100" cy="270" rx="55" ry="80" fill="#1a3512"/>
+      <ellipse cx="85" cy="290" rx="40" ry="60" fill="#1e3d15"/>
+      <line x1="540" y1="800" x2="520" y2="280" stroke="#162e10" stroke-width="14"/>
+      <ellipse cx="520" cy="250" rx="60" ry="90" fill="#162e10"/>
+      <ellipse cx="535" cy="270" rx="45" ry="65" fill="#1a3512"/>
+      <line x1="400" y1="800" x2="390" y2="320" stroke="#1e3d15" stroke-width="10"/>
+      <ellipse cx="390" cy="295" rx="48" ry="72" fill="#1e3d15"/>
+      <!-- mid trees -->
+      <line x1="180" y1="800" x2="195" y2="260" stroke="#265e1a" stroke-width="18"/>
+      <ellipse cx="195" cy="220" rx="75" ry="110" fill="#265e1a"/>
+      <ellipse cx="178" cy="245" rx="58" ry="85" fill="#2d6e20"/>
+      <ellipse cx="212" cy="235" rx="52" ry="78" fill="#2d6e20"/>
+      <line x1="460" y1="800" x2="445" y2="240" stroke="#234f18" stroke-width="16"/>
+      <ellipse cx="445" cy="200" rx="70" ry="100" fill="#234f18"/>
+      <ellipse cx="430" cy="225" rx="55" ry="80" fill="#2d6e20"/>
+      <!-- foreground plants -->
+      <!-- large fern left -->
+      <path d="M40 800 Q30 680 60 600" stroke="#3a7a28" stroke-width="3" fill="none"/>
+      <path d="M60 600 Q10 560 5 500" stroke="#3a7a28" stroke-width="2.5" fill="none"/>
+      <ellipse cx="32" cy="530" rx="28" ry="10" transform="rotate(-35 32 530)" fill="#3a7a28"/>
+      <path d="M60 600 Q110 560 115 500" stroke="#3a7a28" stroke-width="2.5" fill="none"/>
+      <ellipse cx="90" cy="528" rx="28" ry="10" transform="rotate(35 90 528)" fill="#3a7a28"/>
+      <path d="M60 600 Q60 540 65 470" stroke="#3a7a28" stroke-width="2.5" fill="none"/>
+      <ellipse cx="40" cy="490" rx="24" ry="9" transform="rotate(-25 40 490)" fill="#4a9035"/>
+      <ellipse cx="88" cy="488" rx="24" ry="9" transform="rotate(25 88 488)" fill="#4a9035"/>
+      <!-- tall flowering plant center -->
+      <line x1="310" y1="800" x2="308" y2="420" stroke="#4a7a3e" stroke-width="5"/>
+      <line x1="308" y1="560" x2="268" y2="490" stroke="#4a7a3e" stroke-width="3"/>
+      <ellipse cx="248" cy="475" rx="36" ry="14" transform="rotate(-30 248 475)" fill="#4a9035"/>
+      <line x1="308" y1="520" x2="348" y2="460" stroke="#4a7a3e" stroke-width="3"/>
+      <ellipse cx="368" cy="446" rx="36" ry="14" transform="rotate(30 368 446)" fill="#4a9035"/>
+      <line x1="308" y1="480" x2="278" y2="425" stroke="#4a7a3e" stroke-width="2.5"/>
+      <ellipse cx="262" cy="413" rx="30" ry="12" transform="rotate(-28 262 413)" fill="#5aaa44"/>
+      <!-- flower top -->
+      <circle cx="308" cy="408" r="22" fill="#7aad6e" opacity="0.9"/>
+      <circle cx="308" cy="408" r="14" fill="#a8cc9e"/>
+      <circle cx="308" cy="408" r="6" fill="#f9dc5c"/>
+      <!-- flower petals -->
+      <ellipse cx="308" cy="383" rx="8" ry="14" fill="#7aad6e" opacity="0.8"/>
+      <ellipse cx="308" cy="433" rx="8" ry="14" fill="#7aad6e" opacity="0.8"/>
+      <ellipse cx="283" cy="408" rx="14" ry="8" fill="#7aad6e" opacity="0.8"/>
+      <ellipse cx="333" cy="408" rx="14" ry="8" fill="#7aad6e" opacity="0.8"/>
+      <ellipse cx="290" cy="390" rx="8" ry="14" transform="rotate(-45 290 390)" fill="#8dc47e" opacity="0.7"/>
+      <ellipse cx="326" cy="390" rx="8" ry="14" transform="rotate(45 326 390)" fill="#8dc47e" opacity="0.7"/>
+      <ellipse cx="290" cy="426" rx="8" ry="14" transform="rotate(45 290 426)" fill="#8dc47e" opacity="0.7"/>
+      <ellipse cx="326" cy="426" rx="8" ry="14" transform="rotate(-45 326 426)" fill="#8dc47e" opacity="0.7"/>
+      <!-- right fern -->
+      <path d="M580 800 Q590 680 560 600" stroke="#3a7a28" stroke-width="3" fill="none"/>
+      <path d="M560 600 Q510 560 505 500" stroke="#3a7a28" stroke-width="2.5" fill="none"/>
+      <ellipse cx="533" cy="530" rx="28" ry="10" transform="rotate(35 533 530)" fill="#3a7a28"/>
+      <path d="M560 600 Q610 560 615 500" stroke="#3a7a28" stroke-width="2.5" fill="none"/>
+      <ellipse cx="590" cy="528" rx="28" ry="10" transform="rotate(-35 590 528)" fill="#3a7a28"/>
+      <!-- small wildflowers -->
+      <circle cx="150" cy="740" r="6" fill="#e8f5a0"/><line x1="150" y1="746" x2="150" y2="780" stroke="#4a7a3e" stroke-width="2"/>
+      <circle cx="165" cy="735" r="4" fill="#f5c4b3"/><line x1="165" y1="739" x2="165" y2="775" stroke="#4a7a3e" stroke-width="1.5"/>
+      <circle cx="470" cy="745" r="5" fill="#c8dfc3"/><line x1="470" y1="750" x2="470" y2="782" stroke="#4a7a3e" stroke-width="2"/>
+      <circle cx="490" cy="738" r="4" fill="#e8f5a0"/><line x1="490" y1="742" x2="490" y2="776" stroke="#4a7a3e" stroke-width="1.5"/>
+      <!-- vine left edge -->
+      <path d="M0 200 Q30 260 10 330 Q-10 400 25 460 Q50 520 20 580" stroke="#3a7a28" stroke-width="2" fill="none" opacity="0.6"/>
+      <ellipse cx="18" cy="285" rx="20" ry="9" transform="rotate(20 18 285)" fill="#3a7a28" opacity="0.5"/>
+      <ellipse cx="22" cy="400" rx="20" ry="9" transform="rotate(-15 22 400)" fill="#4a9035" opacity="0.5"/>
+      <!-- fireflies / light specs -->
+      <circle cx="200" cy="450" r="2" fill="#f9dc5c" opacity="0.7"/>
+      <circle cx="370" cy="500" r="1.5" fill="#f9dc5c" opacity="0.5"/>
+      <circle cx="260" cy="350" r="1.5" fill="#c8f0a0" opacity="0.6"/>
+      <circle cx="430" cy="420" r="2" fill="#f9dc5c" opacity="0.4"/>
+      <circle cx="140" cy="540" r="1.5" fill="#c8f0a0" opacity="0.5"/>
+    </svg>
+
+    <!-- dark overlay -->
+    <div class="panel-overlay"></div>
+
+    <!-- logo mark top-left -->
+    <a href="{{ url_for('home') }}" class="panel-logo-mark">
+      <div class="panel-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(200,240,190,0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22V12M12 12C12 7 8 3 3 3c0 5 3.5 8.5 9 9zM12 12C12 7 16 3 21 3c0 5-3.5 8.5-9 9z"/>
+        </svg>
+      </div>
+      <span class="panel-logo-text">Flourisha</span>
+    </a>
+
+    <!-- fun facts bottom -->
+    <div class="panel-content">
+      <div class="fact-carousel">
+        <div class="fact-tag"><span class="fact-tag-dot"></span>Did you know?</div>
+        <div class="fact-display">
+          <div class="fact-item active">
+            <p class="fact-text">"The oldest living tree on Earth is a bristlecone pine over 5,000 years old — it was already ancient when the pyramids were built."</p>
+            <p class="fact-source">— Dendrochronology records, White Mountains, California</p>
+          </div>
+          <div class="fact-item">
+            <p class="fact-text">"Bamboo is the fastest-growing plant on the planet, capable of growing up to 91 cm in a single day under the right conditions."</p>
+            <p class="fact-source">— Guinness World Records, Phyllostachys edulis</p>
+          </div>
+          <div class="fact-item">
+            <p class="fact-text">"A single oak tree can support over 500 species of insects, birds, and fungi — making it one of the most biodiverse habitats on land."</p>
+            <p class="fact-source">— Royal Botanic Gardens, Kew</p>
+          </div>
+          <div class="fact-item">
+            <p class="fact-text">"The Rafflesia arnoldii produces the world's largest individual flower — up to 1 metre across — and smells of rotting flesh to attract pollinators."</p>
+            <p class="fact-source">— Botanical Society of the British Isles</p>
+          </div>
+          <div class="fact-item">
+            <p class="fact-text">"Trees in a forest communicate and share nutrients through an underground fungal network — often called the 'Wood Wide Web'."</p>
+            <p class="fact-source">— Dr. Suzanne Simard, University of British Columbia</p>
+          </div>
+        </div>
+        <div class="fact-dots">
+          <button class="fact-dot active" data-idx="0" aria-label="Fact 1"></button>
+          <button class="fact-dot" data-idx="1" aria-label="Fact 2"></button>
+          <button class="fact-dot" data-idx="2" aria-label="Fact 3"></button>
+          <button class="fact-dot" data-idx="3" aria-label="Fact 4"></button>
+          <button class="fact-dot" data-idx="4" aria-label="Fact 5"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT — login form -->
+  <div class="panel-right">
+
+    <!-- subtle vine corner decoration -->
+    <svg class="form-vine" viewBox="0 0 180 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M180 200 Q140 160 150 100 Q160 50 120 20" stroke="var(--accent-primary)" stroke-width="1.5" fill="none"/>
+      <ellipse cx="162" cy="145" rx="22" ry="9" transform="rotate(30 162 145)" stroke="var(--accent-primary)" stroke-width="1" fill="none"/>
+      <ellipse cx="148" cy="90" rx="18" ry="8" transform="rotate(20 148 90)" stroke="var(--accent-primary)" stroke-width="1" fill="none"/>
+      <ellipse cx="128" cy="42" rx="15" ry="7" transform="rotate(15 128 42)" stroke="var(--accent-primary)" stroke-width="1" fill="none"/>
+    </svg>
+
+    <div class="form-wrapper">
+      <div class="form-eyebrow">Welcome back</div>
+      <h1 class="form-title">Sign in to<br><em>Flourisha</em></h1>
+      <p class="form-subtitle">
+        No account yet? <a href="{{ url_for('register') }}">Create one free</a> — no credit card needed.
+      </p>
+
+      <form action="/login" method="post" novalidate>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email address</label>
+          <div class="form-input-wrap">
+            <span class="form-input-icon">
+              <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </span>
+            <input class="form-input" type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="form-input-wrap">
+            <span class="form-input-icon">
+              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
+            <input class="form-input" type="password" id="password" name="password" placeholder="Your password" autocomplete="current-password" required />
+            <button type="button" class="pwd-toggle" id="pwdToggle" aria-label="Show password">
+              <svg id="eyeIcon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        {% if error %}
+        <div class="form-error" role="alert">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          {{ error }}
+        </div>
+        {% endif %}
+
+        <div class="form-row">
+          <label class="remember-wrap">
+            <input type="checkbox" class="remember-checkbox" name="remember" />
+            <span class="remember-label">Remember me</span>
+          </label>
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-login">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          Log in to Flourisha
+        </button>
+
+      </form>
+
+      <div class="form-divider">
+        <div class="form-divider-line"></div>
+        <span class="form-divider-text">or continue as guest</span>
+        <div class="form-divider-line"></div>
+      </div>
+
+      <a href="{{ url_for('home') }}" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:0.8rem 1.5rem;background:transparent;border:1px solid var(--border-color);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:400;color:var(--text-secondary);text-decoration:none;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-primary)';this.style.color='var(--accent-deep)';this.style.background='var(--accent-wash)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.color='var(--text-secondary)';this.style.background='transparent'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Identify a plant without signing in
+      </a>
+
+      <p class="form-footer">
+        New to Flourisha? <a href="{{ url_for('register') }}">Create your free account</a>
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* theme toggle with persistence */
+  const toggle = document.getElementById('themeToggle');
+  const html = document.documentElement;
+
+  const saved = localStorage.getItem('flourisha-theme') || 'day';
+  html.setAttribute('data-theme', saved);
+  if (saved === 'night') toggle.checked = true;
+
+  toggle.addEventListener('change', () => {
+    const theme = toggle.checked ? 'night' : 'day';
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem('flourisha-theme', theme);
+  });
+
+  /* password visibility */
+  const pwdInput = document.getElementById('password');
+  const pwdBtn = document.getElementById('pwdToggle');
+  const eyeIcon = document.getElementById('eyeIcon');
+  const eyeOff = '<line x1="17.94" y1="17.94" x2="6.06" y2="6.06"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><path d="M6.24 6.24A18.5 18.5 0 0 0 1 12s4 8 11 8a9.12 9.12 0 0 0 5.76-2.05"/>';
+  const eyeOn  = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  pwdBtn.addEventListener('click', () => {
+    const shown = pwdInput.type === 'text';
+    pwdInput.type = shown ? 'password' : 'text';
+    eyeIcon.innerHTML = shown ? eyeOn : eyeOff;
+    pwdBtn.setAttribute('aria-label', shown ? 'Show password' : 'Hide password');
+  });
+
+  /* fun facts carousel */
+  const items = document.querySelectorAll('.fact-item');
+  const dots  = document.querySelectorAll('.fact-dot');
+  let current = 0;
+  let timer;
+
+  function goTo(idx) {
+    items[current].classList.remove('active');
+    dots[current].classList.remove('active');
+    current = idx;
+    items[current].classList.add('active');
+    dots[current].classList.add('active');
+  }
+
+  function next() { goTo((current + 1) % items.length); }
+
+  function startTimer() { timer = setInterval(next, 5000); }
+  function resetTimer() { clearInterval(timer); startTimer(); }
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      goTo(parseInt(dot.dataset.idx));
+      resetTimer();
+    });
+  });
+
+  startTimer();
+</script>
+</body>
+</html>

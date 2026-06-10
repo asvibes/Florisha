@@ -1,4 +1,30 @@
+# 🧪 Environment variables
 .env
-noosphere/
+
+# 🐍 Python cache
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 🧱 Virtual environment
+venv/
+env/
+
+# 📁 Flask uploads (optional - depends if you want to keep images locally)
 uploads/
+
+# 🗄️ Database (if SQLite used)
+*.sqlite3
+*.db
+
+# 🧠 IDE files
+.vscode/
+.idea/
+
+# 🧾 OS files
+.DS_Store
+Thumbs.db
+
+# 🔥 Logs
+*.log
