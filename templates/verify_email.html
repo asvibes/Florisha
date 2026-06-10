@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="day">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Florisha — Verify Your Email</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root[data-theme="day"] {
+    --bg-base: #f4f8f2; --bg-card: #ffffff;
+    --accent-primary: #7aad6e; --accent-deep: #4a7a3e;
+    --accent-wash: #dcefd8; --accent-soft: #c8dfc3;
+    --text-primary: #1e2d1a; --text-secondary: #4a6043;
+    --text-muted: #7a9c74; --text-on-accent: #ffffff;
+    --border-color: #c2d9bc; --border-light: #dcefd8;
+    --input-bg: #f9fdf8; --input-border: #c2d9bc;
+    --watercolor-1: rgba(168,204,158,0.18);
+    --watercolor-2: rgba(107,158,96,0.10);
+  }
+  :root[data-theme="night"] {
+    --bg-base: #1a2016; --bg-card: #2a3623;
+    --accent-primary: #7aad6e; --accent-deep: #a8cc9e;
+    --accent-wash: #2e3e27; --accent-soft: #3a5233;
+    --text-primary: #deecd8; --text-secondary: #a8c4a0;
+    --text-muted: #6e8e66; --text-on-accent: #1a2016;
+    --border-color: #3a5233; --border-light: #2e3e27;
+    --input-bg: #212b1c; --input-border: #3a5233;
+    --watercolor-1: rgba(58,82,51,0.25);
+    --watercolor-2: rgba(74,104,64,0.15);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-base); color: var(--text-primary);
+    min-height: 100vh; display: flex; align-items: center;
+    justify-content: center; padding: 2rem;
+    transition: background 0.4s, color 0.4s;
+  }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border-light);
+    border-radius: 20px; padding: 3rem 2.5rem;
+    max-width: 460px; width: 100%; text-align: center;
+    box-shadow: 0 8px 40px rgba(74,122,62,0.10);
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute; width: 300px; height: 300px;
+    top: -80px; right: -80px; border-radius: 50%;
+    background: var(--watercolor-1); filter: blur(60px); pointer-events: none;
+  }
+  .icon-wrap {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: var(--accent-wash); border: 2px solid var(--accent-soft);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+  .icon-wrap svg { width: 32px; height: 32px; stroke: var(--accent-primary); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem; font-weight: 500; color: var(--text-primary);
+    margin-bottom: 0.6rem;
+  }
+  .subtitle {
+    font-size: 0.9rem; font-weight: 300; color: var(--text-secondary);
+    line-height: 1.7; margin-bottom: 2rem;
+  }
+  .email-chip {
+    display: inline-block; padding: 0.35rem 0.9rem;
+    background: var(--accent-wash); border: 1px solid var(--accent-soft);
+    border-radius: 999px; font-size: 0.85rem; font-weight: 500;
+    color: var(--accent-deep); margin-bottom: 2rem;
+  }
+  .alert {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0.75rem 1rem; border-radius: 10px;
+    font-size: 0.85rem; margin-bottom: 1.5rem; text-align: left;
+  }
+  .alert-error { background: rgba(220,80,80,0.08); border: 1px solid rgba(220,80,80,0.25); color: #c0392b; }
+  .alert-success { background: rgba(122,173,110,0.10); border: 1px solid rgba(122,173,110,0.3); color: var(--accent-deep); }
+  [data-theme="night"] .alert-error { background: rgba(220,80,80,0.12); border-color: rgba(220,80,80,0.3); color: #e87c7c; }
+  .alert svg { flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .resend-form { margin-bottom: 1.25rem; }
+  .btn-resend {
+    width: 100%; padding: 0.8rem 1.5rem;
+    background: var(--accent-primary); color: var(--text-on-accent);
+    font-family: 'DM Sans', sans-serif; font-size: 0.92rem; font-weight: 500;
+    border-radius: 12px; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-resend:hover { background: var(--accent-deep); transform: translateY(-1px); }
+  .btn-login {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 0.75rem 1.5rem;
+    background: transparent; border: 1px solid var(--border-color);
+    border-radius: 12px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 400; color: var(--text-secondary);
+    text-decoration: none; transition: all 0.2s; margin-top: 0.75rem;
+  }
+  .btn-login:hover { border-color: var(--accent-primary); color: var(--accent-deep); background: var(--accent-wash); }
+  .hint {
+    font-size: 0.78rem; color: var(--text-muted);
+    margin-top: 1.75rem; line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="icon-wrap">
+    <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+  </div>
+
+  <h1>Check your inbox</h1>
+  <p class="subtitle">We sent a verification link to:</p>
+
+  {% if email %}
+  <div class="email-chip">{{ email }}</div>
+  {% endif %}
+
+  {% if error %}
+  <div class="alert alert-error">
+    <svg width="15" height="15" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    {{ error }}
+  </div>
+  {% endif %}
+
+  {% if success %}
+  <div class="alert alert-success">
+    <svg width="15" height="15" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    {{ success }}
+  </div>
+  {% endif %}
+
+  <form class="resend-form" action="{{ url_for('auth.resend_verification') }}" method="post">
+    <input type="hidden" name="email" value="{{ email }}" />
+    <button type="submit" class="btn-resend">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+      Resend verification email
+    </button>
+  </form>
+
+  <a href="{{ url_for('auth.login') }}" class="btn-login">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+    Back to login
+  </a>
+
+  <p class="hint">Didn't get the email? Check your spam folder.<br>The link expires after 1 hour.</p>
+</div>
+
+<script>
+  const saved = localStorage.getItem('flourisha-theme') || 'day';
+  document.documentElement.setAttribute('data-theme', saved);
+</script>
+</body>
+</html>
