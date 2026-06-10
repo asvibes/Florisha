@@ -294,8 +294,8 @@
   </a>
   <div class="nav-links">
     <a href="{{ url_for('home') }}#how" class="nav-link">How it works</a>
-    <a href="{{ url_for('login') }}" class="btn-nav-login">Log in</a>
-    <a href="{{ url_for('register') }}" class="btn-nav-register">Get started</a>
+    <a href="{{ url_for('auth.login') }}" class="btn-nav-login">Log in</a>
+    <a href="{{ url_for('auth.register')}}" class="btn-nav-register">Get started</a>
     <label class="sky-switch" aria-label="Toggle day/night mode">
       <input type="checkbox" id="themeToggle" />
       <div class="sky-slider">
@@ -474,7 +474,7 @@
       <div class="form-eyebrow">Start your journey</div>
       <h1 class="form-title">Join<br><em>Flourisha</em></h1>
       <p class="form-subtitle">
-        Already have an account? <a href="{{ url_for('login') }}">Log in here</a>
+        Already have an account? <a href="{{ url_for('auth.login')}}">Log in here</a>
       </p>
 
       {% if error %}
@@ -491,7 +491,7 @@
       </div>
       {% endif %}
 
-      <form action="{{ url_for('register') }}" method="post" novalidate>
+      <form action="{{ url_for('auth.register')  }}" method="post" novalidate>
 
         <!-- Email -->
         <div class="form-group">

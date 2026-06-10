@@ -372,8 +372,8 @@
   </a>
   <div class="nav-links">
     <a href="{{ url_for('home') }}#how" class="nav-link">How it works</a>
-    <a href="{{ url_for('login') }}" class="btn-nav-login">Log in</a>
-    <a href="{{ url_for('register') }}" class="btn-nav-register">Get started</a>
+    <a href="{{url_for('auth.login') }}" class="btn-nav-login">Log in</a>
+    <a href="{{ url_for('auth.register') }}" class="btn-nav-register">
     <label class="sky-switch" aria-label="Toggle day/night mode">
       <input type="checkbox" id="themeToggle" />
       <div class="sky-slider">
@@ -489,7 +489,7 @@
       <h1 class="form-title">What's this<br><em>plant?</em></h1>
       <p class="form-subtitle">
         Upload a photo and we'll identify it in seconds.<br>
-        Want to save your finds? <a href="{{ url_for('register') }}">Create a free account</a>
+        Want to save your finds? <a href="{{url_for('auth.register')  }}">Create a free account</a>
       </p>
 
       <!-- Flash messages -->
@@ -554,7 +554,7 @@
         <div class="form-divider-line"></div>
       </div>
       <p class="form-footer">
-        <a href="{{ url_for('login') }}">Log in</a> to save your identifications and build a collection.
+        <a href="{{ url_for('auth.login')}}">Log in</a> to save your identifications and build a collection.
       </p>
 
     </div>
