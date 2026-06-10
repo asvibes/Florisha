@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, redirect, url_for, send_from_directory
+from flask import Flask, render_template, redirect, url_for, session, send_from_directory
 from datetime import timedelta
 
 from extensions import db, migrate, bcrypt, mail

@@ -1,5 +1,6 @@
 import secrets
 from datetime import datetime, timedelta
+from flask import session
 
 from flask import (Blueprint, render_template, redirect,
                    url_for, session, request, flash)

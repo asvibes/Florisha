@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, session, request, jsonify
 from extensions import db
 from models.plant import Plant
-
+from flask import session
 dashboard_bp = Blueprint("dashboard", __name__)
 
 
