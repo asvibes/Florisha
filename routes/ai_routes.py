@@ -1,52 +1,135 @@
 import os
 import uuid
+import json
+from datetime import datetime, timedelta
 from flask import (Blueprint, request, redirect, url_for,
                    session, render_template, current_app, flash)
 from extensions import db
 from models.plant import Plant
-from modules.ai_engine import identify_plant
+from services.plant_processor import process_identification
+from plantnet_service import identify_plant
 
 ai_bp = Blueprint("ai", __name__)
 
 
+# ─────────────────────────────────────────────
+# Helpers
+# ─────────────────────────────────────────────
+
 def allowed_file(filename):
-    """Check the file extension is in the allowed set."""
     allowed = current_app.config["ALLOWED_EXTENSIONS"]
     return "." in filename and filename.rsplit(".", 1)[1].lower() in allowed
 
 
-# ──────────────────── IDENTIFY PAGE (GET) ─────
+def _redirect_on_failure():
+    """Guests → identify page. Logged-in → dashboard identify section."""
+    if "user_id" in session:
+        return redirect(url_for("dashboard.dashboard") + "?section=identify")
+    return redirect(url_for("ai.identify_page"))
+
+
+def _clean_old_guest_uploads():
+    """
+    Delete guest upload files older than 30 minutes from the uploads folder.
+    Called at the start of every new identify POST so no scheduler is needed.
+    """
+    upload_folder = current_app.config["UPLOAD_FOLDER"]
+    cutoff = datetime.utcnow() - timedelta(minutes=30)
+
+    try:
+        for fname in os.listdir(upload_folder):
+            fpath = os.path.join(upload_folder, fname)
+            if not os.path.isfile(fpath):
+                continue
+            modified = datetime.utcfromtimestamp(os.path.getmtime(fpath))
+            if modified < cutoff:
+                os.remove(fpath)
+    except Exception:
+        pass  # never crash the request over cleanup
+
+
+def _build_plant_dict(source, image_url=None):
+    """
+    Build a normalized plant dict for the template from either:
+    - a Plant ORM object  (logged-in path)
+    - a PlantResult dataclass (guest path, top match)
+
+    The template always uses the same keys regardless of source.
+    """
+    # Plant ORM object
+    if isinstance(source, Plant):
+        alternatives_raw = source.alternatives
+        if isinstance(alternatives_raw, str):
+            try:
+                alternatives = json.loads(alternatives_raw)
+            except (json.JSONDecodeError, TypeError):
+                alternatives = []
+        else:
+            alternatives = alternatives_raw or []
+
+        return {
+            "common_name"    : source.name,
+            "scientific_name": source.scientific_name,
+            "family"         : source.family,
+            "genus"          : source.genus,
+            "confidence"     : source.confidence,
+            "image_url"      : source.image_url,
+            "alternatives"   : alternatives,
+        }
+
+    # PlantResult dataclass (guest)
+    return {
+        "common_name"    : source.common_name,
+        "scientific_name": source.scientific_name,
+        "family"         : source.family,
+        "genus"          : source.genus,
+        "confidence"     : source.confidence,
+        "image_url"      : image_url or "",
+        "alternatives"   : [
+            {
+                "common_name"    : alt.common_name,
+                "scientific_name": alt.scientific_name,
+                "family"         : alt.family,
+                "genus"          : alt.genus,
+                "confidence"     : alt.confidence,
+            }
+            for alt in (source.alternatives or [])
+        ],
+    }
+
+
+# ─────────────────────────────────────────────
+# Identify page (GET)
+# ─────────────────────────────────────────────
+
 @ai_bp.route("/identify", methods=["GET"])
 def identify_page():
-    """
-    Standalone identify page — guests only.
-    Logged-in users are sent to their dashboard instead.
-    """
+    """Standalone identify page for guests. Logged-in users go to dashboard."""
     if "user_id" in session:
         return redirect(url_for("dashboard.dashboard") + "?section=identify")
     return render_template("identify.html")
 
 
-# ──────────────────── IDENTIFY (POST) ─────────
+# ─────────────────────────────────────────────
+# Identify (POST)
+# ─────────────────────────────────────────────
+
 @ai_bp.route("/identify", methods=["POST"])
 def identify():
-
-    # ── 1. Check a file was actually uploaded ──
-    if "image" not in request.files:
-        flash("No file received. Please try again.", "error")
-        return _redirect_on_failure()
-
-    file = request.files["image"]
-
-    if file.filename == "":
-        flash("No file selected.", "error")
+    # ── 1. Validate file ───────────────────────
+    file = request.files.get("image")
+    if not file or file.filename == "":
+        flash("Please select an image to upload.", "error")
         return _redirect_on_failure()
 
     if not allowed_file(file.filename):
-        flash("Only JPG, PNG, and WEBP images are supported.", "error")
+        flash("Unsupported file type. Please upload a JPG, PNG, or WebP image.", "error")
         return _redirect_on_failure()
 
-    # ── 2. Save image with a unique filename ───
+    # ── 2. Clean up old guest uploads ─────────
+    _clean_old_guest_uploads()
+
+    # ── 3. Save image with a unique filename ───
     ext           = file.filename.rsplit(".", 1)[1].lower()
     filename      = f"{uuid.uuid4().hex}.{ext}"
     upload_folder = current_app.config["UPLOAD_FOLDER"]
@@ -54,63 +137,119 @@ def identify():
     image_path    = os.path.join(upload_folder, filename)
     file.save(image_path)
 
-    # ── 3. Call Pl@ntNet ───────────────────────
-    result = identify_plant(image_path)
+    # ── 4. Call PlantNet ───────────────────────
+    plantnet_response = identify_plant(image_path)
 
-    if not result["success"]:
+    if not plantnet_response["success"]:
         if os.path.exists(image_path):
             os.remove(image_path)
-        flash(result["error"], "error")
+        flash(plantnet_response["error"], "error")
         return _redirect_on_failure()
 
-    top          = result["top"]
-    alternatives = result["alternatives"]
+    plantnet_data = plantnet_response["data"]
 
-    # ── 4. Logged-in user → save to DB ─────────
+    # ── 5. Process through enrichment pipeline ─
+    result = process_identification(plantnet_data)
+
+    if not result:
+        if os.path.exists(image_path):
+            os.remove(image_path)
+        flash("Could not process the identification. Please try a clearer photo.", "error")
+        return _redirect_on_failure()
+
+    # ── 6. Logged-in user → save to DB ─────────
     if "user_id" in session:
         plant = Plant(
             user_id         = session["user_id"],
-            name            = top["common_name"] or top["scientific_name"],
-            scientific_name = top["scientific_name"],
-            family          = top["family"],
-            genus           = top["genus"],
-            confidence      = top["confidence"],
-            image_url       = filename,          # store filename only, served via /uploads/
-            alternatives    = alternatives,      # list of dicts saved as JSON
+            name            = result.common_name or result.scientific_name,
+            scientific_name = result.scientific_name,
+            family          = result.family,
+            genus           = result.genus,
+            confidence      = result.confidence,
+            image_url       = filename,
+            alternatives    = json.dumps([
+                {
+                    "common_name"    : alt.common_name,
+                    "scientific_name": alt.scientific_name,
+                    "family"         : alt.family,
+                    "genus"          : alt.genus,
+                    "confidence"     : alt.confidence,
+                }
+                for alt in (result.alternatives or [])
+            ]),
         )
         db.session.add(plant)
         db.session.commit()
-
         return redirect(url_for("ai.result", plant_id=plant.id))
 
-    # ── 5. Guest → store result in session, delete image ──
+    # ── 7. Guest → store result + filename in session ──
     else:
-        if os.path.exists(image_path):
-            os.remove(image_path)
-
         session["guest_result"] = {
-            "top":          top,
-            "alternatives": alternatives,
+            "top": {
+                "common_name"    : result.common_name,
+                "scientific_name": result.scientific_name,
+                "family"         : result.family,
+                "genus"          : result.genus,
+                "confidence"     : result.confidence,
+            },
+            "alternatives": [
+                {
+                    "common_name"    : alt.common_name,
+                    "scientific_name": alt.scientific_name,
+                    "family"         : alt.family,
+                    "genus"          : alt.genus,
+                    "confidence"     : alt.confidence,
+                }
+                for alt in (result.alternatives or [])
+            ],
+            "image_filename" : filename,
+            "result_profile" : {
+                "description"   : result.description,
+                "origin_story"  : result.origin_story,
+                "fun_fact"      : result.fun_fact,
+                "emotional_note": result.emotional_note,
+                "regional_notes": result.regional_notes,
+                "care"          : result.care,
+                "botanical"     : result.botanical,
+                "safety"        : result.safety,
+                "uses"          : result.uses,
+                "seasons"       : result.seasons,
+                "from_cache"    : result.from_cache,
+            },
         }
         return redirect(url_for("ai.result_guest"))
 
 
-# ──────────────────── RESULT (logged-in) ──────
+# ─────────────────────────────────────────────
+# Result — logged-in user
+# ─────────────────────────────────────────────
+
 @ai_bp.route("/result/<int:plant_id>")
 def result(plant_id):
-    plant = Plant.query.get_or_404(plant_id)
+    plant_obj = Plant.query.get_or_404(plant_id)
 
-    # make sure the plant belongs to the session user
-    if "user_id" in session and plant.user_id != session["user_id"]:
+    if "user_id" in session and plant_obj.user_id != session["user_id"]:
         return redirect(url_for("dashboard.dashboard"))
 
-    return render_template("result.html",
-                           plant        = plant,
-                           alternatives = plant.alternatives or [],
-                           is_guest     = False)
+    # Re-fetch rich profile from cache for the result page
+    from plant_knowledge import PlantKnowledge
+    knowledge = PlantKnowledge.get_by_scientific_name(plant_obj.scientific_name)
+    rich_profile = knowledge.profile if knowledge else {}
+
+    plant_dict = _build_plant_dict(plant_obj)
+
+    return render_template(
+        "result.html",
+        plant        = plant_dict,
+        result_data  = rich_profile,
+        is_guest     = False,
+    )
 
 
-# ──────────────────── RESULT (guest) ──────────
+# ─────────────────────────────────────────────
+# Result — guest
+# ─────────────────────────────────────────────
+
 @ai_bp.route("/result/guest")
 def result_guest():
     guest_result = session.pop("guest_result", None)
@@ -118,19 +257,49 @@ def result_guest():
     if not guest_result:
         return redirect(url_for("home"))
 
-    return render_template("result.html",
-                           plant        = guest_result["top"],
-                           alternatives = guest_result["alternatives"],
-                           is_guest     = True)
+    top           = guest_result["top"]
+    alternatives  = guest_result.get("alternatives", [])
+    image_filename = guest_result.get("image_filename", "")
+    result_profile = guest_result.get("result_profile", {})
+
+    plant_dict = {
+        "common_name"    : top.get("common_name", ""),
+        "scientific_name": top.get("scientific_name", ""),
+        "family"         : top.get("family", ""),
+        "genus"          : top.get("genus", ""),
+        "confidence"     : top.get("confidence", 0),
+        "image_url"      : image_filename,
+        "alternatives"   : alternatives,
+    }
+
+    return render_template(
+        "result.html",
+        plant        = plant_dict,
+        result_data  = result_profile,
+        is_guest     = True,
+    )
 
 
-# ──────────────────── HELPERS ─────────────────
-def _redirect_on_failure():
+# ─────────────────────────────────────────────
+# Guest image cleanup endpoint
+# ─────────────────────────────────────────────
+
+@ai_bp.route("/cleanup/<filename>", methods=["POST"])
+def cleanup_guest_image(filename):
     """
-    Guests → back to standalone identify page.
-    Logged-in users → back to dashboard identify section.
-    Both carry the flash message set before calling this.
+    Called by JS on the guest result page after the image has loaded.
+    Deletes the temporary guest upload from disk.
+    Only allows deletion of files in the configured upload folder.
     """
-    if "user_id" in session:
-        return redirect(url_for("dashboard.dashboard") + "?section=identify")
-    return redirect(url_for("ai.identify_page"))
+    # Basic safety: strip any path traversal attempts
+    safe_filename = os.path.basename(filename)
+    upload_folder = current_app.config["UPLOAD_FOLDER"]
+    file_path     = os.path.join(upload_folder, safe_filename)
+
+    if os.path.exists(file_path):
+        try:
+            os.remove(file_path)
+        except Exception:
+            pass
+
+    return {"status": "ok"}, 200
