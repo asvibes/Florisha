@@ -601,7 +601,7 @@
               <!-- image -->
               <div class="polaroid-img-wrap">
                 {% if plant.image_url %}
-                  <img src="{{ plant.image_url }}" alt="{{ plant.name }}" loading="lazy" />
+                  <img src="/uploads/{{ plant.image_url }}" alt="{{ plant.name }}" loading="lazy" />
                 {% else %}
                   <div class="polaroid-placeholder">
                     <svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg>
@@ -612,7 +612,7 @@
               <!-- label -->
               <div class="polaroid-label">
                 <span class="polaroid-name">{{ plant.name or plant.scientific_name or 'Unknown' }}</span>
-                <span class="polaroid-date">{{ plant.id }}</span>
+                <span class="polaroid-date">{{ plant.created_at.strftime('%d %b %Y') if plant.created_at else '' }}</span>
               </div>
             </div>
           </div>
@@ -680,7 +680,7 @@
               </button>
               <div class="polaroid-img-wrap">
                 {% if plant.image_url %}
-                  <img src="{{ plant.image_url }}" alt="{{ plant.name }}" loading="lazy" />
+                  <img src="/uploads/{{ plant.image_url }}" alt="{{ plant.name }}" loading="lazy" />
                 {% else %}
                   <div class="polaroid-placeholder">
                     <svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg>
@@ -697,13 +697,12 @@
         </div>
       {% else %}
         <div class="fav-empty">
-          <div class="fav-empty-icon">🤍</div>
+          <div class="fav-empty-icon"></div>
           <p>Heart a plant in your collection to pin it here.</p>
         </div>
       {% endif %}
     </section>
 
-    <!-- ── IDENTIFY SECTION ── -->
     <!-- ── IDENTIFY SECTION ── -->
 <section class="dash-section" id="section-identify">
   <div class="welcome-strip">
@@ -713,6 +712,17 @@
       <p class="welcome-sub">Upload a clear photo for the best result.</p>
     </div>
   </div>
+
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+      <div style="background:{% if category == 'error' %}rgba(220,80,80,0.10){% else %}rgba(122,173,110,0.15){% endif %};border:1px solid {% if category == 'error' %}rgba(220,80,80,0.25){% else %}rgba(122,173,110,0.3){% endif %};border-radius:12px;padding:0.85rem 1.25rem;margin-bottom:1.25rem;font-size:0.875rem;color:{% if category == 'error' %}#c0392b{% else %}var(--accent-deep){% endif %};max-width:500px;">
+        {{ message }}
+      </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
 
   <form action="{{ url_for('ai.identify') }}" method="post" enctype="multipart/form-data" style="max-width:500px;">
     <div id="uploadZone" style="background:var(--bg-card);border:2px dashed var(--border-color);border-radius:16px;padding:4rem 2rem;text-align:center;cursor:pointer;transition:border-color 0.2s;"
@@ -739,7 +749,7 @@
            onchange="handleFileSelect(this)" />
 
     <!-- filename feedback + submit — hidden until file chosen -->
-    <div id="fileFeedback" style="display:none; margin-top:1.25rem; background:var(--bg-card); border:1px solid var(--border-light); border-radius:12px; padding:1rem 1.25rem; display:none; align-items:center; justify-content:space-between; gap:1rem;">
+    <div id="fileFeedback" style="display:none; margin-top:1.25rem; background:var(--bg-card); border:1px solid var(--border-light); border-radius:12px; padding:1rem 1.25rem; align-items:center; justify-content:space-between; gap:1rem;">
       <div style="display:flex;align-items:center;gap:10px;min-width:0;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
           <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
@@ -785,6 +795,7 @@
                 <th>Species</th>
                 <th>Family</th>
                 <th>Confidence</th>
+                <th>Date</th>
               </tr>
             </thead>
             <tbody>
@@ -792,7 +803,7 @@
               <tr>
                 <td>
                   {% if plant.image_url %}
-                    <img src="{{ plant.image_url }}" class="history-thumb" alt="{{ plant.name }}" />
+                    <img src="/uploads/{{ plant.image_url }}" class="history-thumb" alt="{{ plant.name }}" />
                   {% else %}
                     <div class="history-thumb-placeholder">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-soft)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg>
@@ -811,6 +822,7 @@
                     </span>
                   {% else %}—{% endif %}
                 </td>
+                <td style="font-size:0.8rem;color:var(--text-muted);">{{ plant.created_at.strftime('%d %b %Y') if plant.created_at else '—' }}</td>
               </tr>
               {% endfor %}
             </tbody>
@@ -920,7 +932,6 @@
   }
 
   /* ── file upload UX ── */
-/* ── file upload UX ── */
 function handleFileSelect(input) {
   const feedback = document.getElementById('fileFeedback');
   const nameDisplay = document.getElementById('fileNameDisplay');
@@ -950,16 +961,6 @@ function clearFile() {
     if (btn) showSection(sec, btn);
   }
 })();
-
-function clearFile() {
-  const input = document.getElementById('plantImageInput');
-  const feedback = document.getElementById('fileFeedback');
-  const submitBtn = document.getElementById('submitBtn');
-
-  input.value = '';
-  feedback.style.display = 'none';
-  submitBtn.style.display = 'none';
-}
 </script>
 </body>
 </html>
