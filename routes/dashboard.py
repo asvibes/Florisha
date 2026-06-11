@@ -88,15 +88,20 @@ def delete_plant(plant_id):
     if not plant:
         return jsonify({"error": "Not found"}), 404
 
-    # delete image from disk if it exists
+    # Only delete the image file if no journal entry still references it
     if plant.image_url:
-        upload_folder = current_app.config["UPLOAD_FOLDER"]
-        image_path    = os.path.join(upload_folder, os.path.basename(plant.image_url))
-        if os.path.exists(image_path):
-            try:
-                os.remove(image_path)
-            except Exception:
-                pass  # don't block deletion if file removal fails
+        still_referenced = JournalEntry.query.filter_by(
+            image_url=plant.image_url
+        ).first()
+
+        if not still_referenced:
+            upload_folder = current_app.config["UPLOAD_FOLDER"]
+            image_path    = os.path.join(upload_folder, os.path.basename(plant.image_url))
+            if os.path.exists(image_path):
+                try:
+                    os.remove(image_path)
+                except Exception:
+                    pass
 
     db.session.delete(plant)
     db.session.commit()

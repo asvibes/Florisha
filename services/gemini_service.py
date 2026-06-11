@@ -2,9 +2,9 @@
 gemini_service.py
 -----------------
 Handles all Gemini AI interactions for Flourisha.
-Uses google-generativeai SDK.
+Uses google-genai SDK (replaces deprecated google-generativeai).
 
-Install:  pip install google-generativeai
+Install:  pip install google-genai
 Env var:  GEMINI_API_KEY
 """
 
@@ -12,9 +12,11 @@ import os
 import json
 import logging
 import re
-import google.generativeai as genai
 from typing import Optional
 from dotenv import load_dotenv
+from google import genai
+from google.genai import types
+
 load_dotenv()
 logger = logging.getLogger(__name__)
 
@@ -22,14 +24,13 @@ logger = logging.getLogger(__name__)
 # Initialisation
 # ---------------------------------------------------------------------------
 
-_GEMINI_MODEL = "models/gemini-1.5-pro"   # fast + cheap; swap to gemini-1.5-pro for depth
+_GEMINI_MODEL = "gemini-2.0-flash"   # current stable model
 
-def _get_client() -> genai.GenerativeModel:
+def _get_client() -> genai.Client:
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         raise EnvironmentError("GEMINI_API_KEY is not set in environment variables.")
-    genai.configure(api_key=api_key)
-    return genai.GenerativeModel(_GEMINI_MODEL)
+    return genai.Client(api_key=api_key)
 
 
 # ---------------------------------------------------------------------------
@@ -124,8 +125,14 @@ def generate_plant_profile(
     )
 
     try:
-        model = _get_client()
-        response = model.generate_content(prompt)
+        client = _get_client()
+        response = client.models.generate_content(
+            model=_GEMINI_MODEL,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json"
+            ),
+        )
         raw = response.text.strip()
 
         # strip any accidental ```json ... ``` wrapping
