@@ -11,10 +11,11 @@ from routes.dashboard import dashboard_bp
 from routes.ai_routes import ai_bp
 from routes.auth_routes import auth_bp
 from routes.journal_routes import journal_bp           # ← new
-
+from routes.calendar_routes import calendar_bp   # missing import
+       
 app = Flask(__name__)
 app.config.from_object(Config)
-
+app.register_blueprint(calendar_bp)     # missing registration  
 db.init_app(app)
 migrate.init_app(app, db)
 bcrypt.init_app(app)
