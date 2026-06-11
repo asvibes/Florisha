@@ -6,9 +6,11 @@ from extensions import db, migrate, bcrypt, mail
 from config import Config
 from models.user import User
 from models.plant import Plant
+from models.journal_entry import JournalEntry          # ← new
 from routes.dashboard import dashboard_bp
 from routes.ai_routes import ai_bp
 from routes.auth_routes import auth_bp
+from routes.journal_routes import journal_bp           # ← new
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -21,6 +23,7 @@ mail.init_app(app)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(ai_bp)
 app.register_blueprint(auth_bp)
+app.register_blueprint(journal_bp)                     # ← new
 
 app.permanent_session_lifetime = timedelta(days=30)
 

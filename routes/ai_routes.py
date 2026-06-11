@@ -224,6 +224,12 @@ def identify():
 # Result — logged-in user
 # ─────────────────────────────────────────────
 
+# ─────────────────────────────────────────────
+# Result — logged-in user
+# ─────────────────────────────────────────────
+# Replace the existing result() function in routes/ai_routes.py with this.
+# The only change is passing plant_id=plant.id to the template.
+
 @ai_bp.route("/result/<int:plant_id>")
 def result(plant_id):
     plant_obj = Plant.query.get_or_404(plant_id)
@@ -233,16 +239,17 @@ def result(plant_id):
 
     # Re-fetch rich profile from cache for the result page
     from plant_knowledge import PlantKnowledge
-    knowledge = PlantKnowledge.get_by_scientific_name(plant_obj.scientific_name)
+    knowledge    = PlantKnowledge.get_by_scientific_name(plant_obj.scientific_name)
     rich_profile = knowledge.profile if knowledge else {}
 
     plant_dict = _build_plant_dict(plant_obj)
 
     return render_template(
         "result.html",
-        plant        = plant_dict,
-        result_data  = rich_profile,
-        is_guest     = False,
+        plant       = plant_dict,
+        result_data = rich_profile,
+        is_guest    = False,
+        plant_id    = plant_obj.id,          # ← pass this so journal card works
     )
 
 
