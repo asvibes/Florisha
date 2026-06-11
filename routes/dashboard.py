@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, redirect, url_for, session, request, jsonify
+from flask import Blueprint, render_template, redirect, url_for, session, jsonify, current_app
 from extensions import db
 from models.plant import Plant
-from flask import session
+import os
+
 dashboard_bp = Blueprint("dashboard", __name__)
 
 
@@ -11,7 +12,7 @@ def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if "user_id" not in session:
-            return redirect(url_for("login"))
+            return redirect(url_for("auth.login"))   # ← was url_for("login"), which doesn't exist
         return f(*args, **kwargs)
     return decorated
 
@@ -20,8 +21,8 @@ def login_required(f):
 @dashboard_bp.route("/dashboard")
 @login_required
 def dashboard():
-    
-    user_id = session["user_id"]
+
+    user_id    = session["user_id"]
     user_email = session["user_email"]
 
     # all plants belonging to this user, newest first
@@ -41,8 +42,11 @@ def dashboard():
     total_categories = len(collection)
     latest_find      = plants[0] if plants else None
 
-    # favourites
-    favourites = [p for p in plants if p.is_favourite]
+    # favourites — separate query so it's always accurate
+    favourites = (Plant.query
+                  .filter_by(user_id=user_id, is_favourite=True)
+                  .order_by(Plant.id.desc())
+                  .all())
 
     return render_template(
         "dashboard.html",
@@ -63,7 +67,6 @@ def toggle_favourite(plant_id):
     user_id = session["user_id"]
 
     plant = Plant.query.filter_by(id=plant_id, user_id=user_id).first()
-
     if not plant:
         return jsonify({"error": "Not found"}), 404
 
@@ -71,3 +74,29 @@ def toggle_favourite(plant_id):
     db.session.commit()
 
     return jsonify({"is_favourite": plant.is_favourite})
+
+
+# ──────────────────── DELETE PLANT ────────────
+@dashboard_bp.route("/plant/<int:plant_id>/delete", methods=["POST"])
+@login_required
+def delete_plant(plant_id):
+    user_id = session["user_id"]
+
+    plant = Plant.query.filter_by(id=plant_id, user_id=user_id).first()
+    if not plant:
+        return jsonify({"error": "Not found"}), 404
+
+    # delete image from disk if it exists
+    if plant.image_url:
+        upload_folder = current_app.config["UPLOAD_FOLDER"]
+        image_path    = os.path.join(upload_folder, os.path.basename(plant.image_url))
+        if os.path.exists(image_path):
+            try:
+                os.remove(image_path)
+            except Exception:
+                pass  # don't block deletion if file removal fails
+
+    db.session.delete(plant)
+    db.session.commit()
+
+    return jsonify({"success": True})
