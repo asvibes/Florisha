@@ -220,78 +220,41 @@
 
   /* ═══ POLAROID GRID ═══ */
   .polaroid-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 2rem 1.5rem; padding: 1rem 0 3rem; }
-
   .polaroid-wrap { perspective: 800px; }
-
-  /* ── polaroid card ── */
   .polaroid {
     background: var(--polaroid-bg);
     border: 1px solid var(--polaroid-border);
     border-radius: 3px;
-    padding: 10px 10px 0;          /* bottom padding removed — label handles it */
+    padding: 10px 10px 0;
     box-shadow: var(--shadow-card);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
     cursor: default;
   }
-  .polaroid:hover {
-    transform: translateY(-6px) rotate(0deg) !important;
-    box-shadow: var(--shadow-hover);
-  }
-  .polaroid-img-wrap {
-    width: 100%; aspect-ratio: 1/1; overflow: hidden;
-    background: var(--bg-surface); border-radius: 1px; position: relative;
-  }
+  .polaroid:hover { transform: translateY(-6px) rotate(0deg) !important; box-shadow: var(--shadow-hover); }
+  .polaroid-img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: var(--bg-surface); border-radius: 1px; position: relative; }
   .polaroid-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
   .polaroid:hover .polaroid-img-wrap img { transform: scale(1.04); }
   .polaroid-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--accent-wash); }
   .polaroid-placeholder svg { width: 40px; height: 40px; stroke: var(--accent-soft); fill: none; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
-
-  /* ── polaroid label strip — the white area below the photo ── */
-  .polaroid-label {
-    padding: 6px 4px 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 4px;
-    min-height: 48px;
-  }
-
-  /* delete button — left side, hidden until card hovered */
+  .polaroid-label { padding: 6px 4px 10px; display: flex; align-items: center; justify-content: space-between; gap: 4px; min-height: 48px; }
   .delete-btn {
-    flex-shrink: 0;
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    background: transparent;
-    border: none;
-    cursor: pointer;
+    flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+    background: transparent; border: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    opacity: 0;
-    transform: scale(0.8);
+    opacity: 0; transform: scale(0.8);
     transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s;
     pointer-events: none;
   }
-  .polaroid:hover .delete-btn {
-    opacity: 1;
-    transform: scale(1);
-    pointer-events: auto;
-  }
+  .polaroid:hover .delete-btn { opacity: 1; transform: scale(1); pointer-events: auto; }
   .delete-btn:hover { background: var(--delete-bg); }
   .delete-btn svg { width: 13px; height: 13px; stroke: var(--delete-color); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-  /* name + date — centre */
   .polaroid-text { flex: 1; text-align: center; min-width: 0; }
   .polaroid-name { font-family: 'Caveat', cursive; font-size: 1rem; font-weight: 500; color: var(--text-primary); line-height: 1.2; display: block; margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .polaroid-date { font-size: 0.68rem; font-weight: 300; color: var(--text-muted); display: block; }
-
-  /* heart button — right side, always visible */
   .heart-btn {
-    flex-shrink: 0;
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    background: transparent;
-    border: none;
-    cursor: pointer;
+    flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+    background: transparent; border: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: transform 0.2s, background 0.2s;
   }
@@ -299,11 +262,8 @@
   .heart-btn svg { width: 14px; height: 14px; transition: fill 0.2s, stroke 0.2s; }
   .heart-btn.favourited svg { fill: #e05555; stroke: #e05555; }
   .heart-btn:not(.favourited) svg { fill: none; stroke: var(--text-muted); }
-
   @keyframes heartPop { 0%{transform:scale(1)} 40%{transform:scale(1.35)} 70%{transform:scale(0.9)} 100%{transform:scale(1)} }
   .heart-pop { animation: heartPop 0.35s ease forwards; }
-
-  /* card delete animation */
   @keyframes cardFadeOut { 0%{opacity:1;transform:scale(1)} 100%{opacity:0;transform:scale(0.88)} }
   .card-removing { animation: cardFadeOut 0.25s ease forwards; pointer-events: none; }
 
@@ -327,14 +287,7 @@
   .conf-high { background: rgba(122,173,110,0.15); color: var(--accent-deep); }
   .conf-mid  { background: rgba(224,154,48,0.15);  color: #a06820; }
   .conf-low  { background: rgba(220,80,80,0.10);   color: #c0392b; }
-
-  /* delete button in history table */
-  .history-delete-btn {
-    background: none; border: none; cursor: pointer;
-    color: var(--text-muted); padding: 4px 6px; border-radius: 6px;
-    transition: color 0.2s, background 0.2s;
-    display: inline-flex; align-items: center;
-  }
+  .history-delete-btn { background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 4px 6px; border-radius: 6px; transition: color 0.2s, background 0.2s; display: inline-flex; align-items: center; }
   .history-delete-btn:hover { color: var(--delete-color); background: var(--delete-bg); }
   .history-delete-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
@@ -359,39 +312,140 @@
   }
   .confirm-overlay.visible { opacity: 1; pointer-events: auto; }
   .confirm-dialog {
-    background: var(--bg-card);
-    border: 1px solid var(--border-light);
-    border-radius: 16px;
-    padding: 2rem;
-    max-width: 360px; width: 90%;
+    background: var(--bg-card); border: 1px solid var(--border-light);
+    border-radius: 16px; padding: 2rem; max-width: 360px; width: 90%;
     box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-    transform: scale(0.95);
-    transition: transform 0.2s ease;
+    transform: scale(0.95); transition: transform 0.2s ease;
   }
   .confirm-overlay.visible .confirm-dialog { transform: scale(1); }
-  .confirm-dialog-icon {
-    width: 44px; height: 44px; border-radius: 12px;
-    background: var(--delete-bg);
-    display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem;
-  }
+  .confirm-dialog-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--delete-bg); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; }
   .confirm-dialog-icon svg { width: 22px; height: 22px; stroke: var(--delete-color); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .confirm-dialog-title { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
   .confirm-dialog-body { font-size: 0.875rem; font-weight: 300; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.75rem; }
   .confirm-dialog-actions { display: flex; gap: 0.75rem; }
-  .btn-cancel {
-    flex: 1; padding: 0.65rem 1rem; border-radius: 10px;
+  .btn-cancel { flex: 1; padding: 0.65rem 1rem; border-radius: 10px; border: 1px solid var(--border-color); background: transparent; font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 400; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; }
+  .btn-cancel:hover { border-color: var(--accent-primary); color: var(--text-primary); background: var(--accent-wash); }
+  .btn-delete-confirm { flex: 1; padding: 0.65rem 1rem; border-radius: 10px; border: none; background: var(--delete-color); font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500; color: #fff; cursor: pointer; transition: opacity 0.2s; }
+  .btn-delete-confirm:hover { opacity: 0.88; }
+
+  /* ═══ JOURNAL ═══ */
+  .journal-shell {
+    display: grid; grid-template-columns: 300px 1fr; gap: 0;
+    border: 1px solid var(--border-light); border-radius: 16px; overflow: hidden;
+    background: var(--bg-card); box-shadow: var(--shadow-card); min-height: 520px;
+  }
+  .journal-list { border-right: 1px solid var(--border-light); overflow-y: auto; max-height: 680px; }
+  .journal-list-item { display: flex; align-items: center; gap: .875rem; padding: 1rem 1.1rem; border-bottom: 1px solid var(--border-light); cursor: pointer; transition: background .15s; }
+  .journal-list-item:last-child { border-bottom: none; }
+  .journal-list-item:hover { background: var(--accent-wash); }
+  .journal-list-item.selected { background: var(--sidebar-active); border-left: 3px solid var(--accent-primary); padding-left: calc(1.1rem - 3px); }
+  .jli-img-wrap { width: 48px; height: 48px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: var(--bg-surface); }
+  .jli-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .jli-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  .jli-text { flex: 1; min-width: 0; }
+  .jli-title { font-size: .875rem; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: .15rem; }
+  .jli-plant { font-size: .75rem; font-weight: 300; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .jli-date  { font-size: .68rem; color: var(--text-muted); margin-top: .2rem; }
+  .journal-detail { padding: 2rem; overflow-y: auto; max-height: 680px; }
+  .journal-detail-empty { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem; color: var(--text-muted); font-size: .875rem; font-weight: 300; min-height: 300px; }
+  .journal-detail-header { display: flex; align-items: flex-start; gap: 1.25rem; }
+  .journal-detail-img { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border-light); }
+  .journal-detail-meta { flex: 1; }
+  .journal-detail-date  { font-size: .72rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: .35rem; }
+  .journal-detail-plant { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 500; color: var(--text-primary); line-height: 1.15; }
+  .journal-detail-sci   { font-family: 'Cormorant Garamond', serif; font-size: .95rem; font-style: italic; color: var(--text-muted); margin-top: .2rem; }
+  .journal-detail-entry-title { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 500; color: var(--text-primary); line-height: 1.2; }
+  .journal-detail-note { font-size: .9rem; font-weight: 300; color: var(--text-secondary); line-height: 1.8; white-space: pre-wrap; }
+  .journal-detail-actions { display: flex; gap: .75rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-light); }
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 0.6rem 1.1rem; border-radius: 10px;
     border: 1px solid var(--border-color); background: transparent;
-    font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 400;
+    font-family: 'DM Sans', sans-serif; font-size: .875rem; font-weight: 400;
     color: var(--text-secondary); cursor: pointer; transition: all 0.2s;
   }
-  .btn-cancel:hover { border-color: var(--accent-primary); color: var(--text-primary); background: var(--accent-wash); }
-  .btn-delete-confirm {
-    flex: 1; padding: 0.65rem 1rem; border-radius: 10px;
-    border: none; background: var(--delete-color);
-    font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500;
-    color: #fff; cursor: pointer; transition: opacity 0.2s;
+  .btn-outline:hover { border-color: var(--accent-primary); color: var(--text-primary); background: var(--accent-wash); }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 0.65rem 1.25rem; border-radius: 10px;
+    border: none; background: var(--accent-primary);
+    font-family: 'DM Sans', sans-serif; font-size: .875rem; font-weight: 500;
+    color: var(--text-on-accent); cursor: pointer; transition: background 0.2s;
   }
-  .btn-delete-confirm:hover { opacity: 0.88; }
+  .btn-primary:hover { background: var(--accent-deep); }
+
+  /* ═══ CALENDAR ═══ */
+  .cal-shell {
+    background: var(--bg-card); border: 1px solid var(--border-light);
+    border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-card); max-width: 860px;
+  }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-light); }
+  .cal-nav-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid var(--border-color); background: transparent; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary); transition: background 0.2s, border-color 0.2s, color 0.2s; flex-shrink: 0;
+  }
+  .cal-nav-btn:hover { background: var(--accent-wash); border-color: var(--accent-primary); color: var(--accent-deep); }
+  .cal-nav-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .cal-month-label { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 500; color: var(--text-primary); text-align: center; flex: 1; }
+  .cal-month-label span { font-size: 0.85rem; font-weight: 300; color: var(--text-muted); margin-left: 0.4rem; font-family: 'DM Sans', sans-serif; }
+  .cal-dow-row { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 1px solid var(--border-light); background: var(--bg-surface); }
+  .cal-dow { text-align: center; padding: 0.6rem 0; font-size: 0.68rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; }
+  .cal-cell {
+    min-height: 90px; border-right: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);
+    padding: 6px; position: relative; cursor: default; transition: background 0.15s;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .cal-cell:nth-child(7n) { border-right: none; }
+  .cal-cell.cal-cell--empty { background: var(--bg-surface); opacity: 0.5; }
+  .cal-cell.cal-cell--today { background: var(--accent-wash); }
+  .cal-cell.cal-cell--has-plants { cursor: pointer; }
+  .cal-cell.cal-cell--has-plants:hover { background: var(--sidebar-active); }
+  .cal-day-num { font-size: 0.72rem; font-weight: 500; color: var(--text-muted); line-height: 1; align-self: flex-start; }
+  .cal-cell--today .cal-day-num {
+    background: var(--accent-primary); color: var(--text-on-accent);
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 0.68rem;
+  }
+  .cal-thumb-wrap { position: relative; flex: 1; min-height: 0; border-radius: 6px; overflow: hidden; background: var(--bg-surface); }
+  .cal-thumb { width: 100%; height: 100%; min-height: 52px; object-fit: cover; display: block; border-radius: 6px; }
+  .cal-thumb-placeholder { width: 100%; min-height: 52px; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--accent-wash); border-radius: 6px; }
+  .cal-thumb-placeholder svg { width: 20px; height: 20px; stroke: var(--accent-soft); fill: none; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+  .cal-badge { position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.55); color: #fff; font-size: 0.6rem; font-weight: 600; padding: 1px 5px; border-radius: 100px; line-height: 1.6; pointer-events: none; }
+  .cal-journal-dot { position: absolute; top: 4px; right: 4px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-primary); border: 1.5px solid var(--bg-card); pointer-events: none; }
+  .cal-detail-panel { border-top: 1px solid var(--border-light); padding: 1.5rem; display: none; animation: calPanelIn 0.2s ease; }
+  .cal-detail-panel.visible { display: block; }
+  @keyframes calPanelIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .cal-detail-date { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; }
+  .cal-detail-scroll { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.5rem; }
+  .cal-plant-card {
+    flex-shrink: 0; width: 130px; background: var(--bg-surface);
+    border: 1px solid var(--border-light); border-radius: 12px; overflow: hidden;
+    cursor: pointer; transition: box-shadow 0.2s, border-color 0.2s; position: relative;
+  }
+  .cal-plant-card:hover { box-shadow: var(--shadow-hover); border-color: var(--accent-soft); }
+  .cal-plant-card.is-cover { border-color: var(--accent-primary); box-shadow: 0 0 0 2px var(--accent-primary); }
+  .cal-plant-card-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; background: var(--accent-wash); }
+  .cal-plant-card-img-placeholder { width: 100%; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; background: var(--accent-wash); }
+  .cal-plant-card-body { padding: 0.5rem 0.6rem 0.6rem; }
+  .cal-plant-card-name { font-size: 0.78rem; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+  .cal-plant-card-sub { font-size: 0.65rem; font-weight: 300; color: var(--text-muted); }
+  .cal-cover-badge { position: absolute; top: 6px; left: 6px; background: var(--accent-primary); color: var(--text-on-accent); font-size: 0.58rem; font-weight: 600; padding: 2px 6px; border-radius: 100px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .cal-journal-badge { position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; border-radius: 50%; background: var(--accent-primary); display: flex; align-items: center; justify-content: center; }
+  .cal-journal-badge svg { width: 10px; height: 10px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .btn-set-cover {
+    display: block; width: 100%; padding: 0.35rem 0;
+    background: none; border: none; border-top: 1px solid var(--border-light);
+    font-family: 'DM Sans', sans-serif; font-size: 0.68rem; font-weight: 500;
+    color: var(--text-muted); cursor: pointer; text-align: center; transition: background 0.15s, color 0.15s;
+  }
+  .btn-set-cover:hover { background: var(--accent-wash); color: var(--accent-deep); }
+  .cal-plant-card.is-cover .btn-set-cover { color: var(--accent-primary); background: var(--accent-wash); }
+  .cal-detail-close { float: right; background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 2px 4px; border-radius: 6px; transition: background 0.15s, color 0.15s; margin-top: -2px; }
+  .cal-detail-close:hover { background: var(--accent-wash); color: var(--text-primary); }
+  .cal-detail-close svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
   /* ═══ RESPONSIVE ═══ */
   @media (max-width: 768px) {
@@ -403,6 +457,12 @@
     .main-inner { padding: 1.5rem 1rem; }
     .stats-row { grid-template-columns: 1fr; }
     .polaroid-grid { grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+    .journal-shell { grid-template-columns: 1fr; }
+    .journal-list { border-right: none; border-bottom: 1px solid var(--border-light); max-height: 280px; }
+    .journal-detail { max-height: none; }
+    .cal-cell { min-height: 60px; }
+    .cal-thumb { min-height: 36px; }
+    .cal-thumb-placeholder { min-height: 36px; }
   }
 </style>
 </head>
@@ -465,6 +525,14 @@
       <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       Favourites
     </button>
+    <button class="sidebar-link" data-section="journal" onclick="showSection('journal', this)">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Journal
+    </button>
+    <button class="sidebar-link" data-section="calendar" onclick="showSection('calendar', this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Calendar
+    </button>
     <div class="sidebar-section-label">Tools</div>
     <a href="#" class="sidebar-link" onclick="showSection('identify', this); return false;" data-section="identify">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -513,7 +581,6 @@
           Identify a plant
         </a>
       </div>
-
       <div class="stats-row">
         <div class="stat-card">
           <div class="stat-label">Total identified</div>
@@ -535,7 +602,6 @@
           </div>
         </div>
       </div>
-
       {% if plants %}
         <div class="collection-header">
           <h2 class="collection-title">Browse by category</h2>
@@ -548,7 +614,6 @@
             </div>
           </div>
         </div>
-
         <div class="polaroid-grid" id="polaroidGrid">
           {% for plant in plants %}
           <div class="polaroid-wrap" data-cat="{{ plant.family or 'Uncategorised' }}" id="wrap-{{ plant.id }}">
@@ -562,38 +627,24 @@
                   </div>
                 {% endif %}
               </div>
-
-              <!-- label strip: delete | name+date | heart -->
               <div class="polaroid-label">
-                <!-- delete — left, hidden until hover -->
-                <button class="delete-btn"
-                        onclick="confirmDelete({{ plant.id }}, '{{ plant.name or plant.scientific_name or 'this plant' }}')"
-                        aria-label="Delete plant"
-                        title="Remove from collection">
+                <button class="delete-btn" onclick="confirmDelete({{ plant.id }}, '{{ plant.name or plant.scientific_name or 'this plant' }}')" aria-label="Delete plant" title="Remove from collection">
                   <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
                 </button>
-
-                <!-- name + date — centre -->
                 <div class="polaroid-text">
                   <span class="polaroid-name">{{ plant.name or plant.scientific_name or 'Unknown' }}</span>
                   <span class="polaroid-date">{{ plant.created_at.strftime('%d %b %Y') if plant.created_at else '' }}</span>
                 </div>
-
-                <!-- heart — right, always visible -->
-                <button class="heart-btn {% if plant.is_favourite %}favourited{% endif %}"
-                        onclick="toggleHeart({{ plant.id }}, this)"
-                        aria-label="Favourite">
+                <button class="heart-btn {% if plant.is_favourite %}favourited{% endif %}" onclick="toggleHeart({{ plant.id }}, this)" aria-label="Favourite">
                   <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                   </svg>
                 </button>
               </div>
-
             </div>
           </div>
           {% endfor %}
         </div>
-
       {% else %}
         <div class="empty-state">
           <svg class="empty-illustration" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -631,7 +682,6 @@
           <p class="welcome-sub">Plants you've hearted from your collection.</p>
         </div>
       </div>
-
       <div class="polaroid-grid" id="favGrid">
         {% for plant in favourites %}
         <div class="polaroid-wrap" id="fav-wrap-{{ plant.id }}">
@@ -646,18 +696,14 @@
               {% endif %}
             </div>
             <div class="polaroid-label">
-              <button class="delete-btn"
-                      onclick="confirmDelete({{ plant.id }}, '{{ plant.name or plant.scientific_name or 'this plant' }}')"
-                      aria-label="Delete plant" title="Remove from collection">
+              <button class="delete-btn" onclick="confirmDelete({{ plant.id }}, '{{ plant.name or plant.scientific_name or 'this plant' }}')" aria-label="Delete plant" title="Remove from collection">
                 <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
               </button>
               <div class="polaroid-text">
                 <span class="polaroid-name">{{ plant.name or plant.scientific_name or 'Unknown' }}</span>
                 <span class="polaroid-date">{{ plant.family or '' }}</span>
               </div>
-              <button class="heart-btn favourited"
-                      onclick="toggleHeart({{ plant.id }}, this)"
-                      aria-label="Unfavourite">
+              <button class="heart-btn favourited" onclick="toggleHeart({{ plant.id }}, this)" aria-label="Unfavourite">
                 <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                 </svg>
@@ -667,7 +713,6 @@
         </div>
         {% endfor %}
       </div>
-
       {% if not favourites %}
         <div class="fav-empty" id="favEmptyState">
           <div class="fav-empty-icon"></div>
@@ -676,416 +721,158 @@
       {% endif %}
     </section>
 
-<!-- ═══════════════════════════════════════════════════════════════════════
-     JOURNAL SECTION
-     Paste this block inside dashboard.html alongside the other dash-sections.
-     Also add the CSS block and the sidebar link shown at the bottom of this file.
-════════════════════════════════════════════════════════════════════════ -->
-
-<!-- ── JOURNAL SECTION ── -->
-<section class="dash-section" id="section-journal">
-  <div class="welcome-strip">
-    <div class="welcome-text-block">
-      <div class="welcome-greeting">Your memories</div>
-      <h1 class="welcome-title">Plant <em>journal</em></h1>
-      <p class="welcome-sub">Moments you chose to remember.</p>
-    </div>
-  </div>
-
-  {% if journal_entries %}
-  <div class="journal-shell">
-
-    <!-- LEFT — entry list -->
-    <div class="journal-list" id="journalList">
-      {% for entry in journal_entries %}
-      <div class="journal-list-item" id="jli-{{ entry.id }}" onclick="selectEntry({{ entry.id }}, this)">
-        <div class="jli-img-wrap">
-          {% if entry.image_url %}
-            <img src="/uploads/{{ entry.image_url }}" alt="{{ entry.common_name }}" />
-          {% else %}
-            <div class="jli-img-placeholder">
-              <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-soft)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12M12 12C12 7 8 3 3 3c0 5 3.5 8.5 9 9zM12 12C12 7 16 3 21 3c0 5-3.5 8.5-9 9z"/></svg>
-            </div>
-          {% endif %}
-        </div>
-        <div class="jli-text">
-          <div class="jli-title">{{ entry.title or entry.common_name or entry.scientific_name or 'Untitled' }}</div>
-          <div class="jli-plant">{{ entry.common_name or entry.scientific_name or '' }}</div>
-          <div class="jli-date">{{ entry.created_at.strftime('%d %b %Y') }}</div>
+    <!-- ── JOURNAL ── -->
+    <section class="dash-section" id="section-journal">
+      <div class="welcome-strip">
+        <div class="welcome-text-block">
+          <div class="welcome-greeting">Your memories</div>
+          <h1 class="welcome-title">Plant <em>journal</em></h1>
+          <p class="welcome-sub">Moments you chose to remember.</p>
         </div>
       </div>
-      {% endfor %}
-    </div>
-
-    <!-- RIGHT — full entry view -->
-    <div class="journal-detail" id="journalDetail">
-
-      <!-- Empty state shown before any entry selected -->
-      <div class="journal-detail-empty" id="journalDetailEmpty">
-        <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="var(--accent-soft)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14 2 14 8 20 8"/>
-          <line x1="16" y1="13" x2="8" y2="13"/>
-          <line x1="16" y1="17" x2="8" y2="17"/>
-          <polyline points="10 9 9 9 8 9"/>
+      {% if journal_entries %}
+      <div class="journal-shell">
+        <div class="journal-list" id="journalList">
+          {% for entry in journal_entries %}
+          <div class="journal-list-item" id="jli-{{ entry.id }}" onclick="selectEntry({{ entry.id }}, this)">
+            <div class="jli-img-wrap">
+              {% if entry.image_url %}
+                <img src="/uploads/{{ entry.image_url }}" alt="{{ entry.common_name }}" />
+              {% else %}
+                <div class="jli-img-placeholder">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-soft)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12M12 12C12 7 8 3 3 3c0 5 3.5 8.5 9 9zM12 12C12 7 16 3 21 3c0 5-3.5 8.5-9 9z"/></svg>
+                </div>
+              {% endif %}
+            </div>
+            <div class="jli-text">
+              <div class="jli-title">{{ entry.title or entry.common_name or entry.scientific_name or 'Untitled' }}</div>
+              <div class="jli-plant">{{ entry.common_name or entry.scientific_name or '' }}</div>
+              <div class="jli-date">{{ entry.created_at.strftime('%d %b %Y') }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="journal-detail" id="journalDetail">
+          <div class="journal-detail-empty" id="journalDetailEmpty">
+            <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="var(--accent-soft)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+            <p>Select an entry to read it</p>
+          </div>
+          <div class="journal-detail-content" id="journalDetailContent" style="display:none;">
+            <div class="journal-detail-header">
+              <img id="jdImg" src="" alt="" class="journal-detail-img" />
+              <div class="journal-detail-meta">
+                <div class="journal-detail-date" id="jdDate"></div>
+                <div class="journal-detail-plant" id="jdPlant"></div>
+                <div class="journal-detail-sci" id="jdSci"></div>
+              </div>
+            </div>
+            <div id="jdTitleWrap" style="margin-top:1.5rem;">
+              <div class="journal-detail-entry-title" id="jdTitle"></div>
+            </div>
+            <div id="jdNoteWrap" style="margin-top:1rem;">
+              <p class="journal-detail-note" id="jdNote"></p>
+            </div>
+            <div id="jdNoContent" style="display:none;margin-top:1.5rem;">
+              <p style="font-size:.875rem;font-weight:300;color:var(--text-muted);font-style:italic;">No title or note written for this entry.</p>
+            </div>
+            <div class="journal-detail-actions" id="jdActions">
+              <button class="btn-outline" onclick="openEditMode()" style="font-size:.85rem;padding:.6rem 1.1rem;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Edit
+              </button>
+              <button class="btn-outline" onclick="confirmDeleteEntry()" style="font-size:.85rem;padding:.6rem 1.1rem;color:var(--delete-color);border-color:var(--delete-color);">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                Delete
+              </button>
+            </div>
+            <div id="jdEditForm" style="display:none;margin-top:1.5rem;">
+              <div style="display:flex;flex-direction:column;gap:1rem;">
+                <div>
+                  <label style="font-size:.72rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:.4rem;">Title</label>
+                  <input id="jdEditTitle" type="text" maxlength="200"
+                    style="width:100%;padding:.7rem 1rem;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.875rem;color:var(--text-primary);outline:none;transition:border-color .2s;"
+                    onfocus="this.style.borderColor='var(--accent-primary)'"
+                    onblur="this.style.borderColor='var(--border-color)'" />
+                </div>
+                <div>
+                  <label style="font-size:.72rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:.4rem;">Note</label>
+                  <textarea id="jdEditNote" rows="5" maxlength="2000"
+                    style="width:100%;padding:.7rem 1rem;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.875rem;color:var(--text-primary);outline:none;resize:vertical;transition:border-color .2s;line-height:1.65;"
+                    onfocus="this.style.borderColor='var(--accent-primary)'"
+                    onblur="this.style.borderColor='var(--border-color)'"></textarea>
+                </div>
+                <div style="display:flex;gap:.75rem;">
+                  <button class="btn-primary" onclick="saveEdit()" style="font-size:.875rem;padding:.65rem 1.25rem;">Save changes</button>
+                  <button class="btn-outline" onclick="closeEditMode()" style="font-size:.875rem;padding:.65rem 1.25rem;">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <svg class="empty-illustration" viewBox="0 0 140 140" fill="none">
+          <ellipse cx="70" cy="115" rx="30" ry="8" fill="var(--accent-wash)"/>
+          <rect x="35" y="30" width="70" height="85" rx="6" fill="var(--bg-card)" stroke="var(--border-light)" stroke-width="1.5"/>
+          <line x1="50" y1="55" x2="90" y2="55" stroke="var(--accent-soft)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="50" y1="68" x2="85" y2="68" stroke="var(--accent-soft)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="50" y1="81" x2="80" y2="81" stroke="var(--accent-soft)" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="70" cy="38" r="12" fill="var(--accent-wash)" stroke="var(--accent-soft)" stroke-width="1.2"/>
+          <path d="M70 33 Q65 36 66 40 Q70 38 74 40 Q75 36 70 33z" fill="var(--accent-primary)" opacity=".7"/>
         </svg>
-        <p>Select an entry to read it</p>
+        <h2 class="empty-title">Your journal is <em>empty</em></h2>
+        <p class="empty-sub">After identifying a plant, look for "Want to remember this moment?" on the result page.</p>
       </div>
+      {% endif %}
+    </section>
 
-      <!-- Entry content — populated by JS -->
-      <div class="journal-detail-content" id="journalDetailContent" style="display:none;">
-
-        <div class="journal-detail-header">
-          <img id="jdImg" src="" alt="" class="journal-detail-img" />
-          <div class="journal-detail-meta">
-            <div class="journal-detail-date" id="jdDate"></div>
-            <div class="journal-detail-plant" id="jdPlant"></div>
-            <div class="journal-detail-sci" id="jdSci"></div>
-          </div>
+    <!-- ── CALENDAR ── -->
+    <section class="dash-section" id="section-calendar">
+      <div class="welcome-strip">
+        <div class="welcome-text-block">
+          <div class="welcome-greeting">Your botanical diary</div>
+          <h1 class="welcome-title">Plant <em>calendar</em></h1>
+          <p class="welcome-sub">Every day you found something worth keeping.</p>
         </div>
-
-        <!-- Title -->
-        <div id="jdTitleWrap" style="margin-top:1.5rem;">
-          <div class="journal-detail-entry-title" id="jdTitle"></div>
-        </div>
-
-        <!-- Note -->
-        <div id="jdNoteWrap" style="margin-top:1rem;">
-          <p class="journal-detail-note" id="jdNote"></p>
-        </div>
-
-        <!-- No content fallback -->
-        <div id="jdNoContent" style="display:none;margin-top:1.5rem;">
-          <p style="font-size:.875rem;font-weight:300;color:var(--text-muted);font-style:italic;">No title or note written for this entry.</p>
-        </div>
-
-        <!-- Edit / Delete actions -->
-        <div class="journal-detail-actions" id="jdActions">
-          <button class="btn-outline" onclick="openEditMode()" style="font-size:.85rem;padding:.6rem 1.1rem;">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            Edit
+      </div>
+      <div class="cal-shell" id="calShell">
+        <div class="cal-header">
+          <button class="cal-nav-btn" id="calPrevBtn" onclick="calNavigate(-1)" aria-label="Previous month">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
-          <button class="btn-outline" onclick="confirmDeleteEntry()" style="font-size:.85rem;padding:.6rem 1.1rem;color:var(--delete-color);border-color:var(--delete-color);">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-            Delete
+          <div class="cal-month-label" id="calMonthLabel"></div>
+          <button class="cal-nav-btn" id="calNextBtn" onclick="calNavigate(1)" aria-label="Next month">
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
         </div>
-
-        <!-- Edit form — hidden until edit clicked -->
-        <div id="jdEditForm" style="display:none;margin-top:1.5rem;">
-          <div style="display:flex;flex-direction:column;gap:1rem;">
-            <div>
-              <label style="font-size:.72rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:.4rem;">Title</label>
-              <input id="jdEditTitle" type="text" maxlength="200"
-                style="width:100%;padding:.7rem 1rem;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.875rem;color:var(--text-primary);outline:none;transition:border-color .2s;"
-                onfocus="this.style.borderColor='var(--accent-primary)'"
-                onblur="this.style.borderColor='var(--border-color)'" />
-            </div>
-            <div>
-              <label style="font-size:.72rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:.4rem;">Note</label>
-              <textarea id="jdEditNote" rows="5" maxlength="2000"
-                style="width:100%;padding:.7rem 1rem;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.875rem;color:var(--text-primary);outline:none;resize:vertical;transition:border-color .2s;line-height:1.65;"
-                onfocus="this.style.borderColor='var(--accent-primary)'"
-                onblur="this.style.borderColor='var(--border-color)'"></textarea>
-            </div>
-            <div style="display:flex;gap:.75rem;">
-              <button class="btn-primary" onclick="saveEdit()" style="font-size:.875rem;padding:.65rem 1.25rem;">Save changes</button>
-              <button class="btn-outline" onclick="closeEditMode()" style="font-size:.875rem;padding:.65rem 1.25rem;">Cancel</button>
-            </div>
+        <div class="cal-dow-row">
+          <div class="cal-dow">Sun</div>
+          <div class="cal-dow">Mon</div>
+          <div class="cal-dow">Tue</div>
+          <div class="cal-dow">Wed</div>
+          <div class="cal-dow">Thu</div>
+          <div class="cal-dow">Fri</div>
+          <div class="cal-dow">Sat</div>
+        </div>
+        <div class="cal-grid" id="calGrid">
+          <div style="grid-column:1/-1;padding:3rem;text-align:center;color:var(--text-muted);font-size:.875rem;font-weight:300;">
+            Loading your calendar…
           </div>
         </div>
-
+        <div class="cal-detail-panel" id="calDetailPanel">
+          <div class="cal-detail-date" id="calDetailDate"></div>
+          <div class="cal-detail-scroll" id="calDetailScroll"></div>
+        </div>
       </div>
-    </div>
+    </section>
 
-  </div>
-
-  {% else %}
-  <!-- Empty state -->
-  <div class="empty-state">
-    <svg class="empty-illustration" viewBox="0 0 140 140" fill="none">
-      <ellipse cx="70" cy="115" rx="30" ry="8" fill="var(--accent-wash)"/>
-      <rect x="35" y="30" width="70" height="85" rx="6" fill="var(--bg-card)" stroke="var(--border-light)" stroke-width="1.5"/>
-      <line x1="50" y1="55" x2="90" y2="55" stroke="var(--accent-soft)" stroke-width="2" stroke-linecap="round"/>
-      <line x1="50" y1="68" x2="85" y2="68" stroke="var(--accent-soft)" stroke-width="2" stroke-linecap="round"/>
-      <line x1="50" y1="81" x2="80" y2="81" stroke="var(--accent-soft)" stroke-width="2" stroke-linecap="round"/>
-      <circle cx="70" cy="38" r="12" fill="var(--accent-wash)" stroke="var(--accent-soft)" stroke-width="1.2"/>
-      <path d="M70 33 Q65 36 66 40 Q70 38 74 40 Q75 36 70 33z" fill="var(--accent-primary)" opacity=".7"/>
-    </svg>
-    <h2 class="empty-title">Your journal is <em>empty</em></h2>
-    <p class="empty-sub">After identifying a plant, look for "Want to remember this moment?" on the result page.</p>
-  </div>
-  {% endif %}
-
-</section>
-
-
-<!-- ═══════════════════════════════════════════════════════════════════════
-     CSS — add inside the <style> block in dashboard.html
-════════════════════════════════════════════════════════════════════════ -->
-<style>
-/* ── Journal two-panel shell ── */
-.journal-shell {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 0;
-  border: 1px solid var(--border-light);
-  border-radius: 16px;
-  overflow: hidden;
-  background: var(--bg-card);
-  box-shadow: var(--shadow-card);
-  min-height: 520px;
-}
-
-/* ── Left panel ── */
-.journal-list {
-  border-right: 1px solid var(--border-light);
-  overflow-y: auto;
-  max-height: 680px;
-}
-.journal-list-item {
-  display: flex;
-  align-items: center;
-  gap: .875rem;
-  padding: 1rem 1.1rem;
-  border-bottom: 1px solid var(--border-light);
-  cursor: pointer;
-  transition: background .15s;
-}
-.journal-list-item:last-child { border-bottom: none; }
-.journal-list-item:hover { background: var(--accent-wash); }
-.journal-list-item.selected { background: var(--sidebar-active); border-left: 3px solid var(--accent-primary); padding-left: calc(1.1rem - 3px); }
-
-.jli-img-wrap {
-  width: 48px; height: 48px; flex-shrink: 0;
-  border-radius: 8px; overflow: hidden;
-  background: var(--bg-surface);
-}
-.jli-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.jli-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-
-.jli-text { flex: 1; min-width: 0; }
-.jli-title { font-size: .875rem; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: .15rem; }
-.jli-plant { font-size: .75rem; font-weight: 300; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.jli-date  { font-size: .68rem; color: var(--text-muted); margin-top: .2rem; }
-
-/* ── Right panel ── */
-.journal-detail {
-  padding: 2rem;
-  overflow-y: auto;
-  max-height: 680px;
-}
-.journal-detail-empty {
-  height: 100%;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: .75rem;
-  color: var(--text-muted);
-  font-size: .875rem; font-weight: 300;
-  min-height: 300px;
-}
-
-/* entry header */
-.journal-detail-header {
-  display: flex; align-items: flex-start; gap: 1.25rem;
-}
-.journal-detail-img {
-  width: 80px; height: 80px; border-radius: 10px;
-  object-fit: cover; flex-shrink: 0;
-  border: 1px solid var(--border-light);
-}
-.journal-detail-meta { flex: 1; }
-.journal-detail-date  { font-size: .72rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: .35rem; }
-.journal-detail-plant { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 500; color: var(--text-primary); line-height: 1.15; }
-.journal-detail-sci   { font-family: 'Cormorant Garamond', serif; font-size: .95rem; font-style: italic; color: var(--text-muted); margin-top: .2rem; }
-
-/* entry body */
-.journal-detail-entry-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.6rem; font-weight: 500;
-  color: var(--text-primary); line-height: 1.2;
-}
-.journal-detail-note {
-  font-size: .9rem; font-weight: 300;
-  color: var(--text-secondary); line-height: 1.8;
-  white-space: pre-wrap;
-}
-
-/* edit/delete row */
-.journal-detail-actions {
-  display: flex; gap: .75rem;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border-light);
-}
-
-/* ── Responsive ── */
-@media (max-width: 768px) {
-  .journal-shell {
-    grid-template-columns: 1fr;
-  }
-  .journal-list {
-    border-right: none;
-    border-bottom: 1px solid var(--border-light);
-    max-height: 280px;
-  }
-  .journal-detail { max-height: none; }
-}
-</style>
-
-
-<!-- ═══════════════════════════════════════════════════════════════════════
-     SIDEBAR LINK — add inside the sidebar <nav> under My Garden section
-     (after the Favourites link)
-════════════════════════════════════════════════════════════════════════ -->
-
-<button class="sidebar-link" data-section="journal" onclick="showSection('journal', this)">
-  <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-  Journal
-</button>
-
-
-
-<!-- ═══════════════════════════════════════════════════════════════════════
-     JAVASCRIPT — add inside the <script> block in dashboard.html
-════════════════════════════════════════════════════════════════════════ -->
-<script>
-/* ─────────────────────────────────────────
-   JOURNAL
-───────────────────────────────────────── */
-let _activeEntryId = null;
-
-function selectEntry(entryId, el) {
-  // highlight selected
-  document.querySelectorAll('.journal-list-item').forEach(i => i.classList.remove('selected'));
-  el.classList.add('selected');
-  _activeEntryId = entryId;
-
-  // close edit mode if open
-  closeEditMode();
-
-  fetch(`/journal/${entryId}`)
-    .then(r => r.json())
-    .then(data => {
-      // image
-      const img = document.getElementById('jdImg');
-      if (data.image_url) {
-        img.src = `/uploads/${data.image_url}`;
-        img.style.display = 'block';
-      } else {
-        img.style.display = 'none';
-      }
-
-      document.getElementById('jdDate').textContent  = data.created_at  || '';
-      document.getElementById('jdPlant').textContent = data.common_name  || data.scientific_name || '';
-      document.getElementById('jdSci').textContent   = data.scientific_name || '';
-
-      // title
-      const titleEl = document.getElementById('jdTitle');
-      const titleWrap = document.getElementById('jdTitleWrap');
-      if (data.title) {
-        titleEl.textContent    = data.title;
-        titleWrap.style.display = 'block';
-      } else {
-        titleWrap.style.display = 'none';
-      }
-
-      // note
-      const noteEl = document.getElementById('jdNote');
-      const noteWrap = document.getElementById('jdNoteWrap');
-      if (data.note) {
-        noteEl.textContent    = data.note;
-        noteWrap.style.display = 'block';
-      } else {
-        noteWrap.style.display = 'none';
-      }
-
-      // no content fallback
-      document.getElementById('jdNoContent').style.display =
-        (!data.title && !data.note) ? 'block' : 'none';
-
-      // show content panel
-      document.getElementById('journalDetailEmpty').style.display   = 'none';
-      document.getElementById('journalDetailContent').style.display = 'block';
-    })
-    .catch(() => {});
-}
-
-function openEditMode() {
-  const entryId = _activeEntryId;
-  if (!entryId) return;
-
-  fetch(`/journal/${entryId}`)
-    .then(r => r.json())
-    .then(data => {
-      document.getElementById('jdEditTitle').value = data.title || '';
-      document.getElementById('jdEditNote').value  = data.note  || '';
-      document.getElementById('jdActions').style.display  = 'none';
-      document.getElementById('jdEditForm').style.display = 'block';
-    });
-}
-
-function closeEditMode() {
-  document.getElementById('jdEditForm').style.display = 'none';
-  document.getElementById('jdActions').style.display  = 'flex';
-}
-
-function saveEdit() {
-  const entryId = _activeEntryId;
-  if (!entryId) return;
-
-  const title = document.getElementById('jdEditTitle').value.trim();
-  const note  = document.getElementById('jdEditNote').value.trim();
-
-  fetch(`/journal/${entryId}/edit`, {
-    method : 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body   : JSON.stringify({ title, note }),
-  })
-  .then(r => r.json())
-  .then(data => {
-    if (data.success) {
-      closeEditMode();
-      // refresh the right panel
-      const activeEl = document.getElementById(`jli-${entryId}`);
-      if (activeEl) selectEntry(entryId, activeEl);
-
-      // update left panel preview title
-      const listItem = document.getElementById(`jli-${entryId}`);
-      if (listItem) {
-        const titleEl = listItem.querySelector('.jli-title');
-        if (titleEl) titleEl.textContent = title || document.getElementById('jdPlant').textContent || 'Untitled';
-      }
-    }
-  });
-}
-
-function confirmDeleteEntry() {
-  const entryId = _activeEntryId;
-  if (!entryId) return;
-
-  // reuse the existing confirm overlay from dashboard
-  _pendingDeleteId = null; // reset plant delete
-  if (confirm('Delete this journal entry? This cannot be undone.')) {
-    fetch(`/journal/${entryId}/delete`, { method: 'POST' })
-      .then(r => r.json())
-      .then(data => {
-        if (data.success) {
-          // remove from left panel
-          const listItem = document.getElementById(`jli-${entryId}`);
-          if (listItem) listItem.remove();
-
-          // reset right panel
-          document.getElementById('journalDetailContent').style.display = 'none';
-          document.getElementById('journalDetailEmpty').style.display   = 'flex';
-          _activeEntryId = null;
-
-          // if no entries left, could show empty state — optional
-        }
-      });
-  }
-}
-</script>   
     <!-- ── IDENTIFY ── -->
     <section class="dash-section" id="section-identify">
       <div class="welcome-strip">
@@ -1144,12 +931,7 @@ function confirmDeleteEntry() {
           <table class="history-table" id="historyTable">
             <thead>
               <tr>
-                <th>Image</th>
-                <th>Species</th>
-                <th>Family</th>
-                <th>Confidence</th>
-                <th>Date</th>
-                <th></th>
+                <th>Image</th><th>Species</th><th>Family</th><th>Confidence</th><th>Date</th><th></th>
               </tr>
             </thead>
             <tbody>
@@ -1177,9 +959,7 @@ function confirmDeleteEntry() {
                 </td>
                 <td style="font-size:0.8rem;color:var(--text-muted);">{{ plant.created_at.strftime('%d %b %Y') if plant.created_at else '—' }}</td>
                 <td>
-                  <button class="history-delete-btn"
-                          onclick="confirmDelete({{ plant.id }}, '{{ plant.name or plant.scientific_name or 'this plant' }}')"
-                          title="Remove">
+                  <button class="history-delete-btn" onclick="confirmDelete({{ plant.id }}, '{{ plant.name or plant.scientific_name or 'this plant' }}')" title="Remove">
                     <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
                   </button>
                 </td>
@@ -1230,7 +1010,7 @@ function confirmDeleteEntry() {
 </main>
 
 <script>
-  /* ── theme ── */
+  /* ── THEME ── */
   const html   = document.documentElement;
   const toggle = document.getElementById('themeToggle');
   const saved  = localStorage.getItem('flourisha-theme') || 'day';
@@ -1242,26 +1022,27 @@ function confirmDeleteEntry() {
     localStorage.setItem('flourisha-theme', theme);
   });
 
-  /* ── greeting ── */
+  /* ── GREETING ── */
   const hour = new Date().getHours();
   document.getElementById('timeGreeting').textContent =
     hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
-  /* ── section switching ── */
+  /* ── SECTION SWITCHING ── */
   function showSection(id, btn) {
     document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.sidebar-link').forEach(b => b.classList.remove('active'));
     document.getElementById('section-' + id).classList.add('active');
     if (btn) btn.classList.add('active');
+    if (id === 'calendar') calInit();
   }
 
-  /* ── random polaroid tilts ── */
+  /* ── POLAROID TILTS ── */
   document.querySelectorAll('.polaroid').forEach(card => {
     const tilt = (Math.random() * 4 - 2).toFixed(2);
     card.style.transform = `rotate(${tilt}deg)`;
   });
 
-  /* ── category filter ── */
+  /* ── CATEGORY FILTER ── */
   function filterCategory(cat, btn) {
     document.querySelectorAll('#categoryTabs .tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
@@ -1270,81 +1051,55 @@ function confirmDeleteEntry() {
     });
   }
 
-  /* ─────────────────────────────────────────
-     HEART / FAVOURITE TOGGLE
-  ───────────────────────────────────────── */
+  /* ── HEART / FAVOURITE ── */
   function toggleHeart(plantId, btn) {
-    // pop animation
     btn.classList.add('heart-pop');
     btn.addEventListener('animationend', () => btn.classList.remove('heart-pop'), { once: true });
-
     fetch(`/favourite/${plantId}`, { method: 'POST' })
       .then(r => r.json())
       .then(data => {
         const isFav = data.is_favourite;
-
-        // update every heart button for this plant across all grids
         document.querySelectorAll(`.heart-btn[onclick*="toggleHeart(${plantId},"]`).forEach(b => {
           b.classList.toggle('favourited', isFav);
         });
-
-        // sync favourites grid
         const favWrap = document.getElementById(`fav-wrap-${plantId}`);
-
         if (isFav && !favWrap) {
-          // add card to favourites grid — clone from main collection
           const sourceWrap = document.getElementById(`wrap-${plantId}`);
           if (sourceWrap) {
             const clone = sourceWrap.cloneNode(true);
             clone.id = `fav-wrap-${plantId}`;
             const cloneCard = clone.querySelector('.polaroid');
             if (cloneCard) cloneCard.id = `fav-card-${plantId}`;
-            // re-tilt
             const tilt = (Math.random() * 4 - 2).toFixed(2);
             if (cloneCard) cloneCard.style.transform = `rotate(${tilt}deg)`;
-
-            const favGrid = document.getElementById('favGrid');
-            favGrid.appendChild(clone);
+            document.getElementById('favGrid').appendChild(clone);
             hideFavEmpty();
           }
         } else if (!isFav && favWrap) {
-          // remove card from favourites grid
           favWrap.classList.add('card-removing');
-          favWrap.addEventListener('animationend', () => {
-            favWrap.remove();
-            checkFavEmpty();
-          }, { once: true });
+          favWrap.addEventListener('animationend', () => { favWrap.remove(); checkFavEmpty(); }, { once: true });
         }
-
-        // update profile fav count
         updateFavCount();
       })
-      .catch(() => {
-        // server unreachable — toggle locally so UI isn't stuck
-        btn.classList.toggle('favourited');
-      });
+      .catch(() => btn.classList.toggle('favourited'));
   }
 
   function hideFavEmpty() {
     const empty = document.getElementById('favEmptyState');
     if (empty) empty.style.display = 'none';
   }
-
   function checkFavEmpty() {
-    const favGrid  = document.getElementById('favGrid');
-    const empty    = document.getElementById('favEmptyState');
+    const favGrid = document.getElementById('favGrid');
+    const empty   = document.getElementById('favEmptyState');
     const hasCards = favGrid && favGrid.querySelectorAll('.polaroid-wrap').length > 0;
     if (!hasCards && empty) empty.style.display = '';
-    // if empty state doesn't exist yet, create it
     if (!hasCards && !empty && favGrid) {
       const div = document.createElement('div');
-      div.id        = 'favEmptyState';
-      div.className = 'fav-empty';
+      div.id = 'favEmptyState'; div.className = 'fav-empty';
       div.innerHTML = '<div class="fav-empty-icon"></div><p>Heart a plant in your collection to pin it here.</p>';
       favGrid.parentNode.insertBefore(div, favGrid.nextSibling);
     }
   }
-
   function updateFavCount() {
     const favGrid = document.getElementById('favGrid');
     if (!favGrid) return;
@@ -1353,9 +1108,7 @@ function confirmDeleteEntry() {
     if (el) el.textContent = count;
   }
 
-  /* ─────────────────────────────────────────
-     DELETE PLANT
-  ───────────────────────────────────────── */
+  /* ── DELETE PLANT ── */
   let _pendingDeleteId   = null;
   let _pendingDeleteName = '';
 
@@ -1363,89 +1116,53 @@ function confirmDeleteEntry() {
     _pendingDeleteId   = plantId;
     _pendingDeleteName = plantName;
     document.getElementById('confirmOverlay').classList.add('visible');
-
-    // wire confirm button
-    const btn = document.getElementById('confirmDeleteBtn');
-    btn.onclick = executDelete;
+    document.getElementById('confirmDeleteBtn').onclick = executDelete;
   }
-
   function closeConfirm() {
     document.getElementById('confirmOverlay').classList.remove('visible');
-    _pendingDeleteId   = null;
-    _pendingDeleteName = '';
+    _pendingDeleteId = null; _pendingDeleteName = '';
   }
-
-  // close overlay on backdrop click
   document.getElementById('confirmOverlay').addEventListener('click', function(e) {
     if (e.target === this) closeConfirm();
   });
-
   function executDelete() {
     const plantId = _pendingDeleteId;
     if (!plantId) return;
     closeConfirm();
-
     fetch(`/plant/${plantId}/delete`, { method: 'POST' })
       .then(r => r.json())
       .then(data => {
         if (!data.success) return;
-
-        // animate + remove from collection grid
         const wrap = document.getElementById(`wrap-${plantId}`);
-        if (wrap) {
-          wrap.querySelector('.polaroid').classList.add('card-removing');
-          wrap.addEventListener('animationend', () => wrap.remove(), { once: true });
-        }
-
-        // remove from favourites grid
+        if (wrap) { wrap.querySelector('.polaroid').classList.add('card-removing'); wrap.addEventListener('animationend', () => wrap.remove(), { once: true }); }
         const favWrap = document.getElementById(`fav-wrap-${plantId}`);
-        if (favWrap) {
-          favWrap.querySelector('.polaroid').classList.add('card-removing');
-          favWrap.addEventListener('animationend', () => {
-            favWrap.remove();
-            checkFavEmpty();
-          }, { once: true });
-        }
-
-        // remove from history table
+        if (favWrap) { favWrap.querySelector('.polaroid').classList.add('card-removing'); favWrap.addEventListener('animationend', () => { favWrap.remove(); checkFavEmpty(); }, { once: true }); }
         const historyRow = document.getElementById(`history-row-${plantId}`);
-        if (historyRow) {
-          historyRow.style.transition = 'opacity 0.25s';
-          historyRow.style.opacity    = '0';
-          setTimeout(() => historyRow.remove(), 260);
-        }
-
-        // update total count
+        if (historyRow) { historyRow.style.transition = 'opacity 0.25s'; historyRow.style.opacity = '0'; setTimeout(() => historyRow.remove(), 260); }
         const statEl    = document.getElementById('statTotal');
         const profileEl = document.getElementById('profileTotal');
         if (statEl)    statEl.textContent    = Math.max(0, parseInt(statEl.textContent)    - 1);
         if (profileEl) profileEl.textContent = Math.max(0, parseInt(profileEl.textContent) - 1);
-
         updateFavCount();
       })
-      .catch(() => {
-        // silent fail — user can refresh if needed
-      });
+      .catch(() => {});
   }
 
-  /* ── file upload UX ── */
+  /* ── FILE UPLOAD UX ── */
   function handleFileSelect(input) {
-    const feedback    = document.getElementById('fileFeedback');
-    const nameDisplay = document.getElementById('fileNameDisplay');
-    const submitBtn   = document.getElementById('submitBtn');
     if (input.files && input.files[0]) {
-      nameDisplay.textContent  = input.files[0].name;
-      feedback.style.display   = 'flex';
-      submitBtn.style.display  = 'block';
+      document.getElementById('fileNameDisplay').textContent = input.files[0].name;
+      document.getElementById('fileFeedback').style.display  = 'flex';
+      document.getElementById('submitBtn').style.display     = 'block';
     }
   }
   function clearFile() {
-    document.getElementById('plantImageInput').value = '';
-    document.getElementById('fileFeedback').style.display  = 'none';
-    document.getElementById('submitBtn').style.display     = 'none';
+    document.getElementById('plantImageInput').value        = '';
+    document.getElementById('fileFeedback').style.display   = 'none';
+    document.getElementById('submitBtn').style.display      = 'none';
   }
 
-  /* ── auto-open section from URL param ── */
+  /* ── AUTO-OPEN FROM URL PARAM ── */
   (function() {
     const sec = new URLSearchParams(window.location.search).get('section');
     if (sec) {
@@ -1453,6 +1170,331 @@ function confirmDeleteEntry() {
       if (btn) showSection(sec, btn);
     }
   })();
+
+  /* ═══════════════════════════════════════════
+     JOURNAL
+  ═══════════════════════════════════════════ */
+  let _activeEntryId = null;
+
+  function selectEntry(entryId, el) {
+    document.querySelectorAll('.journal-list-item').forEach(i => i.classList.remove('selected'));
+    el.classList.add('selected');
+    _activeEntryId = entryId;
+    closeEditMode();
+    fetch(`/journal/${entryId}`)
+      .then(r => r.json())
+      .then(data => {
+        const img = document.getElementById('jdImg');
+        if (data.image_url) { img.src = `/uploads/${data.image_url}`; img.style.display = 'block'; }
+        else { img.style.display = 'none'; }
+        document.getElementById('jdDate').textContent  = data.created_at  || '';
+        document.getElementById('jdPlant').textContent = data.common_name  || data.scientific_name || '';
+        document.getElementById('jdSci').textContent   = data.scientific_name || '';
+        const titleEl = document.getElementById('jdTitle');
+        const titleWrap = document.getElementById('jdTitleWrap');
+        if (data.title) { titleEl.textContent = data.title; titleWrap.style.display = 'block'; }
+        else { titleWrap.style.display = 'none'; }
+        const noteEl = document.getElementById('jdNote');
+        const noteWrap = document.getElementById('jdNoteWrap');
+        if (data.note) { noteEl.textContent = data.note; noteWrap.style.display = 'block'; }
+        else { noteWrap.style.display = 'none'; }
+        document.getElementById('jdNoContent').style.display = (!data.title && !data.note) ? 'block' : 'none';
+        document.getElementById('journalDetailEmpty').style.display   = 'none';
+        document.getElementById('journalDetailContent').style.display = 'block';
+      })
+      .catch(() => {});
+  }
+
+  function openEditMode() {
+    const entryId = _activeEntryId;
+    if (!entryId) return;
+    fetch(`/journal/${entryId}`)
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('jdEditTitle').value = data.title || '';
+        document.getElementById('jdEditNote').value  = data.note  || '';
+        document.getElementById('jdActions').style.display  = 'none';
+        document.getElementById('jdEditForm').style.display = 'block';
+      });
+  }
+  function closeEditMode() {
+    const f = document.getElementById('jdEditForm');
+    const a = document.getElementById('jdActions');
+    if (f) f.style.display = 'none';
+    if (a) a.style.display = 'flex';
+  }
+  function saveEdit() {
+    const entryId = _activeEntryId;
+    if (!entryId) return;
+    const title = document.getElementById('jdEditTitle').value.trim();
+    const note  = document.getElementById('jdEditNote').value.trim();
+    fetch(`/journal/${entryId}/edit`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, note }),
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        closeEditMode();
+        const activeEl = document.getElementById(`jli-${entryId}`);
+        if (activeEl) selectEntry(entryId, activeEl);
+        const listItem = document.getElementById(`jli-${entryId}`);
+        if (listItem) {
+          const titleEl = listItem.querySelector('.jli-title');
+          if (titleEl) titleEl.textContent = title || document.getElementById('jdPlant').textContent || 'Untitled';
+        }
+      }
+    });
+  }
+  function confirmDeleteEntry() {
+    const entryId = _activeEntryId;
+    if (!entryId) return;
+    if (confirm('Delete this journal entry? This cannot be undone.')) {
+      fetch(`/journal/${entryId}/delete`, { method: 'POST' })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            const listItem = document.getElementById(`jli-${entryId}`);
+            if (listItem) listItem.remove();
+            document.getElementById('journalDetailContent').style.display = 'none';
+            document.getElementById('journalDetailEmpty').style.display   = 'flex';
+            _activeEntryId = null;
+          }
+        });
+    }
+  }
+
+  /* ═══════════════════════════════════════════
+     CALENDAR
+  ═══════════════════════════════════════════ */
+  const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+  let _calYear     = new Date().getFullYear();
+  let _calMonth    = new Date().getMonth() + 1;
+  let _calData     = null;
+  let _calOpenDate = null;
+  let _calInited   = false;
+
+  function calInit() {
+    if (!_calInited) {
+      _calInited = true;
+      calFetch(_calYear, _calMonth);
+    }
+  }
+
+  function calNavigate(dir) {
+    _calMonth += dir;
+    if (_calMonth < 1)  { _calMonth = 12; _calYear--; }
+    if (_calMonth > 12) { _calMonth = 1;  _calYear++; }
+    calCloseDetail();
+    calFetch(_calYear, _calMonth);
+  }
+
+  function calFetch(year, month) {
+    document.getElementById('calGrid').innerHTML =
+      `<div style="grid-column:1/-1;padding:3rem;text-align:center;color:var(--text-muted);font-size:.875rem;font-weight:300;">Loading…</div>`;
+    fetch(`/calendar/data?year=${year}&month=${month}`)
+      .then(r => r.json())
+      .then(data => { _calData = data; calRender(data); })
+      .catch(() => {
+        document.getElementById('calGrid').innerHTML =
+          `<div style="grid-column:1/-1;padding:3rem;text-align:center;color:var(--text-muted);font-size:.875rem;">Couldn't load calendar data.</div>`;
+      });
+  }
+
+  function calRender(data) {
+    const { year, month, days, today } = data;
+    document.getElementById('calMonthLabel').innerHTML =
+      `${MONTH_NAMES[month - 1]} <span>${year}</span>`;
+    const firstDow    = new Date(year, month - 1, 1).getDay();
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const grid = document.getElementById('calGrid');
+    grid.innerHTML = '';
+
+    for (let i = 0; i < firstDow; i++) {
+      const empty = document.createElement('div');
+      empty.className = 'cal-cell cal-cell--empty';
+      grid.appendChild(empty);
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr  = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const dayData  = days[dateStr];
+      const isToday  = dateStr === today;
+      const hasPlants  = dayData && dayData.plants && dayData.plants.length > 0;
+      const hasJournal = dayData && dayData.journal_entries && dayData.journal_entries.length > 0;
+
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell'
+        + (isToday   ? ' cal-cell--today'      : '')
+        + (hasPlants ? ' cal-cell--has-plants' : '');
+      cell.dataset.date = dateStr;
+
+      const num = document.createElement('div');
+      num.className = 'cal-day-num';
+      num.textContent = d;
+      cell.appendChild(num);
+
+      if (hasPlants) {
+        const cover = dayData.cover;
+        const total = dayData.plants.length;
+        const thumbWrap = document.createElement('div');
+        thumbWrap.className = 'cal-thumb-wrap';
+
+        if (cover && cover.image_url) {
+          const img = document.createElement('img');
+          img.className = 'cal-thumb';
+          img.src = `/uploads/${cover.image_url}`;
+          img.alt = cover.name;
+          img.loading = 'lazy';
+          thumbWrap.appendChild(img);
+        } else {
+          const ph = document.createElement('div');
+          ph.className = 'cal-thumb-placeholder';
+          ph.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg>`;
+          thumbWrap.appendChild(ph);
+        }
+        if (total > 1) {
+          const badge = document.createElement('div');
+          badge.className = 'cal-badge';
+          badge.textContent = `+${total - 1}`;
+          thumbWrap.appendChild(badge);
+        }
+        if (hasJournal) {
+          const dot = document.createElement('div');
+          dot.className = 'cal-journal-dot';
+          thumbWrap.appendChild(dot);
+        }
+        cell.appendChild(thumbWrap);
+        cell.addEventListener('click', () => calOpenDay(dateStr, dayData));
+      }
+      grid.appendChild(cell);
+    }
+  }
+
+  function calOpenDay(dateStr, dayData) {
+    _calOpenDate = dateStr;
+    document.querySelectorAll('.cal-cell').forEach(c => c.style.outline = '');
+    const activeCell = document.querySelector(`.cal-cell[data-date="${dateStr}"]`);
+    if (activeCell) activeCell.style.outline = `2px solid var(--accent-primary)`;
+
+    const d = new Date(dateStr + 'T00:00:00');
+    document.getElementById('calDetailDate').innerHTML =
+      `<strong style="color:var(--text-primary)">${d.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'})}</strong>
+       <button class="cal-detail-close" onclick="calCloseDetail()" aria-label="Close">
+         <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+       </button>`;
+
+    const scroll     = document.getElementById('calDetailScroll');
+    scroll.innerHTML = '';
+    const plants     = dayData.plants         || [];
+    const journals   = dayData.journal_entries || [];
+    const coverPlant = dayData.cover;
+
+    plants.forEach(plant => {
+      const isCover    = coverPlant && coverPlant.id === plant.id;
+      const hasJournal = plant.has_journal;
+      const card = document.createElement('div');
+      card.className = 'cal-plant-card' + (isCover ? ' is-cover' : '');
+      card.dataset.plantId = plant.id;
+
+      const imgHtml = plant.image_url
+        ? `<img class="cal-plant-card-img" src="/uploads/${plant.image_url}" alt="${plant.name}" loading="lazy" />`
+        : `<div class="cal-plant-card-img-placeholder"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="var(--accent-soft)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg></div>`;
+
+      const coverBadge   = isCover    ? `<div class="cal-cover-badge">Cover</div>` : '';
+      const journalBadge = hasJournal ? `<div class="cal-journal-badge"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>` : '';
+
+      card.innerHTML = `
+        ${imgHtml}${coverBadge}${journalBadge}
+        <div class="cal-plant-card-body">
+          <div class="cal-plant-card-name">${plant.name}</div>
+          <div class="cal-plant-card-sub">${hasJournal ? 'Has journal entry' : 'No journal yet'}</div>
+        </div>
+        <button class="btn-set-cover" onclick="calSetCover(event,'${dateStr}',${plant.id})">${isCover ? '✓ Cover photo' : 'Set as cover'}</button>
+      `;
+      card.addEventListener('click', (e) => {
+        if (e.target.classList.contains('btn-set-cover')) return;
+        if (hasJournal) calOpenJournalForPlant(plant.id);
+      });
+      scroll.appendChild(card);
+    });
+
+    journals.forEach(je => {
+      const matchedByPlant = plants.some(p => p.name === je.common_name || p.has_journal);
+      if (!matchedByPlant || plants.length === 0) {
+        const card = document.createElement('div');
+        card.className = 'cal-plant-card';
+        const imgHtml = je.image_url
+          ? `<img class="cal-plant-card-img" src="/uploads/${je.image_url}" alt="${je.common_name}" loading="lazy" />`
+          : `<div class="cal-plant-card-img-placeholder"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="var(--accent-soft)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>`;
+        card.innerHTML = `
+          ${imgHtml}
+          <div class="cal-journal-badge"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div class="cal-plant-card-body">
+            <div class="cal-plant-card-name">${je.title || je.common_name || 'Journal entry'}</div>
+            <div class="cal-plant-card-sub">Journal entry</div>
+          </div>
+        `;
+        card.addEventListener('click', () => calOpenJournalEntry(je.id));
+        scroll.appendChild(card);
+      }
+    });
+
+    const panel = document.getElementById('calDetailPanel');
+    panel.classList.add('visible');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function calCloseDetail() {
+    document.getElementById('calDetailPanel').classList.remove('visible');
+    document.querySelectorAll('.cal-cell').forEach(c => c.style.outline = '');
+    _calOpenDate = null;
+  }
+
+  function calSetCover(event, dateStr, plantId) {
+    event.stopPropagation();
+    fetch('/calendar/preference', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ date: dateStr, plant_id: plantId }),
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) return;
+      if (_calData && _calData.days[dateStr]) {
+        const chosen = _calData.days[dateStr].plants.find(p => p.id === plantId);
+        if (chosen) { _calData.days[dateStr].cover = chosen; _calData.pref_map[dateStr] = plantId; }
+      }
+      const cell = document.querySelector(`.cal-cell[data-date="${dateStr}"]`);
+      if (cell && _calData && _calData.days[dateStr]) {
+        const thumbWrap = cell.querySelector('.cal-thumb-wrap');
+        const cover = _calData.days[dateStr].cover;
+        if (thumbWrap && cover && cover.image_url) {
+          const img = thumbWrap.querySelector('.cal-thumb');
+          if (img) img.src = `/uploads/${cover.image_url}`;
+        }
+      }
+      if (_calData && _calData.days[dateStr]) calOpenDay(dateStr, _calData.days[dateStr]);
+    });
+  }
+
+  function calOpenJournalForPlant(plantId) {
+    const journalBtn = document.querySelector('[data-section="journal"]');
+    if (journalBtn) showSection('journal', journalBtn);
+    setTimeout(() => {
+      const listItems = document.querySelectorAll('.journal-list-item');
+      if (listItems.length === 1) listItems[0].click();
+    }, 80);
+  }
+
+  function calOpenJournalEntry(entryId) {
+    const journalBtn = document.querySelector('[data-section="journal"]');
+    if (journalBtn) showSection('journal', journalBtn);
+    setTimeout(() => {
+      const listItem = document.getElementById(`jli-${entryId}`);
+      if (listItem) { listItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); listItem.click(); }
+    }, 80);
+  }
 </script>
 </body>
 </html>
