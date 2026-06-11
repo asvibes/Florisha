@@ -1,12 +1,10 @@
+import os
 import secrets
 from datetime import datetime, timedelta
-from flask import session
-
+import resend
 from flask import (Blueprint, render_template, redirect,
                    url_for, session, request, flash)
-from flask_mail import Message
-
-from extensions import db, bcrypt, mail
+from extensions import db, bcrypt
 from models.user import User
 
 auth_bp = Blueprint("auth", __name__)
@@ -15,7 +13,6 @@ auth_bp = Blueprint("auth", __name__)
 # ── helpers ──────────────────────────────────────────────
 
 def send_verification_email(user):
-    """Generate a fresh token, save it, and email the link."""
     token  = secrets.token_urlsafe(32)
     expiry = datetime.utcnow() + timedelta(hours=1)
 
@@ -25,11 +22,13 @@ def send_verification_email(user):
 
     link = url_for("auth.verify_email", token=token, _external=True)
 
-    msg = Message(
-        subject  = "Verify your Florisha account",
-        sender   = "Florisha <noreply@florisha.com>",
-        recipients = [user.email],
-        body = (
+    resend.api_key = os.getenv("RESEND_API_KEY")
+
+    resend.Emails.send({
+        "from": "Florisha <onboarding@resend.dev>",
+        "to": user.email,
+        "subject": "Verify your Florisha account",
+        "text": (
             f"Hi,\n\n"
             f"Thanks for joining Florisha! Click the link below to verify "
             f"your email address. This link expires in 1 hour.\n\n"
@@ -37,8 +36,7 @@ def send_verification_email(user):
             f"If you didn't create an account, you can ignore this email.\n\n"
             f"— The Florisha Team"
         )
-    )
-    mail.send(msg)
+    })
 
 
 # ── REGISTER ─────────────────────────────────────────────
@@ -50,7 +48,6 @@ def register():
         password         = request.form.get("password", "")
         confirm_password = request.form.get("confirm_password", "")
 
-        # --- validation ---
         if not email or not password or not confirm_password:
             return render_template("register.html", error="All fields are required.")
 
@@ -63,16 +60,12 @@ def register():
         if User.query.filter_by(email=email).first():
             return render_template("register.html", error="An account with that email already exists.")
 
-        # --- create user ---
         hashed_pw = bcrypt.generate_password_hash(password).decode("utf-8")
         new_user  = User(email=email, password=hashed_pw, is_verified=False)
         db.session.add(new_user)
         db.session.commit()
 
-        # --- send verification email ---
         send_verification_email(new_user)
-
-        # store email in session so verify page can show it + resend
         session["pending_email"] = email
 
         return redirect(url_for("auth.verify_pending"))
@@ -80,7 +73,7 @@ def register():
     return render_template("register.html")
 
 
-# ── VERIFY PENDING (the "check your email" page) ─────────
+# ── VERIFY PENDING ────────────────────────────────────────
 
 @auth_bp.route("/verify-pending")
 def verify_pending():
@@ -88,7 +81,7 @@ def verify_pending():
     return render_template("verify_email.html", email=email)
 
 
-# ── VERIFY LINK (user clicks the link in email) ──────────
+# ── VERIFY LINK ───────────────────────────────────────────
 
 @auth_bp.route("/verify/<token>")
 def verify_email(token):
@@ -100,13 +93,11 @@ def verify_email(token):
                                email="")
 
     if datetime.utcnow() > user.token_expiry:
-        # expired — let them resend
         session["pending_email"] = user.email
         return render_template("verify_email.html",
                                error="This link has expired. Request a new one below.",
                                email=user.email)
 
-    # success
     user.is_verified          = True
     user.verification_token   = None
     user.token_expiry         = None
@@ -127,7 +118,6 @@ def resend_verification():
         send_verification_email(user)
         session["pending_email"] = email
 
-    # always show the same page (don't leak whether email exists)
     return render_template("verify_email.html",
                            email=email,
                            success="A new verification link has been sent.")
