@@ -6,7 +6,7 @@
 <title>Flourisha — {{ plant.common_name or plant.scientific_name or 'Plant Result' }}</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 <style>
-  /* ── Tokens (identical to index) ───────────────────────────────────── */
+  /* ── Tokens ── */
   :root[data-theme="day"] {
     --bg-base:        #f4f8f2;
     --bg-surface:     #edf4e9;
@@ -71,7 +71,7 @@
     overflow-x: hidden;
   }
 
-  /* ── Nav (matches index exactly) ───────────────────────────────────── */
+  /* ── Nav ── */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 200;
     background: var(--bg-nav);
@@ -87,7 +87,6 @@
   .nav-logo-icon svg { width: 20px; height: 20px; }
   .nav-logo-text { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--text-primary); letter-spacing: .01em; }
   .nav-right { display: flex; align-items: center; gap: .75rem; }
-
   .btn-nav { font-size: .875rem; font-weight: 400; color: var(--text-secondary); text-decoration: none; padding: .4rem .85rem; border-radius: 8px; transition: color .2s, background .2s; }
   .btn-nav:hover { color: var(--text-primary); background: var(--accent-wash); }
   .btn-nav-outline { font-size: .875rem; font-weight: 500; color: var(--text-secondary); text-decoration: none; padding: .4rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); transition: all .2s; }
@@ -95,7 +94,7 @@
   .btn-nav-solid { font-size: .875rem; font-weight: 500; color: var(--text-on-accent); text-decoration: none; padding: .4rem 1.1rem; border-radius: 8px; background: var(--accent-primary); transition: background .2s; }
   .btn-nav-solid:hover { background: var(--accent-deep); }
 
-  /* ── Day/night toggle ───────────────────────────────────────────────── */
+  /* ── Sky toggle ── */
   .sky-switch { overflow:hidden;position:relative;display:inline-block;width:80px;height:32.5px;flex-shrink:0; }
   .sky-switch input { opacity:0;width:0;height:0;position:absolute; }
   .sky-slider { position:absolute;border-radius:999px;cursor:pointer;overflow:hidden;top:0;left:0;right:0;bottom:0;background-color:#2196F3;transition:.6s ease-in-out;border:1.5px solid rgba(255,255,255,0.3); }
@@ -116,37 +115,30 @@
   .sky-spaceship { z-index:800;opacity:0;position:absolute;top:0;right:25px;height:11px;transform:translateY(38px) translateX(-38px);transition:transform 2s ease-in-out;transition-delay:1s;pointer-events:none; }
   .sky-switch input:checked + .sky-slider .sky-spaceship { opacity:1;transform:translateY(-25px) translateX(10px); }
 
-  /* ── Background watercolor blobs ────────────────────────────────────── */
+  /* ── BG blobs ── */
   .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; transition: background .4s; }
   .blob-a  { width: 500px; height: 400px; top: -80px;  right: -100px; background: var(--watercolor-1); }
   .blob-b  { width: 350px; height: 350px; bottom: 60px; left: -80px;  background: var(--watercolor-2); }
 
-  /* ── Botanical SVG accents ───────────────────────────────────────────── */
+  /* ── Botanical accents ── */
   .leaf-accent { position: absolute; pointer-events: none; opacity: .12; transition: opacity .4s; }
   [data-theme="night"] .leaf-accent { opacity: .06; }
 
-  /* ── Page shell ─────────────────────────────────────────────────────── */
+  /* ── Page shell ── */
   .page { padding-top: 64px; position: relative; z-index: 1; }
 
-  /* ── Image processing state ─────────────────────────────────────────── */
+  /* ── Image shimmer ── */
   .plant-image-wrap { position: relative; width: 100%; aspect-ratio: 1/1; background: var(--bg-surface); border-radius: 12px; overflow: hidden; }
   .plant-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity .6s ease; }
   .plant-image-wrap img.loaded { opacity: 1; }
-  .img-shimmer {
-    position: absolute; inset: 0;
-    background: linear-gradient(90deg, var(--bg-surface) 25%, var(--accent-wash) 50%, var(--bg-surface) 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.6s infinite;
-    border-radius: 12px;
-    transition: opacity .4s;
-  }
+  .img-shimmer { position: absolute; inset: 0; background: linear-gradient(90deg, var(--bg-surface) 25%, var(--accent-wash) 50%, var(--bg-surface) 75%); background-size: 200% 100%; animation: shimmer 1.6s infinite; border-radius: 12px; transition: opacity .4s; }
   .img-shimmer.hidden { opacity: 0; pointer-events: none; }
   @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
   .img-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem; }
   .img-placeholder svg { width: 48px; height: 48px; stroke: var(--accent-soft); fill: none; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
   .img-placeholder-text { font-size: .8rem; font-weight: 300; color: var(--text-muted); letter-spacing: .04em; }
 
-  /* ── Hero ───────────────────────────────────────────────────────────── */
+  /* ── Hero ── */
   .result-hero {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -159,74 +151,26 @@
     position: relative;
   }
 
-  /* ── Image column ───────────────────────────────────────────────────── */
+  /* ── Image column ── */
   .image-column { position: relative; }
-  .image-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-light);
-    border-radius: 16px;
-    padding: 1.25rem;
-    box-shadow: var(--shadow-card);
-    transition: box-shadow .3s, border-color .3s;
-  }
+  .image-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.25rem; box-shadow: var(--shadow-card); transition: box-shadow .3s, border-color .3s; }
   .image-card:hover { border-color: var(--accent-soft); box-shadow: var(--shadow-hover); }
-
   .image-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 1rem; }
   .image-meta-sci { font-family: 'Cormorant Garamond', serif; font-size: .95rem; font-style: italic; color: var(--text-muted); }
-  .conf-pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--accent-wash); border: 1px solid var(--accent-soft);
-    border-radius: 100px; padding: .25rem .85rem;
-    font-size: .78rem; font-weight: 500; color: var(--accent-deep);
-  }
+  .conf-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-wash); border: 1px solid var(--accent-soft); border-radius: 100px; padding: .25rem .85rem; font-size: .78rem; font-weight: 500; color: var(--accent-deep); }
   .conf-pill-dot { width: 6px; height: 6px; background: var(--accent-primary); border-radius: 50%; display: inline-block; }
-
-  .guest-notice {
-    margin-top: 1rem;
-    display: flex; align-items: center; gap: 8px;
-    font-size: .8rem; font-weight: 400; color: var(--text-muted);
-    background: var(--bg-surface); border: 1px solid var(--border-light);
-    border-radius: 10px; padding: .6rem 1rem;
-  }
+  .guest-notice { margin-top: 1rem; display: flex; align-items: center; gap: 8px; font-size: .8rem; font-weight: 400; color: var(--text-muted); background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 10px; padding: .6rem 1rem; }
   .guest-notice svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 
-  /* ── Identity column ────────────────────────────────────────────────── */
+  /* ── Identity column ── */
   .identity-column { display: flex; flex-direction: column; gap: 0; }
-
-  .result-eyebrow {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: .78rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
-    color: var(--accent-deep); background: var(--accent-wash);
-    border: 1px solid var(--accent-soft);
-    padding: .3rem 1rem; border-radius: 100px;
-    margin-bottom: 1.25rem; width: fit-content;
-  }
+  .result-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: .78rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-deep); background: var(--accent-wash); border: 1px solid var(--accent-soft); padding: .3rem 1rem; border-radius: 100px; margin-bottom: 1.25rem; width: fit-content; }
   .result-eyebrow-dot { width: 6px; height: 6px; background: var(--accent-primary); border-radius: 50%; }
+  .result-common-name { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.4rem, 4.5vw, 3.4rem); font-weight: 500; color: var(--text-primary); line-height: 1.06; margin-bottom: .4rem; letter-spacing: -.01em; }
+  .result-scientific { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem; }
+  .result-description { font-size: .9rem; font-weight: 300; color: var(--text-secondary); line-height: 1.75; margin-bottom: 1.75rem; }
 
-  .result-common-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2.4rem, 4.5vw, 3.4rem);
-    font-weight: 500; color: var(--text-primary);
-    line-height: 1.06; margin-bottom: .4rem; letter-spacing: -.01em;
-  }
-  .result-scientific {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.2rem; font-style: italic;
-    color: var(--text-muted); margin-bottom: 1.5rem;
-  }
-  .result-description {
-    font-size: .9rem; font-weight: 300;
-    color: var(--text-secondary); line-height: 1.75;
-    margin-bottom: 1.75rem;
-  }
-
-  .taxonomy-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 1px; background: var(--border-light);
-    border: 1px solid var(--border-light);
-    border-radius: 14px; overflow: hidden;
-    margin-bottom: 1.75rem;
-  }
+  .taxonomy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border-light); border: 1px solid var(--border-light); border-radius: 14px; overflow: hidden; margin-bottom: 1.75rem; }
   .taxon-cell { background: var(--bg-card); padding: 1rem 1.25rem; transition: background .2s; }
   .taxon-cell:hover { background: var(--accent-wash); }
   .taxon-label { font-size: .68rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: .3rem; }
@@ -241,67 +185,38 @@
   .conf-bar-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--accent-primary), var(--accent-deep)); transition: width 1.2s cubic-bezier(.22,1,.36,1); width: 0; }
 
   .result-actions { display: flex; gap: .75rem; flex-wrap: wrap; }
-  .btn-primary {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: .75rem 1.5rem; background: var(--accent-primary);
-    color: var(--text-on-accent); font-family: 'DM Sans', sans-serif;
-    font-size: .9rem; font-weight: 500; border-radius: 12px; border: none;
-    cursor: pointer; text-decoration: none; transition: background .2s, transform .15s;
-  }
+  .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: .75rem 1.5rem; background: var(--accent-primary); color: var(--text-on-accent); font-family: 'DM Sans', sans-serif; font-size: .9rem; font-weight: 500; border-radius: 12px; border: none; cursor: pointer; text-decoration: none; transition: background .2s, transform .15s; }
   .btn-primary:hover { background: var(--accent-deep); transform: translateY(-1px); }
   .btn-primary svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .btn-outline {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: .75rem 1.5rem; background: transparent;
-    color: var(--text-secondary); font-family: 'DM Sans', sans-serif;
-    font-size: .9rem; border-radius: 12px; border: 1px solid var(--border-color);
-    text-decoration: none; transition: all .2s;
-  }
+  .btn-outline { display: inline-flex; align-items: center; gap: 8px; padding: .75rem 1.5rem; background: transparent; color: var(--text-secondary); font-family: 'DM Sans', sans-serif; font-size: .9rem; border-radius: 12px; border: 1px solid var(--border-color); text-decoration: none; transition: all .2s; cursor: pointer; }
   .btn-outline:hover { border-color: var(--accent-primary); color: var(--accent-deep); background: var(--accent-wash); }
   .btn-outline svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-  /* ── Lower sections ─────────────────────────────────────────────────── */
-  .lower { max-width: 1100px; margin: 0 auto; padding: 0 2rem 6rem; }
+  /* ── Cache badge ── */
+  .cache-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--accent-wash); border: 1px solid var(--accent-soft); color: var(--accent-deep); border-radius: 100px; font-size: .72rem; font-weight: 500; padding: .2rem .65rem; letter-spacing: .04em; }
+  .cache-badge svg { width: 11px; height: 11px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
+  /* ── Lower sections ── */
+  .lower { max-width: 1100px; margin: 0 auto; padding: 0 2rem 6rem; }
   .section-block { padding-top: 4.5rem; }
   .section-label { font-size: .78rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-primary); margin-bottom: .6rem; }
   .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.7rem, 3vw, 2.2rem); font-weight: 500; color: var(--text-primary); line-height: 1.15; margin-bottom: 1.75rem; }
   .section-title em { font-style: italic; color: var(--accent-deep); }
-
   .section-rule { height: 1px; background: var(--border-light); max-width: 1100px; margin: 0 auto; }
 
-  /* ── Fun fact ────────────────────────────────────────────────────────── */
-  .fun-fact-card {
-    background: var(--bg-card); border: 1px solid var(--border-light);
-    border-radius: 16px; padding: 1.5rem 1.75rem;
-    box-shadow: var(--shadow-card);
-    display: flex; align-items: flex-start; gap: 1.25rem;
-    transition: box-shadow .2s, border-color .2s;
-  }
+  /* ── Fun fact ── */
+  .fun-fact-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.5rem 1.75rem; box-shadow: var(--shadow-card); display: flex; align-items: flex-start; gap: 1.25rem; transition: box-shadow .2s, border-color .2s; }
   .fun-fact-card:hover { border-color: var(--accent-soft); box-shadow: var(--shadow-hover); }
-  .fun-fact-icon-wrap {
-    width: 44px; height: 44px; flex-shrink: 0;
-    background: var(--accent-wash); border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-  }
+  .fun-fact-icon-wrap { width: 44px; height: 44px; flex-shrink: 0; background: var(--accent-wash); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
   .fun-fact-icon-wrap svg { width: 22px; height: 22px; stroke: var(--accent-deep); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   .fun-fact-label { font-size: .7rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: .35rem; }
   .fun-fact-text { font-size: .9rem; font-weight: 300; color: var(--text-secondary); line-height: 1.7; }
 
-  /* ── Care grid ───────────────────────────────────────────────────────── */
+  /* ── Care grid ── */
   .care-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
-  .care-card {
-    background: var(--bg-card); border: 1px solid var(--border-light);
-    border-radius: 16px; padding: 1.5rem;
-    box-shadow: var(--shadow-card);
-    transition: box-shadow .2s, border-color .2s, transform .2s;
-  }
+  .care-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.5rem; box-shadow: var(--shadow-card); transition: box-shadow .2s, border-color .2s, transform .2s; }
   .care-card:hover { border-color: var(--accent-soft); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
-  .care-icon-wrap {
-    width: 44px; height: 44px; background: var(--accent-wash);
-    border-radius: 12px; display: flex; align-items: center; justify-content: center;
-    margin-bottom: 1rem;
-  }
+  .care-icon-wrap { width: 44px; height: 44px; background: var(--accent-wash); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
   .care-icon-wrap svg { width: 22px; height: 22px; stroke: var(--accent-deep); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   .care-label { font-size: .68rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: .35rem; }
   .care-value { font-size: .875rem; font-weight: 300; color: var(--text-secondary); line-height: 1.55; }
@@ -310,32 +225,19 @@
   .diff-intermediate { background: var(--warn-yellow); color: var(--warn-text); }
   .diff-expert       { background: var(--danger-red);  color: var(--danger-text); }
 
-  /* ── Two-col info layout ─────────────────────────────────────────────── */
+  /* ── Two-col ── */
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-  .info-card {
-    background: var(--bg-card); border: 1px solid var(--border-light);
-    border-radius: 16px; padding: 1.5rem; box-shadow: var(--shadow-card);
-  }
-  .info-card-title {
-    font-family: 'Cormorant Garamond', serif; font-size: 1.1rem;
-    font-weight: 600; color: var(--text-primary);
-    display: flex; align-items: center; gap: .75rem; margin-bottom: 1.1rem;
-  }
-  .info-card-title-icon {
-    width: 32px; height: 32px; background: var(--accent-wash);
-    border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
+  .info-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.5rem; box-shadow: var(--shadow-card); }
+  .info-card-title { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: .75rem; margin-bottom: 1.1rem; }
+  .info-card-title-icon { width: 32px; height: 32px; background: var(--accent-wash); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .info-card-title-icon svg { width: 16px; height: 16px; stroke: var(--accent-deep); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .info-row { display: flex; justify-content: space-between; align-items: baseline; padding: .55rem 0; border-bottom: 1px solid var(--border-light); gap: 1rem; }
   .info-row:last-child { border-bottom: none; }
   .info-key { font-size: .75rem; font-weight: 500; color: var(--text-muted); letter-spacing: .06em; text-transform: uppercase; flex-shrink: 0; }
   .info-val { font-size: .875rem; font-weight: 300; color: var(--text-secondary); text-align: right; line-height: 1.45; }
 
-  /* ── Safety banner ───────────────────────────────────────────────────── */
-  .safety-banner {
-    border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem;
-    display: flex; align-items: flex-start; gap: .875rem;
-  }
+  /* ── Safety ── */
+  .safety-banner { border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; display: flex; align-items: flex-start; gap: .875rem; }
   .safety-safe   { background: var(--safe-green);  border: 1px solid var(--safe-text); }
   .safety-warn   { background: var(--warn-yellow); border: 1px solid var(--warn-text); }
   .safety-danger { background: var(--danger-red);  border: 1px solid var(--danger-text); }
@@ -352,91 +254,146 @@
   .safety-warn   .safety-text { color: var(--warn-text); }
   .safety-danger .safety-text { color: var(--danger-text); }
 
-  /* ── Seasons ─────────────────────────────────────────────────────────── */
+  /* ── Seasons ── */
   .seasons-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-  .season-card {
-    background: var(--bg-card); border: 1px solid var(--border-light);
-    border-radius: 16px; padding: 1.5rem; text-align: center;
-    box-shadow: var(--shadow-card); transition: box-shadow .2s, border-color .2s, transform .2s;
-  }
+  .season-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.5rem; text-align: center; box-shadow: var(--shadow-card); transition: box-shadow .2s, border-color .2s, transform .2s; }
   .season-card:hover { border-color: var(--accent-soft); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
-  .season-icon-wrap {
-    width: 44px; height: 44px; background: var(--accent-wash);
-    border-radius: 12px; display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 1rem;
-  }
+  .season-icon-wrap { width: 44px; height: 44px; background: var(--accent-wash); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
   .season-icon-wrap svg { width: 22px; height: 22px; stroke: var(--accent-deep); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   .season-label { font-size: .68rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: .4rem; }
   .season-value { font-size: .875rem; font-weight: 300; color: var(--text-secondary); line-height: 1.5; }
 
-  /* ── Emotional note ──────────────────────────────────────────────────── */
-  .emotional-note {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.5rem; font-style: italic; font-weight: 400;
-    color: var(--text-secondary); line-height: 1.55;
-    border-left: 3px solid var(--accent-primary);
-    padding: .25rem 0 .25rem 1.5rem;
-    max-width: 640px;
-  }
+  /* ── Emotional note ── */
+  .emotional-note { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-style: italic; font-weight: 400; color: var(--text-secondary); line-height: 1.55; border-left: 3px solid var(--accent-primary); padding: .25rem 0 .25rem 1.5rem; max-width: 640px; }
 
-  /* ── Regional note ───────────────────────────────────────────────────── */
-  .regional-note {
-    background: var(--bg-surface); border: 1px solid var(--border-light);
-    border-radius: 14px; padding: 1.25rem 1.5rem;
-    font-size: .875rem; font-weight: 300; color: var(--text-secondary); line-height: 1.7;
-    display: flex; align-items: flex-start; gap: 1rem;
-  }
-  .regional-icon {
-    width: 36px; height: 36px; flex-shrink: 0; background: var(--accent-wash);
-    border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-top: .1rem;
-  }
+  /* ── Regional note ── */
+  .regional-note { background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 14px; padding: 1.25rem 1.5rem; font-size: .875rem; font-weight: 300; color: var(--text-secondary); line-height: 1.7; display: flex; align-items: flex-start; gap: 1rem; }
+  .regional-icon { width: 36px; height: 36px; flex-shrink: 0; background: var(--accent-wash); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-top: .1rem; }
   .regional-icon svg { width: 18px; height: 18px; stroke: var(--accent-deep); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .regional-note strong { font-weight: 500; color: var(--text-primary); }
 
-  /* ── Alternatives ────────────────────────────────────────────────────── */
+  /* ── Alternatives ── */
   .alt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
-  .alt-card {
-    background: var(--bg-card); border: 1px solid var(--border-light);
-    border-radius: 16px; padding: 1.5rem; box-shadow: var(--shadow-card);
-    transition: box-shadow .2s, border-color .2s, transform .2s;
-  }
+  .alt-card { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.5rem; box-shadow: var(--shadow-card); transition: box-shadow .2s, border-color .2s, transform .2s; }
   .alt-card:hover { border-color: var(--accent-soft); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
   .alt-rank { font-size: .68rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: .5rem; }
   .alt-name { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 600; color: var(--text-primary); margin-bottom: .2rem; line-height: 1.2; }
   .alt-sci  { font-family: 'Cormorant Garamond', serif; font-size: .9rem; font-style: italic; color: var(--text-muted); margin-bottom: .85rem; }
-  .alt-conf {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: .2rem .7rem; border-radius: 100px;
-    font-size: .72rem; font-weight: 500;
-    background: var(--accent-wash); color: var(--accent-deep);
-  }
+  .alt-conf { display: inline-flex; align-items: center; gap: 5px; padding: .2rem .7rem; border-radius: 100px; font-size: .72rem; font-weight: 500; background: var(--accent-wash); color: var(--accent-deep); }
   .alt-conf-dot { width: 5px; height: 5px; background: var(--accent-primary); border-radius: 50%; }
   .no-alts { font-size: .875rem; font-weight: 300; color: var(--text-muted); font-style: italic; }
 
-  /* ── Cache badge ─────────────────────────────────────────────────────── */
-  .cache-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    background: var(--accent-wash); border: 1px solid var(--accent-soft);
-    color: var(--accent-deep); border-radius: 100px;
-    font-size: .72rem; font-weight: 500; padding: .2rem .65rem; letter-spacing: .04em;
+  /* ────────────────────────────────────────────
+     JOURNAL CARD
+  ──────────────────────────────────────────── */
+  .journal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    padding: 1.75rem 2rem;
+    box-shadow: var(--shadow-card);
+    transition: border-color .2s, box-shadow .2s;
   }
-  .cache-badge svg { width: 11px; height: 11px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .journal-card:hover { border-color: var(--accent-soft); }
 
-  /* ── Guest CTA card ──────────────────────────────────────────────────── */
-  .cta-block { padding: 5rem 2rem 6rem; max-width: 600px; margin: 0 auto; text-align: center; }
-  .cta-eyebrow {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: .78rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
-    color: var(--accent-deep); background: var(--accent-wash);
-    border: 1px solid var(--accent-soft);
-    padding: .3rem 1rem; border-radius: 100px; margin-bottom: 1.5rem;
+  .journal-invite {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
   }
+  .journal-invite-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
+  .journal-form { display: none; }
+  .journal-form.open { display: block; }
+
+  .journal-form-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .journal-field { margin-bottom: 1rem; }
+  .journal-field label {
+    display: block;
+    font-size: .72rem;
+    font-weight: 500;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: .45rem;
+  }
+  .journal-field label span {
+    font-weight: 300;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--text-muted);
+  }
+  .journal-input,
+  .journal-textarea {
+    width: 100%;
+    padding: .75rem 1rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color .2s, background .2s;
+  }
+  .journal-input:focus,
+  .journal-textarea:focus {
+    border-color: var(--accent-primary);
+    background: var(--bg-card);
+  }
+  .journal-textarea {
+    resize: vertical;
+    line-height: 1.65;
+    min-height: 100px;
+  }
+  .journal-form-actions {
+    display: flex;
+    gap: .75rem;
+    margin-top: 1.25rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .journal-success {
+    display: none;
+    align-items: center;
+    gap: .75rem;
+    background: var(--accent-wash);
+    border: 1px solid var(--accent-soft);
+    border-radius: 12px;
+    padding: .85rem 1.1rem;
+    margin-top: 1.25rem;
+  }
+  .journal-success.show { display: flex; }
+  .journal-success svg { width: 18px; height: 18px; stroke: var(--accent-deep); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .journal-success-text { font-size: .875rem; color: var(--accent-deep); }
+  .journal-success-link { font-size: .875rem; color: var(--accent-deep); font-weight: 500; margin-left: auto; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+
+  /* ── Guest CTA ── */
+  .cta-block { padding: 5rem 2rem 6rem; max-width: 600px; margin: 0 auto; text-align: center; }
+  .cta-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: .78rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-deep); background: var(--accent-wash); border: 1px solid var(--accent-soft); padding: .3rem 1rem; border-radius: 100px; margin-bottom: 1.5rem; }
   .cta-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 500; color: var(--text-primary); line-height: 1.12; margin-bottom: 1rem; }
   .cta-title em { font-style: italic; color: var(--accent-deep); }
   .cta-sub { font-size: .9rem; font-weight: 300; color: var(--text-secondary); line-height: 1.7; margin-bottom: 2rem; }
   .cta-actions { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
 
-  /* ── Responsive ──────────────────────────────────────────────────────── */
+  /* ── Responsive ── */
   @media (max-width: 900px) {
     .two-col { grid-template-columns: 1fr; }
     .seasons-grid { grid-template-columns: 1fr 1fr; }
@@ -450,6 +407,7 @@
     .care-grid { grid-template-columns: 1fr 1fr; }
     .seasons-grid { grid-template-columns: 1fr; }
     .section-block { padding-top: 3rem; }
+    .journal-invite { flex-direction: column; align-items: flex-start; gap: 1rem; }
   }
 </style>
 </head>
@@ -458,7 +416,7 @@
 <div class="bg-blob blob-a"></div>
 <div class="bg-blob blob-b"></div>
 
-<!-- ── Nav ──────────────────────────────────────────────────────────────── -->
+<!-- ── Nav ── -->
 <nav>
   <a href="{{ url_for('home') }}" class="nav-logo">
     <div class="nav-logo-icon">
@@ -472,9 +430,7 @@
     {% if not is_guest %}
       <a href="{{ url_for('dashboard.dashboard') }}" class="btn-nav">My collection</a>
     {% endif %}
-    <a href="{{ url_for('dashboard.dashboard') }}?section=identify" class="btn-nav-outline">
-      Identify another
-    </a>
+    <a href="{{ url_for('dashboard.dashboard') }}?section=identify" class="btn-nav-outline">Identify another</a>
     {% if is_guest %}
       <a href="{{ url_for('auth.register') }}" class="btn-nav-solid">Get started</a>
     {% endif %}
@@ -492,10 +448,10 @@
   </div>
 </nav>
 
-<!-- ── Hero ─────────────────────────────────────────────────────────────── -->
+<!-- ── Page ── -->
 <div class="page">
 
-  <!-- Botanical line-art accents -->
+  <!-- Botanical accents -->
   <svg class="leaf-accent" style="top:64px;right:-10px;width:300px;height:300px;" viewBox="0 0 300 300" fill="none">
     <path d="M280 20 Q180 80 165 180 Q150 260 80 285" stroke="var(--accent-primary)" stroke-width="1" fill="none"/>
     <ellipse cx="215" cy="80" rx="34" ry="16" transform="rotate(-35 215 80)" stroke="var(--accent-primary)" stroke-width=".8" fill="none"/>
@@ -508,41 +464,30 @@
     <ellipse cx="92" cy="110" rx="26" ry="12" transform="rotate(38 92 110)" stroke="var(--accent-primary)" stroke-width=".8" fill="none"/>
   </svg>
 
+  <!-- ── Hero ── -->
   <div class="result-hero">
 
-    <!-- ── Image column ────────────────────────────────────────────────── -->
+    <!-- Image column -->
     <div class="image-column">
       <div class="image-card">
         <div class="plant-image-wrap">
-          <!-- Shimmer shown while image loads -->
           <div class="img-shimmer" id="imgShimmer"></div>
-
           {% if plant.image_url %}
-            <img
-              id="plantImage"
-              src="{{ url_for('uploaded_file', filename=plant.image_url) }}"
-              alt="{{ plant.common_name or 'Identified plant' }}"
-            />
+            <img id="plantImage" src="{{ url_for('uploaded_file', filename=plant.image_url) }}" alt="{{ plant.common_name or 'Identified plant' }}" />
           {% else %}
-            <!-- No image available (should not happen after Option B) -->
             <div class="img-placeholder">
               <svg viewBox="0 0 24 24"><path d="M12 22V12M12 12C12 7 8 3 3 3c0 5 3.5 8.5 9 9zM12 12C12 7 16 3 21 3c0 5-3.5 8.5-9 9z"/></svg>
               <span class="img-placeholder-text">No image available</span>
             </div>
           {% endif %}
         </div>
-
         <div class="image-meta">
           <span class="image-meta-sci">{{ plant.scientific_name or '' }}</span>
           {% if plant.confidence %}
-            <span class="conf-pill">
-              <span class="conf-pill-dot"></span>
-              {{ (plant.confidence * 100) | int }}% match
-            </span>
+            <span class="conf-pill"><span class="conf-pill-dot"></span>{{ (plant.confidence * 100) | int }}% match</span>
           {% endif %}
         </div>
       </div>
-
       {% if is_guest %}
         <div class="guest-notice">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -551,13 +496,11 @@
       {% endif %}
     </div>
 
-    <!-- ── Identity column ─────────────────────────────────────────────── -->
+    <!-- Identity column -->
     <div class="identity-column">
-
       <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap;">
         <div class="result-eyebrow" style="margin-bottom:0;">
-          <span class="result-eyebrow-dot"></span>
-          Identified species
+          <span class="result-eyebrow-dot"></span>Identified species
         </div>
         {% if result_data and result_data.get('from_cache') %}
           <span class="cache-badge">
@@ -575,22 +518,10 @@
       {% endif %}
 
       <div class="taxonomy-grid">
-        <div class="taxon-cell">
-          <div class="taxon-label">Family</div>
-          <div class="taxon-value">{{ plant.family or '—' }}</div>
-        </div>
-        <div class="taxon-cell">
-          <div class="taxon-label">Genus</div>
-          <div class="taxon-value"><em>{{ plant.genus or '—' }}</em></div>
-        </div>
-        <div class="taxon-cell">
-          <div class="taxon-label">Common name</div>
-          <div class="taxon-value">{{ plant.common_name or '—' }}</div>
-        </div>
-        <div class="taxon-cell">
-          <div class="taxon-label">Scientific name</div>
-          <div class="taxon-value"><em>{{ plant.scientific_name or '—' }}</em></div>
-        </div>
+        <div class="taxon-cell"><div class="taxon-label">Family</div><div class="taxon-value">{{ plant.family or '—' }}</div></div>
+        <div class="taxon-cell"><div class="taxon-label">Genus</div><div class="taxon-value"><em>{{ plant.genus or '—' }}</em></div></div>
+        <div class="taxon-cell"><div class="taxon-label">Common name</div><div class="taxon-value">{{ plant.common_name or '—' }}</div></div>
+        <div class="taxon-cell"><div class="taxon-label">Scientific name</div><div class="taxon-value"><em>{{ plant.scientific_name or '—' }}</em></div></div>
       </div>
 
       {% set conf_pct = ((plant.confidence or 0) * 100) | int %}
@@ -625,11 +556,10 @@
           </a>
         {% endif %}
       </div>
-
     </div>
   </div>
 
-  <!-- ── Lower sections ──────────────────────────────────────────────── -->
+  <!-- ── Lower sections ── -->
   <div class="lower">
 
     <!-- Fun fact -->
@@ -656,92 +586,14 @@
       <div class="section-label">Care guide</div>
       <h2 class="section-title">How to keep it <em>thriving</em></h2>
       <div class="care-grid">
-
-        {% if care.get('sunlight') %}
-        <div class="care-card">
-          <div class="care-icon-wrap">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          </div>
-          <div class="care-label">Sunlight</div>
-          <div class="care-value">{{ care.sunlight }}</div>
-        </div>
-        {% endif %}
-
-        {% if care.get('water') %}
-        <div class="care-card">
-          <div class="care-icon-wrap">
-            <svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
-          </div>
-          <div class="care-label">Water</div>
-          <div class="care-value">{{ care.water }}</div>
-        </div>
-        {% endif %}
-
-        {% if care.get('soil') %}
-        <div class="care-card">
-          <div class="care-icon-wrap">
-            <svg viewBox="0 0 24 24"><path d="M12 22V12M12 12C12 7 8 3 3 3c0 5 3.5 8.5 9 9zM12 12C12 7 16 3 21 3c0 5-3.5 8.5-9 9z"/></svg>
-          </div>
-          <div class="care-label">Soil</div>
-          <div class="care-value">{{ care.soil }}</div>
-        </div>
-        {% endif %}
-
-        {% if care.get('humidity') %}
-        <div class="care-card">
-          <div class="care-icon-wrap">
-            <svg viewBox="0 0 24 24"><path d="M8 19a4 4 0 0 1-4-4 7 7 0 0 1 7-7h.5A6.5 6.5 0 0 1 18 14.5 4.5 4.5 0 0 1 13.5 19z"/></svg>
-          </div>
-          <div class="care-label">Humidity</div>
-          <div class="care-value">{{ care.humidity }}</div>
-        </div>
-        {% endif %}
-
-        {% if care.get('temperature') %}
-        <div class="care-card">
-          <div class="care-icon-wrap">
-            <svg viewBox="0 0 24 24"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
-          </div>
-          <div class="care-label">Temperature</div>
-          <div class="care-value">{{ care.temperature }}</div>
-        </div>
-        {% endif %}
-
-        {% if care.get('fertiliser') %}
-        <div class="care-card">
-          <div class="care-icon-wrap">
-            <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
-          </div>
-          <div class="care-label">Fertiliser</div>
-          <div class="care-value">{{ care.fertiliser }}</div>
-        </div>
-        {% endif %}
-
-        {% if care.get('pruning') %}
-        <div class="care-card">
-          <div class="care-icon-wrap">
-            <svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
-          </div>
-          <div class="care-label">Pruning</div>
-          <div class="care-value">{{ care.pruning }}</div>
-        </div>
-        {% endif %}
-
-        {% if care.get('difficulty') %}
-        <div class="care-card">
-          <div class="care-icon-wrap">
-            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          </div>
-          <div class="care-label">Difficulty</div>
-          <div class="care-value">
-            {% set diff = care.difficulty | lower %}
-            <span class="difficulty-badge {% if 'beginner' in diff %}diff-beginner{% elif 'intermediate' in diff %}diff-intermediate{% else %}diff-expert{% endif %}">
-              {{ care.difficulty }}
-            </span>
-          </div>
-        </div>
-        {% endif %}
-
+        {% if care.get('sunlight') %}<div class="care-card"><div class="care-icon-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div><div class="care-label">Sunlight</div><div class="care-value">{{ care.sunlight }}</div></div>{% endif %}
+        {% if care.get('water') %}<div class="care-card"><div class="care-icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div><div class="care-label">Water</div><div class="care-value">{{ care.water }}</div></div>{% endif %}
+        {% if care.get('soil') %}<div class="care-card"><div class="care-icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 22V12M12 12C12 7 8 3 3 3c0 5 3.5 8.5 9 9zM12 12C12 7 16 3 21 3c0 5-3.5 8.5-9 9z"/></svg></div><div class="care-label">Soil</div><div class="care-value">{{ care.soil }}</div></div>{% endif %}
+        {% if care.get('humidity') %}<div class="care-card"><div class="care-icon-wrap"><svg viewBox="0 0 24 24"><path d="M8 19a4 4 0 0 1-4-4 7 7 0 0 1 7-7h.5A6.5 6.5 0 0 1 18 14.5 4.5 4.5 0 0 1 13.5 19z"/></svg></div><div class="care-label">Humidity</div><div class="care-value">{{ care.humidity }}</div></div>{% endif %}
+        {% if care.get('temperature') %}<div class="care-card"><div class="care-icon-wrap"><svg viewBox="0 0 24 24"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg></div><div class="care-label">Temperature</div><div class="care-value">{{ care.temperature }}</div></div>{% endif %}
+        {% if care.get('fertiliser') %}<div class="care-card"><div class="care-icon-wrap"><svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg></div><div class="care-label">Fertiliser</div><div class="care-value">{{ care.fertiliser }}</div></div>{% endif %}
+        {% if care.get('pruning') %}<div class="care-card"><div class="care-icon-wrap"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg></div><div class="care-label">Pruning</div><div class="care-value">{{ care.pruning }}</div></div>{% endif %}
+        {% if care.get('difficulty') %}<div class="care-card"><div class="care-icon-wrap"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="care-label">Difficulty</div><div class="care-value">{% set diff = care.difficulty | lower %}<span class="difficulty-badge {% if 'beginner' in diff %}diff-beginner{% elif 'intermediate' in diff %}diff-intermediate{% else %}diff-expert{% endif %}">{{ care.difficulty }}</span></div></div>{% endif %}
       </div>
     </div>
     {% endif %}
@@ -751,19 +603,13 @@
     <div class="section-rule" style="margin-top:4.5rem;"></div>
     <div class="section-block">
       <div class="two-col">
-
         {% if result_data.get('botanical') %}
         {% set bot = result_data.botanical %}
         <div>
           <div class="section-label">Botanical profile</div>
           <h2 class="section-title" style="font-size:1.5rem;">What makes it <em>distinct</em></h2>
           <div class="info-card">
-            <div class="info-card-title">
-              <div class="info-card-title-icon">
-                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              </div>
-              Botanical details
-            </div>
+            <div class="info-card-title"><div class="info-card-title-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>Botanical details</div>
             {% if bot.get('leaf_type') %}<div class="info-row"><span class="info-key">Leaves</span><span class="info-val">{{ bot.leaf_type }}</span></div>{% endif %}
             {% if bot.get('flower') %}<div class="info-row"><span class="info-key">Flower</span><span class="info-val">{{ bot.flower }}</span></div>{% endif %}
             {% if bot.get('fruit_seed') %}<div class="info-row"><span class="info-key">Fruit / seed</span><span class="info-val">{{ bot.fruit_seed }}</span></div>{% endif %}
@@ -772,45 +618,22 @@
           </div>
         </div>
         {% endif %}
-
         {% if result_data.get('safety') %}
         {% set saf = result_data.safety %}
         <div>
           <div class="section-label">Safety</div>
           <h2 class="section-title" style="font-size:1.5rem;">Is it <em>safe?</em></h2>
-
           {% if saf.get('toxic_to_humans') %}
-            <div class="safety-banner safety-danger">
-              <div class="safety-banner-icon">
-                <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              </div>
-              <p class="safety-text"><strong>Toxic to humans.</strong> {{ saf.get('notes') or '' }}</p>
-            </div>
+            <div class="safety-banner safety-danger"><div class="safety-banner-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><p class="safety-text"><strong>Toxic to humans.</strong> {{ saf.get('notes') or '' }}</p></div>
           {% elif saf.get('toxic_to_pets') %}
-            <div class="safety-banner safety-warn">
-              <div class="safety-banner-icon">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              </div>
-              <p class="safety-text"><strong>Safe for humans</strong> but keep away from pets. {{ saf.get('notes') or '' }}</p>
-            </div>
+            <div class="safety-banner safety-warn"><div class="safety-banner-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><p class="safety-text"><strong>Safe for humans</strong> but keep away from pets. {{ saf.get('notes') or '' }}</p></div>
           {% else %}
-            <div class="safety-banner safety-safe">
-              <div class="safety-banner-icon">
-                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-              </div>
-              <p class="safety-text">{{ saf.get('notes') or 'Generally considered safe for people and common pets.' }}</p>
-            </div>
+            <div class="safety-banner safety-safe"><div class="safety-banner-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><p class="safety-text">{{ saf.get('notes') or 'Generally considered safe for people and common pets.' }}</p></div>
           {% endif %}
-
           {% if result_data.get('uses') %}
           {% set uses = result_data.uses %}
           <div class="info-card" style="margin-top:1rem;">
-            <div class="info-card-title">
-              <div class="info-card-title-icon">
-                <svg viewBox="0 0 24 24"><path d="M12 22V12M12 12C12 7 8 3 3 3c0 5 3.5 8.5 9 9zM12 12C12 7 16 3 21 3c0 5-3.5 8.5-9 9z"/></svg>
-              </div>
-              Uses
-            </div>
+            <div class="info-card-title"><div class="info-card-title-icon"><svg viewBox="0 0 24 24"><path d="M12 22V12M12 12C12 7 8 3 3 3c0 5 3.5 8.5 9 9zM12 12C12 7 16 3 21 3c0 5-3.5 8.5-9 9z"/></svg></div>Uses</div>
             {% if uses.get('medicinal') and uses.medicinal != 'None documented' %}<div class="info-row"><span class="info-key">Medicinal</span><span class="info-val">{{ uses.medicinal }}</span></div>{% endif %}
             {% if uses.get('culinary') and uses.culinary != 'Not edible' %}<div class="info-row"><span class="info-key">Culinary</span><span class="info-val">{{ uses.culinary }}</span></div>{% endif %}
             {% if uses.get('ayurvedic') %}<div class="info-row"><span class="info-key">Ayurvedic</span><span class="info-val">{{ uses.ayurvedic }}</span></div>{% endif %}
@@ -819,7 +642,6 @@
           {% endif %}
         </div>
         {% endif %}
-
       </div>
     </div>
     {% endif %}
@@ -832,33 +654,9 @@
       <div class="section-label">When to grow</div>
       <h2 class="section-title">Rhythm of <em>the year</em></h2>
       <div class="seasons-grid">
-        {% if seas.get('best_growing') %}
-        <div class="season-card">
-          <div class="season-icon-wrap">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          </div>
-          <div class="season-label">Best growing season</div>
-          <div class="season-value">{{ seas.best_growing }}</div>
-        </div>
-        {% endif %}
-        {% if seas.get('bloom_time') %}
-        <div class="season-card">
-          <div class="season-icon-wrap">
-            <svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg>
-          </div>
-          <div class="season-label">Bloom time</div>
-          <div class="season-value">{{ seas.bloom_time }}</div>
-        </div>
-        {% endif %}
-        {% if seas.get('dormancy') %}
-        <div class="season-card">
-          <div class="season-icon-wrap">
-            <svg viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
-          </div>
-          <div class="season-label">Dormancy</div>
-          <div class="season-value">{{ seas.dormancy }}</div>
-        </div>
-        {% endif %}
+        {% if seas.get('best_growing') %}<div class="season-card"><div class="season-icon-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div><div class="season-label">Best growing season</div><div class="season-value">{{ seas.best_growing }}</div></div>{% endif %}
+        {% if seas.get('bloom_time') %}<div class="season-card"><div class="season-icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg></div><div class="season-label">Bloom time</div><div class="season-value">{{ seas.bloom_time }}</div></div>{% endif %}
+        {% if seas.get('dormancy') %}<div class="season-card"><div class="season-icon-wrap"><svg viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg></div><div class="season-label">Dormancy</div><div class="season-value">{{ seas.dormancy }}</div></div>{% endif %}
       </div>
     </div>
     {% endif %}
@@ -875,9 +673,7 @@
     {% if result_data and result_data.get('regional_notes') %}
     <div class="section-block" style="padding-top:2rem;">
       <div class="regional-note">
-        <div class="regional-icon">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-        </div>
+        <div class="regional-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
         <div><strong>In your region — </strong>{{ result_data.regional_notes }}</div>
       </div>
     </div>
@@ -895,12 +691,7 @@
             <div class="alt-rank">Match {{ loop.index + 1 }}</div>
             <div class="alt-name">{{ alt.common_name or alt.scientific_name or 'Unknown' }}</div>
             <div class="alt-sci">{{ alt.scientific_name or '' }}</div>
-            {% if alt.confidence %}
-              <span class="alt-conf">
-                <span class="alt-conf-dot"></span>
-                {{ (alt.confidence * 100) | int }}%
-              </span>
-            {% endif %}
+            {% if alt.confidence %}<span class="alt-conf"><span class="alt-conf-dot"></span>{{ (alt.confidence * 100) | int }}%</span>{% endif %}
           </div>
           {% endfor %}
         </div>
@@ -909,16 +700,61 @@
       {% endif %}
     </div>
 
+    <!-- ── Journal card — logged-in users only ── -->
+    {% if not is_guest and plant_id is defined and plant_id %}
+    <div class="section-rule" style="margin-top:4.5rem;"></div>
+    <div class="section-block">
+      <div class="journal-card" id="journalCard">
+
+        <!-- Invite state -->
+        <div class="journal-invite" id="journalInvite">
+          <p class="journal-invite-text">Want to remember this moment?</p>
+          <button class="btn-outline" onclick="openJournal()">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+            Add to journal
+          </button>
+        </div>
+
+        <!-- Form state -->
+        <div class="journal-form" id="journalForm">
+          <p class="journal-form-title">Want to remember this moment?</p>
+
+          <div class="journal-field">
+            <label for="journalTitle">Title <span>(optional)</span></label>
+            <input id="journalTitle" class="journal-input" type="text" maxlength="200" placeholder="e.g. Monsoon walk, Grandmother's garden…" />
+          </div>
+
+          <div class="journal-field">
+            <label for="journalNote">Note <span>(optional)</span></label>
+            <textarea id="journalNote" class="journal-textarea" maxlength="2000" placeholder="Where did you find it? What did it remind you of?"></textarea>
+          </div>
+
+          <div class="journal-form-actions">
+            <button class="btn-primary" id="journalSaveBtn" onclick="saveJournal()">
+              <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save to journal
+            </button>
+            <button class="btn-outline" onclick="closeJournal()">Cancel</button>
+          </div>
+
+          <div class="journal-success" id="journalSuccess">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="journal-success-text">Saved to your journal.</span>
+            <a href="{{ url_for('dashboard.dashboard') }}?section=journal" class="journal-success-link">View journal →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    {% endif %}
+
   </div><!-- /lower -->
 
-  <!-- ── Guest CTA ──────────────────────────────────────────────────────── -->
+  <!-- ── Guest CTA ── -->
   {% if is_guest %}
   <div style="background:var(--bg-surface);border-top:1px solid var(--border-light);transition:background .4s;">
     <div class="cta-block">
-      <div class="cta-eyebrow">
-        <span class="result-eyebrow-dot"></span>
-        Want to keep this?
-      </div>
+      <div class="cta-eyebrow"><span class="result-eyebrow-dot"></span>Want to keep this?</div>
       <h2 class="cta-title">Save your finds, <em>build your garden</em></h2>
       <p class="cta-sub">Create a free account to keep your identification history, re-visit past plants, and mark favourites — your personal botanical record.</p>
       <div class="cta-actions">
@@ -935,7 +771,7 @@
 </div><!-- /page -->
 
 <script>
-  /* ── Theme toggle ─────────────────────────────────────────────────────── */
+  /* ── Theme ── */
   const html   = document.documentElement;
   const toggle = document.getElementById('themeToggle');
   const saved  = localStorage.getItem('flourisha-theme') || 'day';
@@ -947,7 +783,7 @@
     localStorage.setItem('flourisha-theme', theme);
   });
 
-  /* ── Confidence bar animation ─────────────────────────────────────────── */
+  /* ── Confidence bar ── */
   window.addEventListener('load', () => {
     const bar = document.getElementById('confBar');
     if (bar) {
@@ -956,33 +792,74 @@
     }
   });
 
-  /* ── Plant image load / shimmer ───────────────────────────────────────── */
+  /* ── Image shimmer ── */
   const plantImg = document.getElementById('plantImage');
   const shimmer  = document.getElementById('imgShimmer');
-
   function onImageReady() {
     if (plantImg) plantImg.classList.add('loaded');
     if (shimmer)  shimmer.classList.add('hidden');
-
-    /* ── Guest cleanup: fire-and-forget after image visible ─────────────── */
     {% if is_guest and plant.image_url %}
-    fetch("{{ url_for('ai.cleanup_guest_image', filename=plant.image_url) }}", { method: 'POST' })
-      .catch(() => {}); // silently ignore network errors
+    fetch("{{ url_for('ai.cleanup_guest_image', filename=plant.image_url) }}", { method: 'POST' }).catch(() => {});
     {% endif %}
   }
-
   if (plantImg) {
-    if (plantImg.complete && plantImg.naturalHeight !== 0) {
-      onImageReady();
-    } else {
+    if (plantImg.complete && plantImg.naturalHeight !== 0) { onImageReady(); }
+    else {
       plantImg.addEventListener('load',  onImageReady);
-      plantImg.addEventListener('error', () => {
-        if (shimmer) shimmer.classList.add('hidden');
-      });
+      plantImg.addEventListener('error', () => { if (shimmer) shimmer.classList.add('hidden'); });
     }
   } else {
     if (shimmer) shimmer.classList.add('hidden');
   }
+
+  /* ── Journal ── */
+  {% if not is_guest and plant_id is defined and plant_id %}
+  const PLANT_ID = {{ plant_id }};
+
+  function openJournal() {
+    document.getElementById('journalInvite').style.display = 'none';
+    const form = document.getElementById('journalForm');
+    form.classList.add('open');
+    document.getElementById('journalTitle').focus();
+  }
+
+  function closeJournal() {
+    document.getElementById('journalForm').classList.remove('open');
+    document.getElementById('journalInvite').style.display = 'flex';
+  }
+
+  function saveJournal() {
+    const title   = document.getElementById('journalTitle').value.trim();
+    const note    = document.getElementById('journalNote').value.trim();
+    const saveBtn = document.getElementById('journalSaveBtn');
+
+    saveBtn.disabled   = true;
+    saveBtn.innerHTML  = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg> Saving…';
+
+    fetch('/journal/save', {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body   : JSON.stringify({ plant_id: PLANT_ID, title, note }),
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        // hide fields and actions
+        document.querySelectorAll('.journal-field').forEach(f => f.style.display = 'none');
+        document.querySelector('.journal-form-actions').style.display = 'none';
+        document.getElementById('journalSuccess').classList.add('show');
+      } else {
+        saveBtn.disabled  = false;
+        saveBtn.innerHTML = 'Save to journal';
+        alert('Could not save. Please try again.');
+      }
+    })
+    .catch(() => {
+      saveBtn.disabled  = false;
+      saveBtn.innerHTML = 'Save to journal';
+    });
+  }
+  {% endif %}
 </script>
 </body>
 </html>
