@@ -15,6 +15,8 @@ from routes.calendar_routes import calendar_bp   # missing import
        
 app = Flask(__name__)
 app.config.from_object(Config)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.register_blueprint(calendar_bp)     # missing registration  
 db.init_app(app)
 migrate.init_app(app, db)
@@ -27,7 +29,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(journal_bp)                     # ← new
 
 app.permanent_session_lifetime = timedelta(days=30)
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+
 
 @app.route("/")
 def home():
