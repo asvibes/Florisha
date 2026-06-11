@@ -14,7 +14,7 @@ import logging
 import re
 from typing import Optional
 from dotenv import load_dotenv
-from google import genai
+import google.generativeai as genai
 from google.genai import types
 
 load_dotenv()
