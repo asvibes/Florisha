@@ -160,7 +160,6 @@
   }
   .panel-logo-icon svg { width: 20px; height: 20px; }
   .panel-logo-text { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; color: rgba(200,235,195,0.85); letter-spacing: 0.02em; }
-
   .panel-tip {
     background: rgba(0,0,0,0.28);
     border: 1px solid rgba(122,173,110,0.2);
@@ -268,7 +267,7 @@
   }
   .form-subtitle a:hover { border-color: var(--accent-primary); }
 
-  /* ── UPLOAD ZONE ── */
+  /* ── DESKTOP UPLOAD ZONE ── */
   .upload-zone {
     background: var(--bg-card);
     border: 2px dashed var(--border-color);
@@ -304,8 +303,77 @@
   }
   .upload-preview-change:hover { color: var(--accent-deep); }
 
-  /* hidden input */
-  #plantImageInput { display: none; }
+  /* ── MOBILE CAPTURE ZONE ── */
+  /* Hidden on desktop, shown on mobile */
+  .mobile-capture { display: none; }
+
+  .mobile-preview-zone {
+    background: var(--bg-card);
+    border: 2px dashed var(--border-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s;
+  }
+  .mobile-preview-zone.has-image {
+    border-style: solid;
+    border-color: var(--accent-primary);
+    padding: 1rem;
+  }
+  .mobile-preview-img {
+    width: 100%; max-height: 260px; object-fit: cover;
+    border-radius: 10px; display: block;
+  }
+  .mobile-preview-name {
+    font-size: 0.82rem; color: var(--text-secondary);
+    margin-top: 0.5rem; display: block;
+  }
+
+  .mobile-action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .btn-mobile-action {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.5rem;
+    padding: 1.1rem 0.75rem;
+    border-radius: 14px;
+    border: 1.5px solid var(--border-color);
+    background: var(--bg-card);
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .btn-mobile-action:active { transform: scale(0.97); }
+  .btn-mobile-action:hover {
+    border-color: var(--accent-primary);
+    background: var(--accent-wash);
+  }
+  .btn-mobile-action.primary-action {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--text-on-accent);
+  }
+  .btn-mobile-action.primary-action:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
+  .btn-mobile-action svg {
+    width: 26px; height: 26px;
+    stroke: currentColor; fill: none;
+    stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .btn-mobile-action .action-label {
+    font-size: 0.82rem; font-weight: 500;
+    color: inherit; line-height: 1.2; text-align: center;
+  }
+  .btn-mobile-action:not(.primary-action) .action-label { color: var(--text-primary); }
+
+  /* hidden inputs */
+  #plantImageInput        { display: none; }
+  #cameraInput            { display: none; }
+  #galleryInput           { display: none; }
 
   /* ── SUBMIT ── */
   .btn-submit {
@@ -317,6 +385,7 @@
     border-radius: 12px; border: none; cursor: pointer;
     transition: background 0.2s, transform 0.15s;
     align-items: center; justify-content: center; gap: 8px;
+    touch-action: manipulation;
   }
   .btn-submit:hover { background: var(--accent-deep); transform: translateY(-1px); }
   .btn-submit svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
@@ -353,9 +422,31 @@
   /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
     .panel-left { display: none; }
-    .panel-right { padding: 2rem 1.25rem; }
+
+    .panel-right {
+      padding: 1.75rem 1.25rem 2.5rem;
+      /* extra bottom padding so content clears safe area */
+      padding-bottom: max(2.5rem, env(safe-area-inset-bottom, 2.5rem));
+      align-items: flex-start;
+    }
+
     nav { padding: 0 1rem; }
     .nav-link { display: none; }
+    .btn-nav-register { display: none; }
+
+    .form-wrapper { max-width: 100%; }
+
+    .form-title { font-size: 2rem; }
+    .form-subtitle { margin-bottom: 1.5rem; }
+
+    /* Hide desktop upload zone, show mobile capture zone */
+    .upload-zone-desktop { display: none; }
+    .mobile-capture      { display: block; }
+  }
+
+  /* ── SAFE AREA (notched phones) ── */
+  @supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .panel-right { padding-bottom: calc(2.5rem + env(safe-area-inset-bottom)); }
   }
 </style>
 </head>
@@ -372,8 +463,8 @@
   </a>
   <div class="nav-links">
     <a href="{{ url_for('home') }}#how" class="nav-link">How it works</a>
-    <a href="{{url_for('auth.login') }}" class="btn-nav-login">Log in</a>
-    <a href="{{ url_for('auth.register')}}" class="btn-nav-register">Get started</a>
+    <a href="{{ url_for('auth.login') }}" class="btn-nav-login">Log in</a>
+    <a href="{{ url_for('auth.register') }}" class="btn-nav-register">Get started</a>
     <label class="sky-switch" aria-label="Toggle day/night mode">
       <input type="checkbox" id="themeToggle" />
       <div class="sky-slider">
@@ -390,7 +481,7 @@
 
 <div class="identify-layout">
 
-  <!-- LEFT — botanical tips panel -->
+  <!-- LEFT — botanical tips panel (desktop only) -->
   <div class="panel-left">
     <svg class="panel-botanical-svg" viewBox="0 0 620 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <rect width="620" height="800" fill="#060f04"/>
@@ -407,7 +498,6 @@
       <ellipse cx="132" cy="212" rx="65" ry="95" fill="#1f4812"/>
       <line x1="490" y1="800" x2="472" y2="215" stroke="#163510" stroke-width="18"/>
       <ellipse cx="472" cy="172" rx="80" ry="115" fill="#163510"/>
-      <!-- hero fern -->
       <line x1="310" y1="800" x2="310" y2="340" stroke="#2e6b1c" stroke-width="6"/>
       <path d="M310 600 Q240 540 210 460" stroke="#2e6b1c" stroke-width="3.5" fill="none"/>
       <ellipse cx="228" cy="492" rx="28" ry="10" transform="rotate(-40 228 492)" fill="#336e1e"/>
@@ -419,23 +509,18 @@
       <ellipse cx="254" cy="415" rx="24" ry="9" transform="rotate(-38 254 415)" fill="#3a8022"/>
       <path d="M310 460 Q362 415 378 345" stroke="#2e6b1c" stroke-width="3" fill="none"/>
       <ellipse cx="366" cy="375" rx="24" ry="9" transform="rotate(38 366 375)" fill="#3a8022"/>
-      <!-- fiddlehead -->
       <path d="M310 340 Q318 310 310 290 Q302 270 310 260 Q322 250 328 265 Q334 280 322 290 Q314 298 316 310" stroke="#3a8022" stroke-width="2.5" fill="none"/>
       <circle cx="320" cy="260" r="7" fill="#3a8022" opacity="0.8"/>
       <circle cx="320" cy="260" r="4" fill="#5aaa44" opacity="0.9"/>
-      <!-- ground -->
       <ellipse cx="155" cy="780" rx="60" ry="18" fill="#163510" opacity="0.8"/>
       <ellipse cx="460" cy="775" rx="55" ry="16" fill="#102508" opacity="0.8"/>
-      <!-- glow -->
       <circle cx="180" cy="580" r="3" fill="#88ff88" opacity="0.25"/>
       <circle cx="180" cy="580" r="8" fill="#44aa44" opacity="0.08"/>
       <circle cx="420" cy="620" r="2.5" fill="#88ff88" opacity="0.20"/>
       <circle cx="260" cy="480" r="2" fill="#aaffaa" opacity="0.22"/>
       <circle cx="360" cy="510" r="2" fill="#88ff88" opacity="0.18"/>
     </svg>
-
     <div class="panel-overlay"></div>
-
     <a href="{{ url_for('home') }}" class="panel-logo-mark">
       <div class="panel-logo-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="rgba(190,235,185,0.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -444,7 +529,6 @@
       </div>
       <span class="panel-logo-text">Flourisha</span>
     </a>
-
     <div class="panel-content">
       <div class="panel-tip">
         <div class="panel-tip-tag"><span class="panel-tip-dot"></span>Tips for best results</div>
@@ -489,7 +573,7 @@
       <h1 class="form-title">What's this<br><em>plant?</em></h1>
       <p class="form-subtitle">
         Upload a photo and we'll identify it in seconds.<br>
-        Want to save your finds? <a href="{{url_for('auth.register')  }}">Create a free account</a>
+        Want to save your finds? <a href="{{ url_for('auth.register') }}">Create a free account</a>
       </p>
 
       <!-- Flash messages -->
@@ -513,9 +597,8 @@
 
       <form action="{{ url_for('ai.identify') }}" method="post" enctype="multipart/form-data" id="identifyForm">
 
-        <!-- drag-and-drop upload zone -->
-        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('plantImageInput').click()">
-          <!-- prompt (shown before file chosen) -->
+        <!-- ── DESKTOP: drag-and-drop upload zone ── -->
+        <div class="upload-zone upload-zone-desktop" id="uploadZone" onclick="document.getElementById('plantImageInput').click()">
           <div id="uploadPrompt">
             <div class="upload-zone-icon">
               <svg viewBox="0 0 24 24">
@@ -527,20 +610,51 @@
             <div class="upload-zone-title">Drop your photo here</div>
             <p class="upload-zone-sub">or click to browse — JPG, PNG, WEBP</p>
           </div>
-          <!-- preview (shown after file chosen) -->
           <div class="upload-preview" id="uploadPreview">
             <img id="previewImg" src="" alt="Preview" />
             <span class="upload-preview-name" id="previewName"></span>
             <button type="button" class="upload-preview-change" onclick="resetUpload(event)">Choose a different photo</button>
           </div>
         </div>
+        <!-- Desktop hidden input -->
+        <input type="file" id="plantImageInput" name="image" accept=".jpg,.jpeg,.png,.webp" onchange="handleFile(this)" />
 
-        <input type="file"
-               id="plantImageInput"
-               name="image"
-               accept=".jpg,.jpeg,.png,.webp"
-               onchange="handleFile(this)" />
+        <!-- ── MOBILE: camera + gallery choice ── -->
+        <div class="mobile-capture" id="mobileCaptureSection">
 
+          <!-- Preview zone (shown after image selected) -->
+          <div class="mobile-preview-zone" id="mobilePreviewZone" style="display:none;">
+            <img class="mobile-preview-img" id="mobilePreviewImg" src="" alt="Selected plant" />
+            <span class="mobile-preview-name" id="mobilePreviewName"></span>
+          </div>
+
+          <!-- Two action buttons -->
+          <div class="mobile-action-row">
+            <button type="button" class="btn-mobile-action primary-action" onclick="document.getElementById('cameraInput').click()">
+              <svg viewBox="0 0 24 24">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+              <span class="action-label">Take a photo</span>
+            </button>
+            <button type="button" class="btn-mobile-action" onclick="document.getElementById('galleryInput').click()">
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <span class="action-label">Choose from gallery</span>
+            </button>
+          </div>
+
+          <!-- Camera input: opens rear camera directly -->
+          <input type="file" id="cameraInput"  name="image" accept="image/*" capture="environment" onchange="handleMobileFile(this)" />
+          <!-- Gallery input: opens file picker, no camera -->
+          <input type="file" id="galleryInput" name="image" accept=".jpg,.jpeg,.png,.webp" onchange="handleMobileFile(this)" />
+
+        </div>
+
+        <!-- Submit button (shared, shown after image selected) -->
         <button type="submit" class="btn-submit" id="submitBtn">
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           Identify this plant
@@ -554,7 +668,7 @@
         <div class="form-divider-line"></div>
       </div>
       <p class="form-footer">
-        <a href="{{ url_for('auth.login')}}">Log in</a> to save your identifications and build a collection.
+        <a href="{{ url_for('auth.login') }}">Log in</a> to save your identifications and build a collection.
       </p>
 
     </div>
@@ -563,7 +677,7 @@
 </div>
 
 <script>
-  /* ── theme ── */
+  /* ── THEME ── */
   const html   = document.documentElement;
   const toggle = document.getElementById('themeToggle');
   const saved  = localStorage.getItem('flourisha-theme') || 'day';
@@ -575,67 +689,99 @@
     localStorage.setItem('flourisha-theme', theme);
   });
 
-  /* ── file handling ── */
-  const uploadZone  = document.getElementById('uploadZone');
-  const uploadPrompt = document.getElementById('uploadPrompt');
+  /* ── DESKTOP FILE HANDLING ── */
+  const uploadZone    = document.getElementById('uploadZone');
+  const uploadPrompt  = document.getElementById('uploadPrompt');
   const uploadPreview = document.getElementById('uploadPreview');
-  const previewImg  = document.getElementById('previewImg');
-  const previewName = document.getElementById('previewName');
-  const submitBtn   = document.getElementById('submitBtn');
+  const previewImg    = document.getElementById('previewImg');
+  const previewName   = document.getElementById('previewName');
+  const submitBtn     = document.getElementById('submitBtn');
 
   function handleFile(input) {
     const file = input.files[0];
     if (!file) return;
-
-    // show image preview
     const reader = new FileReader();
     reader.onload = e => {
-      previewImg.src = e.target.result;
+      previewImg.src      = e.target.result;
       previewName.textContent = file.name;
-      uploadPrompt.style.display = 'none';
+      uploadPrompt.style.display  = 'none';
       uploadPreview.style.display = 'flex';
-      submitBtn.style.display = 'flex';
+      submitBtn.style.display     = 'flex';
     };
     reader.readAsDataURL(file);
   }
 
   function resetUpload(e) {
-    e.stopPropagation();   // don't trigger zone click
+    e.stopPropagation();
     document.getElementById('plantImageInput').value = '';
-    uploadPrompt.style.display = 'block';
+    uploadPrompt.style.display  = 'block';
     uploadPreview.style.display = 'none';
-    submitBtn.style.display = 'none';
+    submitBtn.style.display     = 'none';
   }
 
-  /* ── drag and drop ── */
-  uploadZone.addEventListener('dragover', e => {
-    e.preventDefault();
-    uploadZone.classList.add('dragover');
-  });
-  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
-  uploadZone.addEventListener('drop', e => {
-    e.preventDefault();
-    uploadZone.classList.remove('dragover');
-    const file = e.dataTransfer.files[0];
+  /* ── DESKTOP DRAG AND DROP ── */
+  if (uploadZone) {
+    uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+    uploadZone.addEventListener('drop', e => {
+      e.preventDefault(); uploadZone.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+      const input = document.getElementById('plantImageInput');
+      const dt    = new DataTransfer();
+      dt.items.add(file);
+      input.files = dt.files;
+      handleFile(input);
+    });
+  }
+
+  /* ── MOBILE FILE HANDLING ── */
+  /*
+   * When the user picks via camera or gallery, we:
+   * 1. Show the preview
+   * 2. Copy the file into the MAIN form input (name="image") so the
+   *    existing Flask route receives it unchanged.
+   */
+  function handleMobileFile(input) {
+    const file = input.files[0];
     if (!file) return;
-    const input = document.getElementById('plantImageInput');
+
+    // Copy file to the real form input so Flask route gets name="image"
+    const mainInput = document.getElementById('plantImageInput');
     const dt = new DataTransfer();
     dt.items.add(file);
-    input.files = dt.files;
-    handleFile(input);
-  });
+    mainInput.files = dt.files;
 
-  /* ── loading state on submit ── */
+    // Show preview
+    const reader = new FileReader();
+    reader.onload = e => {
+      const previewZone     = document.getElementById('mobilePreviewZone');
+      const mobileImg       = document.getElementById('mobilePreviewImg');
+      const mobileName      = document.getElementById('mobilePreviewName');
+
+      mobileImg.src           = e.target.result;
+      mobileName.textContent  = file.name;
+      previewZone.style.display = 'block';
+      previewZone.classList.add('has-image');
+
+      submitBtn.style.display = 'flex';
+      // Scroll the submit button into view smoothly
+      setTimeout(() => submitBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /* ── LOADING STATE ON SUBMIT ── */
   document.getElementById('identifyForm').addEventListener('submit', () => {
     submitBtn.classList.add('loading');
     submitBtn.innerHTML = '<div class="spinner"></div> Identifying…';
   });
 
-  /* ── auto-dismiss flash after 6s ── */
+  /* ── AUTO-DISMISS FLASH AFTER 6s ── */
   document.querySelectorAll('.flash-banner').forEach(banner => {
     setTimeout(() => {
       banner.style.transition = 'opacity 0.4s';
-      banner.style.opacity = '0';
+      banner.style.opacity    = '0';
       setTimeout(() => banner.remove(), 400);
     }, 6000);
   });

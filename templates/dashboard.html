@@ -198,6 +198,7 @@
     color: var(--text-on-accent); font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem; font-weight: 500; border-radius: 12px; border: none;
     cursor: pointer; text-decoration: none; transition: background 0.2s, transform 0.15s;
+    touch-action: manipulation;
   }
   .btn-identify:hover { background: var(--accent-deep); transform: translateY(-1px); }
   .btn-identify svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
@@ -447,15 +448,113 @@
   .cal-detail-close:hover { background: var(--accent-wash); color: var(--text-primary); }
   .cal-detail-close svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
+  /* ═══ MOBILE BOTTOM NAV ═══ */
+  .mobile-bottom-nav {
+    display: none;
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 400;
+    background: var(--bg-topbar);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid var(--border-light);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    transition: background 0.4s, border-color 0.4s;
+  }
+  .mobile-nav-inner {
+    display: flex; align-items: stretch; height: 58px;
+  }
+  .mobile-nav-btn {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 3px;
+    background: none; border: none; cursor: pointer;
+    color: var(--text-muted); font-family: 'DM Sans', sans-serif;
+    font-size: 0.6rem; font-weight: 500; letter-spacing: 0.04em;
+    text-transform: uppercase; padding: 0;
+    transition: color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .mobile-nav-btn:active { opacity: 0.7; }
+  .mobile-nav-btn.active { color: var(--accent-primary); }
+  .mobile-nav-btn svg {
+    width: 21px; height: 21px; stroke: currentColor; fill: none;
+    stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .mobile-nav-label { line-height: 1; }
+  /* Centre Identify button */
+  .mobile-nav-identify { flex: 0 0 68px; }
+  .mobile-nav-identify-inner {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--accent-primary);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(122,173,110,0.45);
+    transition: background 0.2s, transform 0.15s;
+    margin-bottom: 3px;
+  }
+  .mobile-nav-identify:active .mobile-nav-identify-inner { transform: scale(0.92); }
+  .mobile-nav-identify svg { stroke: #fff !important; }
+  .mobile-nav-identify .mobile-nav-label { color: var(--accent-deep); font-weight: 600; }
+
+  /* ── Mobile capture buttons inside identify section ── */
+  .mobile-capture-section { display: none; }
+  .dash-mobile-preview-zone {
+    background: var(--bg-card);
+    border: 2px dashed var(--border-color);
+    border-radius: 16px; padding: 1.5rem;
+    text-align: center; margin-bottom: 1rem;
+    transition: border-color 0.2s;
+  }
+  .dash-mobile-preview-zone.has-image {
+    border-style: solid; border-color: var(--accent-primary); padding: 1rem;
+  }
+  .dash-mobile-preview-img {
+    width: 100%; max-height: 240px; object-fit: cover;
+    border-radius: 10px; display: block;
+  }
+  .dash-mobile-preview-name {
+    font-size: 0.82rem; color: var(--text-secondary);
+    margin-top: 0.5rem; display: block;
+  }
+  .mobile-action-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0.75rem; margin-bottom: 0.75rem;
+  }
+  .btn-mobile-action {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 0.5rem; padding: 1.1rem 0.75rem;
+    border-radius: 14px; border: 1.5px solid var(--border-color);
+    background: var(--bg-card); cursor: pointer; transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-mobile-action:active { transform: scale(0.97); }
+  .btn-mobile-action:hover { border-color: var(--accent-primary); background: var(--accent-wash); }
+  .btn-mobile-action.cam-primary {
+    background: var(--accent-primary); border-color: var(--accent-primary); color: #fff;
+  }
+  .btn-mobile-action.cam-primary:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
+  .btn-mobile-action svg {
+    width: 26px; height: 26px; stroke: currentColor; fill: none;
+    stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .btn-mobile-action .act-label {
+    font-size: 0.82rem; font-weight: 500; color: inherit; line-height: 1.2; text-align: center;
+  }
+  .btn-mobile-action:not(.cam-primary) .act-label { color: var(--text-primary); }
+
   /* ═══ RESPONSIVE ═══ */
   @media (max-width: 768px) {
     :root { --sidebar-width: 0px; }
     .sidebar { display: none; }
     .topbar { padding: 0 1rem; }
     .topbar-logo { position: static; transform: none; }
+    .topbar-greeting { display: none; }
     .main { margin-left: 0; }
-    .main-inner { padding: 1.5rem 1rem; }
-    .stats-row { grid-template-columns: 1fr; }
+    .main-inner {
+      padding: 1.5rem 1rem;
+      /* leave space for bottom nav */
+      padding-bottom: calc(58px + 1.5rem + env(safe-area-inset-bottom, 0px));
+    }
+    .stats-row { grid-template-columns: 1fr 1fr; }
     .polaroid-grid { grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
     .journal-shell { grid-template-columns: 1fr; }
     .journal-list { border-right: none; border-bottom: 1px solid var(--border-light); max-height: 280px; }
@@ -463,6 +562,16 @@
     .cal-cell { min-height: 60px; }
     .cal-thumb { min-height: 36px; }
     .cal-thumb-placeholder { min-height: 36px; }
+
+    /* Show bottom nav */
+    .mobile-bottom-nav { display: block; }
+
+    /* Show mobile capture, hide desktop upload zone */
+    .desktop-upload-zone { display: none !important; }
+    .mobile-capture-section { display: block; }
+
+    /* Hide identify button in welcome strip on mobile (bottom nav has it) */
+    .welcome-strip .btn-identify { display: none; }
   }
 </style>
 </head>
@@ -651,17 +760,12 @@
             <ellipse cx="70" cy="115" rx="30" ry="8" fill="var(--accent-wash)"/>
             <path d="M45 90 L50 118 Q70 124 90 118 L95 90 Z" fill="var(--accent-soft)"/>
             <ellipse cx="70" cy="90" rx="25" ry="7" fill="var(--accent-primary)" opacity="0.6"/>
-            <ellipse cx="70" cy="90" rx="22" ry="5.5" fill="var(--accent-deep)" opacity="0.3"/>
             <line x1="70" y1="88" x2="70" y2="48" stroke="var(--accent-primary)" stroke-width="3" stroke-linecap="round"/>
             <path d="M70 72 Q48 58 42 40 Q62 42 70 60" fill="var(--accent-primary)" opacity="0.7"/>
             <path d="M70 62 Q92 48 98 30 Q78 32 70 50" fill="var(--accent-deep)" opacity="0.6"/>
             <circle cx="70" cy="42" r="10" fill="var(--accent-soft)"/>
             <circle cx="70" cy="42" r="5" fill="var(--accent-primary)"/>
             <circle cx="70" cy="42" r="2.5" fill="#f9dc5c"/>
-            <ellipse cx="70" cy="30" rx="4" ry="7" fill="var(--accent-soft)" opacity="0.8"/>
-            <ellipse cx="70" cy="54" rx="4" ry="7" fill="var(--accent-soft)" opacity="0.8"/>
-            <ellipse cx="58" cy="42" rx="7" ry="4" fill="var(--accent-soft)" opacity="0.8"/>
-            <ellipse cx="82" cy="42" rx="7" ry="4" fill="var(--accent-soft)" opacity="0.8"/>
           </svg>
           <h2 class="empty-title">Your collection is <em>waiting</em></h2>
           <p class="empty-sub">Photograph a plant and Flourisha will identify it — it goes straight into your collection.</p>
@@ -696,7 +800,7 @@
               {% endif %}
             </div>
             <div class="polaroid-label">
-              <button class="delete-btn" onclick="confirmDelete({{ plant.id }}, '{{ plant.name or plant.scientific_name or 'this plant' }}')" aria-label="Delete plant" title="Remove from collection">
+              <button class="delete-btn" onclick="confirmDelete({{ plant.id }}, '{{ plant.name or plant.scientific_name or 'this plant' }}')" aria-label="Delete">
                 <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
               </button>
               <div class="polaroid-text">
@@ -757,9 +861,6 @@
             <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="var(--accent-soft)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
               <polyline points="14 2 14 8 20 8"/>
-              <line x1="16" y1="13" x2="8" y2="13"/>
-              <line x1="16" y1="17" x2="8" y2="17"/>
-              <polyline points="10 9 9 9 8 9"/>
             </svg>
             <p>Select an entry to read it</p>
           </div>
@@ -853,18 +954,11 @@
           </button>
         </div>
         <div class="cal-dow-row">
-          <div class="cal-dow">Sun</div>
-          <div class="cal-dow">Mon</div>
-          <div class="cal-dow">Tue</div>
-          <div class="cal-dow">Wed</div>
-          <div class="cal-dow">Thu</div>
-          <div class="cal-dow">Fri</div>
-          <div class="cal-dow">Sat</div>
+          <div class="cal-dow">Sun</div><div class="cal-dow">Mon</div><div class="cal-dow">Tue</div>
+          <div class="cal-dow">Wed</div><div class="cal-dow">Thu</div><div class="cal-dow">Fri</div><div class="cal-dow">Sat</div>
         </div>
         <div class="cal-grid" id="calGrid">
-          <div style="grid-column:1/-1;padding:3rem;text-align:center;color:var(--text-muted);font-size:.875rem;font-weight:300;">
-            Loading your calendar…
-          </div>
+          <div style="grid-column:1/-1;padding:3rem;text-align:center;color:var(--text-muted);font-size:.875rem;font-weight:300;">Loading your calendar…</div>
         </div>
         <div class="cal-detail-panel" id="calDetailPanel">
           <div class="cal-detail-date" id="calDetailDate"></div>
@@ -891,8 +985,12 @@
           {% endfor %}
         {% endif %}
       {% endwith %}
-      <form action="{{ url_for('ai.identify') }}" method="post" enctype="multipart/form-data" style="max-width:500px;">
-        <div id="uploadZone" style="background:var(--bg-card);border:2px dashed var(--border-color);border-radius:16px;padding:4rem 2rem;text-align:center;cursor:pointer;transition:border-color 0.2s;"
+
+      <form action="{{ url_for('ai.identify') }}" method="post" enctype="multipart/form-data" style="max-width:500px;" id="dashIdentifyForm">
+
+        <!-- Desktop upload zone -->
+        <div id="uploadZone" class="desktop-upload-zone"
+             style="background:var(--bg-card);border:2px dashed var(--border-color);border-radius:16px;padding:4rem 2rem;text-align:center;cursor:pointer;transition:border-color 0.2s;"
              onmouseover="this.style.borderColor='var(--accent-primary)'"
              onmouseout="this.style.borderColor='var(--border-color)'"
              onclick="document.getElementById('plantImageInput').click()">
@@ -901,15 +999,49 @@
           </svg>
           <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:500;color:var(--text-primary);margin-bottom:0.5rem;">Drop your photo here</p>
           <p style="font-size:0.85rem;color:var(--text-muted);">or click to browse — JPG, PNG, WEBP supported</p>
-        </div>
-        <input type="file" id="plantImageInput" name="image" accept=".jpg,.jpeg,.png,.webp" style="display:none;" onchange="handleFileSelect(this)" />
-        <div id="fileFeedback" style="display:none;margin-top:1.25rem;background:var(--bg-card);border:1px solid var(--border-light);border-radius:12px;padding:1rem 1.25rem;align-items:center;justify-content:space-between;gap:1rem;">
-          <div style="display:flex;align-items:center;gap:10px;min-width:0;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
-            <span id="fileNameDisplay" style="font-size:0.875rem;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
+          <!-- Desktop file preview -->
+          <div id="fileFeedback" style="display:none;margin-top:1.25rem;background:var(--bg-surface);border:1px solid var(--border-light);border-radius:12px;padding:1rem 1.25rem;align-items:center;justify-content:space-between;gap:1rem;">
+            <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+              <span id="fileNameDisplay" style="font-size:0.875rem;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
+            </div>
+            <button type="button" onclick="clearFile()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:0.8rem;flex-shrink:0;padding:0;">Remove</button>
           </div>
-          <button type="button" onclick="clearFile()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:0.8rem;flex-shrink:0;padding:0;">Remove</button>
         </div>
+
+        <!-- Main file input (used by both desktop and mobile paths) -->
+        <input type="file" id="plantImageInput" name="image" accept=".jpg,.jpeg,.png,.webp" style="display:none;" onchange="handleFileSelect(this)" />
+
+        <!-- ── MOBILE: camera + gallery buttons ── -->
+        <div class="mobile-capture-section" id="dashMobileCaptureSection">
+          <!-- Preview zone -->
+          <div class="dash-mobile-preview-zone" id="dashMobilePreview" style="display:none;">
+            <img class="dash-mobile-preview-img" id="dashMobileImg" src="" alt="Selected plant" />
+            <span class="dash-mobile-preview-name" id="dashMobileFileName"></span>
+          </div>
+          <!-- Action buttons -->
+          <div class="mobile-action-row">
+            <button type="button" class="btn-mobile-action cam-primary" onclick="document.getElementById('dashCameraInput').click()">
+              <svg viewBox="0 0 24 24">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+              <span class="act-label">Take a photo</span>
+            </button>
+            <button type="button" class="btn-mobile-action" onclick="document.getElementById('dashGalleryInput').click()">
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <span class="act-label">Choose from gallery</span>
+            </button>
+          </div>
+          <!-- Camera input opens rear camera, gallery opens file picker -->
+          <input type="file" id="dashCameraInput"  name="image" accept="image/*" capture="environment" onchange="handleDashMobileFile(this)" style="display:none;" />
+          <input type="file" id="dashGalleryInput" name="image" accept=".jpg,.jpeg,.png,.webp"           onchange="handleDashMobileFile(this)" style="display:none;" />
+        </div>
+
         <button type="submit" id="submitBtn" style="display:none;margin-top:1rem;width:100%;" class="btn-identify">
           <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           Identify this plant
@@ -927,7 +1059,7 @@
         </div>
       </div>
       {% if plants %}
-        <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-card);">
+        <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-card);overflow-x:auto;">
           <table class="history-table" id="historyTable">
             <thead>
               <tr>
@@ -1009,6 +1141,49 @@
   </div>
 </main>
 
+<!-- ═══ MOBILE BOTTOM NAV ═══ -->
+<nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Main navigation">
+  <div class="mobile-nav-inner">
+
+    <button class="mobile-nav-btn active" id="mnav-collection"
+            onclick="mobileNav('collection', this)" aria-label="Collection">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span class="mobile-nav-label">Collection</span>
+    </button>
+
+    <button class="mobile-nav-btn" id="mnav-journal"
+            onclick="mobileNav('journal', this)" aria-label="Journal">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span class="mobile-nav-label">Journal</span>
+    </button>
+
+    <!-- Centre: Identify (camera shutter) -->
+    <button class="mobile-nav-btn mobile-nav-identify" id="mnav-identify"
+            onclick="mobileNav('identify', this)" aria-label="Identify a plant">
+      <div class="mobile-nav-identify-inner">
+        <svg viewBox="0 0 24 24">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+      </div>
+      <span class="mobile-nav-label">Identify</span>
+    </button>
+
+    <button class="mobile-nav-btn" id="mnav-calendar"
+            onclick="mobileNav('calendar', this)" aria-label="Calendar">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="mobile-nav-label">Calendar</span>
+    </button>
+
+    <button class="mobile-nav-btn" id="mnav-profile"
+            onclick="mobileNav('profile', this)" aria-label="Profile">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="mobile-nav-label">Profile</span>
+    </button>
+
+  </div>
+</nav>
+
 <script>
   /* ── THEME ── */
   const html   = document.documentElement;
@@ -1034,6 +1209,18 @@
     document.getElementById('section-' + id).classList.add('active');
     if (btn) btn.classList.add('active');
     if (id === 'calendar') calInit();
+    // sync mobile nav
+    document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+    const mBtn = document.getElementById('mnav-' + id);
+    if (mBtn) mBtn.classList.add('active');
+    // scroll to top on mobile
+    if (window.innerWidth <= 768) window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ── MOBILE NAV ── */
+  function mobileNav(id, btn) {
+    const sidebarBtn = document.querySelector('[data-section="' + id + '"]');
+    showSection(id, sidebarBtn);
   }
 
   /* ── POLAROID TILTS ── */
@@ -1148,7 +1335,7 @@
       .catch(() => {});
   }
 
-  /* ── FILE UPLOAD UX ── */
+  /* ── DESKTOP FILE UPLOAD UX ── */
   function handleFileSelect(input) {
     if (input.files && input.files[0]) {
       document.getElementById('fileNameDisplay').textContent = input.files[0].name;
@@ -1161,6 +1348,38 @@
     document.getElementById('fileFeedback').style.display   = 'none';
     document.getElementById('submitBtn').style.display      = 'none';
   }
+
+  /* ── MOBILE FILE HANDLING (dashboard identify section) ── */
+  function handleDashMobileFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    // Copy to the named input so Flask route receives name="image"
+    const mainInput = document.getElementById('plantImageInput');
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    mainInput.files = dt.files;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      const previewZone = document.getElementById('dashMobilePreview');
+      document.getElementById('dashMobileImg').src          = e.target.result;
+      document.getElementById('dashMobileFileName').textContent = file.name;
+      previewZone.style.display = 'block';
+      previewZone.classList.add('has-image');
+
+      document.getElementById('submitBtn').style.display = 'block';
+      setTimeout(() => document.getElementById('submitBtn').scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /* ── LOADING STATE ON SUBMIT ── */
+  document.getElementById('dashIdentifyForm').addEventListener('submit', () => {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<div style="width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;"></div> Identifying…';
+  });
 
   /* ── AUTO-OPEN FROM URL PARAM ── */
   (function() {
@@ -1268,20 +1487,15 @@
      CALENDAR
   ═══════════════════════════════════════════ */
   const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-
-  let _calYear     = new Date().getFullYear();
-  let _calMonth    = new Date().getMonth() + 1;
-  let _calData     = null;
+  let _calYear = new Date().getFullYear();
+  let _calMonth = new Date().getMonth() + 1;
+  let _calData = null;
   let _calOpenDate = null;
-  let _calInited   = false;
+  let _calInited = false;
 
   function calInit() {
-    if (!_calInited) {
-      _calInited = true;
-      calFetch(_calYear, _calMonth);
-    }
+    if (!_calInited) { _calInited = true; calFetch(_calYear, _calMonth); }
   }
-
   function calNavigate(dir) {
     _calMonth += dir;
     if (_calMonth < 1)  { _calMonth = 12; _calYear--; }
@@ -1289,7 +1503,6 @@
     calCloseDetail();
     calFetch(_calYear, _calMonth);
   }
-
   function calFetch(year, month) {
     document.getElementById('calGrid').innerHTML =
       `<div style="grid-column:1/-1;padding:3rem;text-align:center;color:var(--text-muted);font-size:.875rem;font-weight:300;">Loading…</div>`;
@@ -1301,52 +1514,39 @@
           `<div style="grid-column:1/-1;padding:3rem;text-align:center;color:var(--text-muted);font-size:.875rem;">Couldn't load calendar data.</div>`;
       });
   }
-
   function calRender(data) {
     const { year, month, days, today } = data;
-    document.getElementById('calMonthLabel').innerHTML =
-      `${MONTH_NAMES[month - 1]} <span>${year}</span>`;
-    const firstDow    = new Date(year, month - 1, 1).getDay();
+    document.getElementById('calMonthLabel').innerHTML = `${MONTH_NAMES[month - 1]} <span>${year}</span>`;
+    const firstDow = new Date(year, month - 1, 1).getDay();
     const daysInMonth = new Date(year, month, 0).getDate();
     const grid = document.getElementById('calGrid');
     grid.innerHTML = '';
-
     for (let i = 0; i < firstDow; i++) {
       const empty = document.createElement('div');
       empty.className = 'cal-cell cal-cell--empty';
       grid.appendChild(empty);
     }
-
     for (let d = 1; d <= daysInMonth; d++) {
       const dateStr  = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
       const dayData  = days[dateStr];
       const isToday  = dateStr === today;
       const hasPlants  = dayData && dayData.plants && dayData.plants.length > 0;
       const hasJournal = dayData && dayData.journal_entries && dayData.journal_entries.length > 0;
-
       const cell = document.createElement('div');
-      cell.className = 'cal-cell'
-        + (isToday   ? ' cal-cell--today'      : '')
-        + (hasPlants ? ' cal-cell--has-plants' : '');
+      cell.className = 'cal-cell' + (isToday ? ' cal-cell--today' : '') + (hasPlants ? ' cal-cell--has-plants' : '');
       cell.dataset.date = dateStr;
-
       const num = document.createElement('div');
       num.className = 'cal-day-num';
       num.textContent = d;
       cell.appendChild(num);
-
       if (hasPlants) {
         const cover = dayData.cover;
         const total = dayData.plants.length;
         const thumbWrap = document.createElement('div');
         thumbWrap.className = 'cal-thumb-wrap';
-
         if (cover && cover.image_url) {
           const img = document.createElement('img');
-          img.className = 'cal-thumb';
-          img.src = `/uploads/${cover.image_url}`;
-          img.alt = cover.name;
-          img.loading = 'lazy';
+          img.className = 'cal-thumb'; img.src = `/uploads/${cover.image_url}`; img.alt = cover.name; img.loading = 'lazy';
           thumbWrap.appendChild(img);
         } else {
           const ph = document.createElement('div');
@@ -1354,104 +1554,54 @@
           ph.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg>`;
           thumbWrap.appendChild(ph);
         }
-        if (total > 1) {
-          const badge = document.createElement('div');
-          badge.className = 'cal-badge';
-          badge.textContent = `+${total - 1}`;
-          thumbWrap.appendChild(badge);
-        }
-        if (hasJournal) {
-          const dot = document.createElement('div');
-          dot.className = 'cal-journal-dot';
-          thumbWrap.appendChild(dot);
-        }
+        if (total > 1) { const badge = document.createElement('div'); badge.className = 'cal-badge'; badge.textContent = `+${total - 1}`; thumbWrap.appendChild(badge); }
+        if (hasJournal) { const dot = document.createElement('div'); dot.className = 'cal-journal-dot'; thumbWrap.appendChild(dot); }
         cell.appendChild(thumbWrap);
         cell.addEventListener('click', () => calOpenDay(dateStr, dayData));
       }
       grid.appendChild(cell);
     }
   }
-
   function calOpenDay(dateStr, dayData) {
     _calOpenDate = dateStr;
     document.querySelectorAll('.cal-cell').forEach(c => c.style.outline = '');
     const activeCell = document.querySelector(`.cal-cell[data-date="${dateStr}"]`);
     if (activeCell) activeCell.style.outline = `2px solid var(--accent-primary)`;
-
     const d = new Date(dateStr + 'T00:00:00');
     document.getElementById('calDetailDate').innerHTML =
       `<strong style="color:var(--text-primary)">${d.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'})}</strong>
        <button class="cal-detail-close" onclick="calCloseDetail()" aria-label="Close">
          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
        </button>`;
-
     const scroll     = document.getElementById('calDetailScroll');
     scroll.innerHTML = '';
-    const plants     = dayData.plants         || [];
+    const plants     = dayData.plants || [];
     const journals   = dayData.journal_entries || [];
     const coverPlant = dayData.cover;
-
     plants.forEach(plant => {
       const isCover    = coverPlant && coverPlant.id === plant.id;
       const hasJournal = plant.has_journal;
       const card = document.createElement('div');
       card.className = 'cal-plant-card' + (isCover ? ' is-cover' : '');
       card.dataset.plantId = plant.id;
-
       const imgHtml = plant.image_url
         ? `<img class="cal-plant-card-img" src="/uploads/${plant.image_url}" alt="${plant.name}" loading="lazy" />`
         : `<div class="cal-plant-card-img-placeholder"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="var(--accent-soft)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg></div>`;
-
       const coverBadge   = isCover    ? `<div class="cal-cover-badge">Cover</div>` : '';
       const journalBadge = hasJournal ? `<div class="cal-journal-badge"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>` : '';
-
-      card.innerHTML = `
-        ${imgHtml}${coverBadge}${journalBadge}
-        <div class="cal-plant-card-body">
-          <div class="cal-plant-card-name">${plant.name}</div>
-          <div class="cal-plant-card-sub">${hasJournal ? 'Has journal entry' : 'No journal yet'}</div>
-        </div>
-        <button class="btn-set-cover" onclick="calSetCover(event,'${dateStr}',${plant.id})">${isCover ? '✓ Cover photo' : 'Set as cover'}</button>
-      `;
-      card.addEventListener('click', (e) => {
-        if (e.target.classList.contains('btn-set-cover')) return;
-        if (hasJournal) calOpenJournalForPlant(plant.id);
-      });
+      card.innerHTML = `${imgHtml}${coverBadge}${journalBadge}<div class="cal-plant-card-body"><div class="cal-plant-card-name">${plant.name}</div><div class="cal-plant-card-sub">${hasJournal ? 'Has journal entry' : 'No journal yet'}</div></div><button class="btn-set-cover" onclick="calSetCover(event,'${dateStr}',${plant.id})">${isCover ? '✓ Cover photo' : 'Set as cover'}</button>`;
+      card.addEventListener('click', (e) => { if (e.target.classList.contains('btn-set-cover')) return; if (hasJournal) calOpenJournalForPlant(plant.id); });
       scroll.appendChild(card);
     });
-
-    journals.forEach(je => {
-      const matchedByPlant = plants.some(p => p.name === je.common_name || p.has_journal);
-      if (!matchedByPlant || plants.length === 0) {
-        const card = document.createElement('div');
-        card.className = 'cal-plant-card';
-        const imgHtml = je.image_url
-          ? `<img class="cal-plant-card-img" src="/uploads/${je.image_url}" alt="${je.common_name}" loading="lazy" />`
-          : `<div class="cal-plant-card-img-placeholder"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="var(--accent-soft)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>`;
-        card.innerHTML = `
-          ${imgHtml}
-          <div class="cal-journal-badge"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-          <div class="cal-plant-card-body">
-            <div class="cal-plant-card-name">${je.title || je.common_name || 'Journal entry'}</div>
-            <div class="cal-plant-card-sub">Journal entry</div>
-          </div>
-        `;
-        card.addEventListener('click', () => calOpenJournalEntry(je.id));
-        scroll.appendChild(card);
-      }
-    });
-
     const panel = document.getElementById('calDetailPanel');
     panel.classList.add('visible');
     panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
-
   function calCloseDetail() {
     document.getElementById('calDetailPanel').classList.remove('visible');
     document.querySelectorAll('.cal-cell').forEach(c => c.style.outline = '');
     _calOpenDate = null;
   }
-
   function calSetCover(event, dateStr, plantId) {
     event.stopPropagation();
     fetch('/calendar/preference', {
@@ -1465,28 +1615,13 @@
         const chosen = _calData.days[dateStr].plants.find(p => p.id === plantId);
         if (chosen) { _calData.days[dateStr].cover = chosen; _calData.pref_map[dateStr] = plantId; }
       }
-      const cell = document.querySelector(`.cal-cell[data-date="${dateStr}"]`);
-      if (cell && _calData && _calData.days[dateStr]) {
-        const thumbWrap = cell.querySelector('.cal-thumb-wrap');
-        const cover = _calData.days[dateStr].cover;
-        if (thumbWrap && cover && cover.image_url) {
-          const img = thumbWrap.querySelector('.cal-thumb');
-          if (img) img.src = `/uploads/${cover.image_url}`;
-        }
-      }
       if (_calData && _calData.days[dateStr]) calOpenDay(dateStr, _calData.days[dateStr]);
     });
   }
-
   function calOpenJournalForPlant(plantId) {
     const journalBtn = document.querySelector('[data-section="journal"]');
     if (journalBtn) showSection('journal', journalBtn);
-    setTimeout(() => {
-      const listItems = document.querySelectorAll('.journal-list-item');
-      if (listItems.length === 1) listItems[0].click();
-    }, 80);
   }
-
   function calOpenJournalEntry(entryId) {
     const journalBtn = document.querySelector('[data-section="journal"]');
     if (journalBtn) showSection('journal', journalBtn);
@@ -1495,6 +1630,11 @@
       if (listItem) { listItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); listItem.click(); }
     }, 80);
   }
+
+  /* ── spin keyframe for loading state ── */
+  const styleEl = document.createElement('style');
+  styleEl.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+  document.head.appendChild(styleEl);
 </script>
 </body>
 </html>
