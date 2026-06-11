@@ -14,14 +14,15 @@ import logging
 import re
 import google.generativeai as genai
 from typing import Optional
-
+from dotenv import load_dotenv
+load_dotenv()
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Initialisation
 # ---------------------------------------------------------------------------
 
-_GEMINI_MODEL = "gemini-1.5-flash"   # fast + cheap; swap to gemini-1.5-pro for depth
+_GEMINI_MODEL = "models/gemini-1.5-pro"   # fast + cheap; swap to gemini-1.5-pro for depth
 
 def _get_client() -> genai.GenerativeModel:
     api_key = os.getenv("GEMINI_API_KEY")
