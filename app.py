@@ -27,7 +27,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(journal_bp)                     # ← new
 
 app.permanent_session_lifetime = timedelta(days=30)
-
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 
 @app.route("/")
 def home():
