@@ -1,7 +1,9 @@
 import os
 import secrets
 from datetime import datetime, timedelta
-import resend
+
+import sib_api_v3_sdk
+from sib_api_v3_sdk.rest import ApiException
 from flask import (Blueprint, render_template, redirect,
                    url_for, session, request, flash)
 from extensions import db, bcrypt
@@ -11,6 +13,8 @@ auth_bp = Blueprint("auth", __name__)
 
 
 # ── helpers ──────────────────────────────────────────────
+
+
 
 def send_verification_email(user):
     token  = secrets.token_urlsafe(32)
@@ -22,13 +26,18 @@ def send_verification_email(user):
 
     link = url_for("auth.verify_email", token=token, _external=True)
 
-    resend.api_key = os.getenv("RESEND_API_KEY")
+    configuration = sib_api_v3_sdk.Configuration()
+    configuration.api_key['api-key'] = os.getenv("BREVO_API_KEY")
 
-    resend.Emails.send({
-        "from": "Florisha <onboarding@resend.dev>",
-        "to": user.email,
-        "subject": "Verify your Florisha account",
-        "text": (
+    api_instance = sib_api_v3_sdk.TransactionalEmailsApi(
+        sib_api_v3_sdk.ApiClient(configuration)
+    )
+
+    email = sib_api_v3_sdk.SendSmtpEmail(
+        to=[{"email": user.email}],
+        sender={"email": "florisha.app@gmail.com", "name": "Florisha"},
+        subject="Verify your Florisha account",
+        text_content=(
             f"Hi,\n\n"
             f"Thanks for joining Florisha! Click the link below to verify "
             f"your email address. This link expires in 1 hour.\n\n"
@@ -36,7 +45,8 @@ def send_verification_email(user):
             f"If you didn't create an account, you can ignore this email.\n\n"
             f"— The Florisha Team"
         )
-    })
+    )
+    api_instance.send_transac_email(email)
 
 
 # ── REGISTER ─────────────────────────────────────────────
