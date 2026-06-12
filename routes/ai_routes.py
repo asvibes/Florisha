@@ -216,6 +216,17 @@ def result_guest():
         is_guest     = True,
     )
 
+# ─────────────────────────────────────────────
+# Cleanup guest image
+# ─────────────────────────────────────────────
+
+@ai_bp.route("/cleanup-guest-image", methods=["POST"])
+def cleanup_guest_image():
+    from utils.cloudinary_helper import delete_image
+    filename = request.args.get("filename", "")
+    if filename:
+        delete_image(filename)
+    return "", 204
 
 # ─────────────────────────────────────────────
 # Helpers
