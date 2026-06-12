@@ -12,3 +12,7 @@ class User(db.Model):
     is_verified          = db.Column(db.Boolean, default=False, nullable=False)
     verification_token   = db.Column(db.String(100), unique=True, nullable=True)
     token_expiry         = db.Column(db.DateTime, nullable=True)
+    
+    # password reset
+    reset_token        = db.Column(db.String(100), unique=True, nullable=True)
+    reset_token_expiry = db.Column(db.DateTime, nullable=True)
