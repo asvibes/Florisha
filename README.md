@@ -72,51 +72,56 @@
 ```
 Florisha/
 │
-├── app.py                    # App entry point
-├── config.py                 # Configuration & environment variables
-├── extensions.py             # Flask extensions (db, bcrypt, mail)
-├── requirements.txt          # Python dependencies
-├── runtime.txt               # Python version for Render
-├── .python-version           # Local Python version
-├── .env                      # Environment variables (not committed)
+├── app.py                         # App entry point
+├── config.py                      # Configuration & environment variables
+├── extensions.py                  # Flask extensions (db, bcrypt, mail)
+├── planet_knowledge.py            # Plant domain knowledge base & facts
+├── plant_service.py               # Core plant service layer (business logic)
+├── requirements.txt               # Python dependencies
+├── runtime.txt                    # Python version for Render
+├── .python-version                # Local Python version
+├── .env                           # Environment variables (not committed)
 ├── .gitignore
 │
-├── models/                   # SQLAlchemy database models
+├── models/                        # SQLAlchemy database models
+│   ├── __init__.py
 │   ├── user.py
 │   ├── plant.py
 │   ├── journal_entry.py
 │   └── calendar_preferences.py
 │
-├── routes/                   # Flask Blueprints
-│   ├── auth_routes.py        # Register, login, logout, email verification
-│   ├── ai_routes.py          # Plant identification & AI profile generation
-│   ├── dashboard.py          # User dashboard
-│   ├── main_routes.py        # Home & static pages
-│   ├── journal_routes.py     # Plant journal CRUD
-│   └── calendar_routes.py    # Care calendar
+├── routes/                        # Flask Blueprints
+│   ├── __init__.py
+│   ├── auth_routes.py             # Register, login, logout, email verification
+│   ├── ai_routes.py               # Plant identification & AI profile generation
+│   ├── dashboard.py               # User dashboard
+│   ├── main_routes.py             # Home & static pages
+│   ├── journal_routes.py          # Plant journal CRUD
+│   └── calendar_routes.py         # Care calendar
 │
-├── services/                 # External API integrations
-│   ├── gemini_service.py     # Google Gemini AI plant profiles
-│   └── plant_processor.py    # PlantNet identification processing
+├── services/                      # External API integrations
+│   ├── gemini_service.py          # Google Gemini AI plant profiles
+│   └── plant_processor.py         # PlantNet identification processing
 │
-├── modules/                  # AI & recommendation logic
+├── modules/                       # AI & recommendation logic
 │   ├── ai_engine.py
 │   ├── prompt_engine.py
 │   ├── recommendation.py
 │   └── user_profile.py
 │
 ├── ml/
-│   └── model.pkl             # Trained ML model
+│   └── model.pkl                  # Trained ML model
 │
 ├── utils/
-│   └── image_handler.py      # Image upload & processing
+│   ├── image_handler.py           # Image upload & processing
+│   └── cloudinary_helper.py       # Cloudinary cloud image storage helper
 │
-├── static/                   # CSS, JS, Images
+├── static/                        # CSS, JS, Images
 │   ├── css/style.css
 │   ├── js/app.js
 │   └── images/
 │
-├── templates/                # Jinja2 HTML templates
+├── templates/                     # Jinja2 HTML templates
 │   ├── index.html
 │   ├── dashboard.html
 │   ├── identify.html
@@ -125,13 +130,22 @@ Florisha/
 │   ├── login.html
 │   ├── register.html
 │   ├── verify_email.html
+│   ├── forgot_password.html
+│   ├── reset_password.html
 │   └── upload.html
 │
-├── migrations/               # Alembic database migrations
-├── data/                     # JSON data files
+├── migrations/                    # Alembic database migrations
+│   ├── versions/
+│   ├── alembic.ini
+│   ├── env.py
+│   ├── README.md
+│   └── script.py.mako
+│
+├── data/                          # JSON data files
 │   ├── users.json
 │   └── history.json
-└── uploads/                  # User uploaded plant images
+│
+└── uploads/                       # User uploaded plant images
 ```
 
 ---
