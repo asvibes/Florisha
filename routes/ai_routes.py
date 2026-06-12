@@ -8,6 +8,7 @@ from extensions import db
 from models.plant import Plant
 from services.plant_processor import process_identification
 from plantnet_service import identify_plant
+from utils.cloudinary_helper import upload_image
 
 ai_bp = Blueprint("ai", __name__)
 
@@ -22,80 +23,9 @@ def allowed_file(filename):
 
 
 def _redirect_on_failure():
-    """Guests → identify page. Logged-in → dashboard identify section."""
     if "user_id" in session:
         return redirect(url_for("dashboard.dashboard") + "?section=identify")
     return redirect(url_for("ai.identify_page"))
-
-
-def _clean_old_guest_uploads():
-    """
-    Delete guest upload files older than 30 minutes from the uploads folder.
-    Called at the start of every new identify POST so no scheduler is needed.
-    """
-    upload_folder = current_app.config["UPLOAD_FOLDER"]
-    cutoff = datetime.utcnow() - timedelta(minutes=30)
-
-    try:
-        for fname in os.listdir(upload_folder):
-            fpath = os.path.join(upload_folder, fname)
-            if not os.path.isfile(fpath):
-                continue
-            modified = datetime.utcfromtimestamp(os.path.getmtime(fpath))
-            if modified < cutoff:
-                os.remove(fpath)
-    except Exception:
-        pass  # never crash the request over cleanup
-
-
-def _build_plant_dict(source, image_url=None):
-    """
-    Build a normalized plant dict for the template from either:
-    - a Plant ORM object  (logged-in path)
-    - a PlantResult dataclass (guest path, top match)
-
-    The template always uses the same keys regardless of source.
-    """
-    # Plant ORM object
-    if isinstance(source, Plant):
-        alternatives_raw = source.alternatives
-        if isinstance(alternatives_raw, str):
-            try:
-                alternatives = json.loads(alternatives_raw)
-            except (json.JSONDecodeError, TypeError):
-                alternatives = []
-        else:
-            alternatives = alternatives_raw or []
-
-        return {
-            "common_name"    : source.name,
-            "scientific_name": source.scientific_name,
-            "family"         : source.family,
-            "genus"          : source.genus,
-            "confidence"     : source.confidence,
-            "image_url"      : source.image_url,
-            "alternatives"   : alternatives,
-        }
-
-    # PlantResult dataclass (guest)
-    return {
-        "common_name"    : source.common_name,
-        "scientific_name": source.scientific_name,
-        "family"         : source.family,
-        "genus"          : source.genus,
-        "confidence"     : source.confidence,
-        "image_url"      : image_url or "",
-        "alternatives"   : [
-            {
-                "common_name"    : alt.common_name,
-                "scientific_name": alt.scientific_name,
-                "family"         : alt.family,
-                "genus"          : alt.genus,
-                "confidence"     : alt.confidence,
-            }
-            for alt in (source.alternatives or [])
-        ],
-    }
 
 
 # ─────────────────────────────────────────────
@@ -104,7 +34,6 @@ def _build_plant_dict(source, image_url=None):
 
 @ai_bp.route("/identify", methods=["GET"])
 def identify_page():
-    """Standalone identify page for guests. Logged-in users go to dashboard."""
     if "user_id" in session:
         return redirect(url_for("dashboard.dashboard") + "?section=identify")
     return render_template("identify.html")
@@ -126,10 +55,7 @@ def identify():
         flash("Unsupported file type. Please upload a JPG, PNG, or WebP image.", "error")
         return _redirect_on_failure()
 
-    # ── 2. Clean up old guest uploads ─────────
-    _clean_old_guest_uploads()
-
-    # ── 3. Save image with a unique filename ───
+    # ── 2. Save temporarily to disk for PlantNet ──
     ext           = file.filename.rsplit(".", 1)[1].lower()
     filename      = f"{uuid.uuid4().hex}.{ext}"
     upload_folder = current_app.config["UPLOAD_FOLDER"]
@@ -137,7 +63,7 @@ def identify():
     image_path    = os.path.join(upload_folder, filename)
     file.save(image_path)
 
-    # ── 4. Call PlantNet ───────────────────────
+    # ── 3. Call PlantNet ───────────────────────
     plantnet_response = identify_plant(image_path)
 
     if not plantnet_response["success"]:
@@ -148,7 +74,7 @@ def identify():
 
     plantnet_data = plantnet_response["data"]
 
-    # ── 5. Process through enrichment pipeline ─
+    # ── 4. Process through enrichment pipeline ─
     result = process_identification(plantnet_data)
 
     if not result:
@@ -156,6 +82,17 @@ def identify():
             os.remove(image_path)
         flash("Could not process the identification. Please try a clearer photo.", "error")
         return _redirect_on_failure()
+
+    # ── 5. Upload image to Cloudinary ──────────
+    try:
+        with open(image_path, "rb") as f:
+            cloudinary_url = upload_image(f, public_id=uuid.uuid4().hex)
+    except Exception as e:
+        cloudinary_url = None
+    finally:
+        # Always clean up the temp file
+        if os.path.exists(image_path):
+            os.remove(image_path)
 
     # ── 6. Logged-in user → save to DB ─────────
     if "user_id" in session:
@@ -166,7 +103,7 @@ def identify():
             family          = result.family,
             genus           = result.genus,
             confidence      = result.confidence,
-            image_url       = filename,
+            image_url = cloudinary_url or None,
             alternatives    = json.dumps([
                 {
                     "common_name"    : alt.common_name,
@@ -182,7 +119,7 @@ def identify():
         db.session.commit()
         return redirect(url_for("ai.result", plant_id=plant.id))
 
-    # ── 7. Guest → store result + filename in session ──
+    # ── 7. Guest → store result in session ─────
     else:
         session["guest_result"] = {
             "top": {
@@ -202,7 +139,7 @@ def identify():
                 }
                 for alt in (result.alternatives or [])
             ],
-            "image_filename" : filename,
+            "image_filename" : cloudinary_url or "",
             "result_profile" : {
                 "description"   : result.description,
                 "origin_story"  : result.origin_story,
@@ -224,12 +161,6 @@ def identify():
 # Result — logged-in user
 # ─────────────────────────────────────────────
 
-# ─────────────────────────────────────────────
-# Result — logged-in user
-# ─────────────────────────────────────────────
-# Replace the existing result() function in routes/ai_routes.py with this.
-# The only change is passing plant_id=plant.id to the template.
-
 @ai_bp.route("/result/<int:plant_id>")
 def result(plant_id):
     plant_obj = Plant.query.get_or_404(plant_id)
@@ -237,7 +168,6 @@ def result(plant_id):
     if "user_id" in session and plant_obj.user_id != session["user_id"]:
         return redirect(url_for("dashboard.dashboard"))
 
-    # Re-fetch rich profile from cache for the result page
     from plant_knowledge import PlantKnowledge
     knowledge    = PlantKnowledge.get_by_scientific_name(plant_obj.scientific_name)
     rich_profile = knowledge.profile if knowledge else {}
@@ -249,7 +179,7 @@ def result(plant_id):
         plant       = plant_dict,
         result_data = rich_profile,
         is_guest    = False,
-        plant_id    = plant_obj.id,          # ← pass this so journal card works
+        plant_id    = plant_obj.id,
     )
 
 
@@ -264,8 +194,8 @@ def result_guest():
     if not guest_result:
         return redirect(url_for("home"))
 
-    top           = guest_result["top"]
-    alternatives  = guest_result.get("alternatives", [])
+    top            = guest_result["top"]
+    alternatives   = guest_result.get("alternatives", [])
     image_filename = guest_result.get("image_filename", "")
     result_profile = guest_result.get("result_profile", {})
 
@@ -288,25 +218,45 @@ def result_guest():
 
 
 # ─────────────────────────────────────────────
-# Guest image cleanup endpoint
+# Helpers
 # ─────────────────────────────────────────────
 
-@ai_bp.route("/cleanup/<filename>", methods=["POST"])
-def cleanup_guest_image(filename):
-    """
-    Called by JS on the guest result page after the image has loaded.
-    Deletes the temporary guest upload from disk.
-    Only allows deletion of files in the configured upload folder.
-    """
-    # Basic safety: strip any path traversal attempts
-    safe_filename = os.path.basename(filename)
-    upload_folder = current_app.config["UPLOAD_FOLDER"]
-    file_path     = os.path.join(upload_folder, safe_filename)
+def _build_plant_dict(source, image_url=None):
+    if isinstance(source, Plant):
+        alternatives_raw = source.alternatives
+        if isinstance(alternatives_raw, str):
+            try:
+                alternatives = json.loads(alternatives_raw)
+            except (json.JSONDecodeError, TypeError):
+                alternatives = []
+        else:
+            alternatives = alternatives_raw or []
 
-    if os.path.exists(file_path):
-        try:
-            os.remove(file_path)
-        except Exception:
-            pass
+        return {
+            "common_name"    : source.name,
+            "scientific_name": source.scientific_name,
+            "family"         : source.family,
+            "genus"          : source.genus,
+            "confidence"     : source.confidence,
+            "image_url"      : source.image_url,
+            "alternatives"   : alternatives,
+        }
 
-    return {"status": "ok"}, 200
+    return {
+        "common_name"    : source.common_name,
+        "scientific_name": source.scientific_name,
+        "family"         : source.family,
+        "genus"          : source.genus,
+        "confidence"     : source.confidence,
+        "image_url"      : image_url or "",
+        "alternatives"   : [
+            {
+                "common_name"    : alt.common_name,
+                "scientific_name": alt.scientific_name,
+                "family"         : alt.family,
+                "genus"          : alt.genus,
+                "confidence"     : alt.confidence,
+            }
+            for alt in (source.alternatives or [])
+        ],
+    }
