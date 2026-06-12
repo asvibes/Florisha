@@ -122,8 +122,12 @@ def verify_email(token):
 @auth_bp.route("/resend-verification", methods=["POST"])
 def resend_verification():
     email = request.form.get("email", "").strip().lower()
-    user  = User.query.filter_by(email=email).first()
-
+    
+    if not email:  # ← guard against empty email
+        return render_template("verify_email.html", email="",
+                               error="Please enter your email address.")
+    
+    user = User.query.filter_by(email=email).first()
     if user and not user.is_verified:
         send_verification_email(user)
         session["pending_email"] = email
