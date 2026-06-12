@@ -42,7 +42,7 @@ def start():
     return redirect(url_for("ai.identify_page"))
 
 
-@app.route("/uploads/<filename>")
+@app.route("/uploads/<path:filename>")
 def uploaded_file(filename):
     upload_folder = os.path.abspath(app.config["UPLOAD_FOLDER"])
     return send_from_directory(upload_folder, filename)

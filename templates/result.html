@@ -473,7 +473,7 @@
         <div class="plant-image-wrap">
           <div class="img-shimmer" id="imgShimmer"></div>
           {% if plant.image_url %}
-            <img id="plantImage" src="{{ url_for('uploaded_file', filename=plant.image_url) }}" alt="{{ plant.common_name or 'Identified plant' }}" />
+            <img id="plantImage" src="{{ plant.image_url if plant.image_url and plant.image_url.startswith('http') else url_for('uploaded_file', filename=plant.image_url) }}">
           {% else %}
             <div class="img-placeholder">
               <svg viewBox="0 0 24 24"><path d="M12 22V12M12 12C12 7 8 3 3 3c0 5 3.5 8.5 9 9zM12 12C12 7 16 3 21 3c0 5-3.5 8.5-9 9z"/></svg>
