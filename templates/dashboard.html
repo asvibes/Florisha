@@ -729,7 +729,7 @@
             <div class="polaroid" id="card-{{ plant.id }}">
               <div class="polaroid-img-wrap">
                 {% if plant.image_url %}
-                  <img src="/uploads/{{ plant.image_url }}" alt="{{ plant.name }}" loading="lazy" />
+                  <img src="{{ plant.image_url if plant.image_url.startswith('http') else '/uploads/' ~ plant.image_url }}" alt="{{ plant.name }}" loading="lazy" />
                 {% else %}
                   <div class="polaroid-placeholder">
                     <svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg>
@@ -792,7 +792,7 @@
           <div class="polaroid" id="fav-card-{{ plant.id }}">
             <div class="polaroid-img-wrap">
               {% if plant.image_url %}
-                <img src="/uploads/{{ plant.image_url }}" alt="{{ plant.name }}" loading="lazy" />
+                <img src="{{ plant.image_url if plant.image_url.startswith('http') else '/uploads/' ~ plant.image_url }}" alt="{{ plant.name }}" loading="lazy" />
               {% else %}
                 <div class="polaroid-placeholder">
                   <svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg>
@@ -841,7 +841,7 @@
           <div class="journal-list-item" id="jli-{{ entry.id }}" onclick="selectEntry({{ entry.id }}, this)">
             <div class="jli-img-wrap">
               {% if entry.image_url %}
-                <img src="/uploads/{{ entry.image_url }}" alt="{{ entry.common_name }}" />
+                <img src="{{ entry.image_url if entry.image_url.startswith('http') else '/uploads/' ~ entry.image_url }}" alt="{{ entry.common_name }}" />
               {% else %}
                 <div class="jli-img-placeholder">
                   <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-soft)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12M12 12C12 7 8 3 3 3c0 5 3.5 8.5 9 9zM12 12C12 7 16 3 21 3c0 5-3.5 8.5-9 9z"/></svg>
@@ -1071,7 +1071,7 @@
               <tr id="history-row-{{ plant.id }}">
                 <td>
                   {% if plant.image_url %}
-                    <img src="/uploads/{{ plant.image_url }}" class="history-thumb" alt="{{ plant.name }}" />
+                    <img src="{{ plant.image_url if plant.image_url.startswith('http') else '/uploads/' ~ plant.image_url }}" class="history-thumb" alt="{{ plant.name }}" />
                   {% else %}
                     <div class="history-thumb-placeholder">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-soft)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg>
@@ -1404,8 +1404,14 @@
       .then(r => r.json())
       .then(data => {
         const img = document.getElementById('jdImg');
-        if (data.image_url) { img.src = `/uploads/${data.image_url}`; img.style.display = 'block'; }
-        else { img.style.display = 'none'; }
+        if (data.image_url) {
+          img.src = data.image_url.startsWith('http')
+            ? data.image_url
+            : `/uploads/${data.image_url}`;
+          img.style.display = 'block';
+        } else {
+            img.style.display = 'none';
+        }
         document.getElementById('jdDate').textContent  = data.created_at  || '';
         document.getElementById('jdPlant').textContent = data.common_name  || data.scientific_name || '';
         document.getElementById('jdSci').textContent   = data.scientific_name || '';
@@ -1546,7 +1552,7 @@
         thumbWrap.className = 'cal-thumb-wrap';
         if (cover && cover.image_url) {
           const img = document.createElement('img');
-          img.className = 'cal-thumb'; img.src = `/uploads/${cover.image_url}`; img.alt = cover.name; img.loading = 'lazy';
+          img.className = 'cal-thumb'; img.src = cover.image_url.startsWith('http') ? cover.image_url : `/uploads/${cover.image_url}`; img.alt = cover.name; img.loading = 'lazy';
           thumbWrap.appendChild(img);
         } else {
           const ph = document.createElement('div');
@@ -1585,8 +1591,8 @@
       card.className = 'cal-plant-card' + (isCover ? ' is-cover' : '');
       card.dataset.plantId = plant.id;
       const imgHtml = plant.image_url
-        ? `<img class="cal-plant-card-img" src="/uploads/${plant.image_url}" alt="${plant.name}" loading="lazy" />`
-        : `<div class="cal-plant-card-img-placeholder"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="var(--accent-soft)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 1 9 9c0 4.97-9 13-9 13S3 15.97 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg></div>`;
+        ? `<img class="cal-plant-card-img" src="${plant.image_url.startsWith('http') ? plant.image_url : '/uploads/' + plant.image_url}" alt="${plant.name}" loading="lazy" />`
+        : `<div class="cal-plant-card-img-placeholder">...</div>`;
       const coverBadge   = isCover    ? `<div class="cal-cover-badge">Cover</div>` : '';
       const journalBadge = hasJournal ? `<div class="cal-journal-badge"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>` : '';
       card.innerHTML = `${imgHtml}${coverBadge}${journalBadge}<div class="cal-plant-card-body"><div class="cal-plant-card-name">${plant.name}</div><div class="cal-plant-card-sub">${hasJournal ? 'Has journal entry' : 'No journal yet'}</div></div><button class="btn-set-cover" onclick="calSetCover(event,'${dateStr}',${plant.id})">${isCover ? '✓ Cover photo' : 'Set as cover'}</button>`;
