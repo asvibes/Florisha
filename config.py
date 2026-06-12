@@ -18,7 +18,7 @@ class Config:
     ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
 
     # PlantNet
-    PLANTNET_API_KEY = "2b104P6k2P7lUb9CRpFYnip7xO"
+    PLANTNET_API_KEY = os.getenv("PLANTNET_API_KEY")
     PLANTNET_API_URL = "https://my-api.plantnet.org/v2/identify/all"
 
     # Gmail SMTP
